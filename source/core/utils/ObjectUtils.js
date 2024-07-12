@@ -31,6 +31,23 @@ ObjectUtils.getRoot = function(obj)
 };
 
 /**
+ * Get first parent by given type
+ *
+ * @method searchParentByType
+ * @param {Object3D} obj
+ * @return {Object3D} parent
+ */
+ObjectUtils.searchParentByType = function(obj, type)
+{
+	var node = obj;
+	while (node.parent !== null && node.type !== type)
+	{
+		node = node.parent;
+	}
+	return node;
+};
+
+/**
  * Scale and center object into a unitary box.
  *
  * Useful to scale objects to fit into a known size box.

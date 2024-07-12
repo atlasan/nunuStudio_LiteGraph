@@ -43,6 +43,7 @@ import {Text} from "../../../../components/Text.js";
 import {Component} from "../../../../components/Component.js";
 import {ButtonDrawer} from "../../../../components/buttons/ButtonDrawer.js";
 import {PythonScript} from "../../../../../core/objects/script/PythonScript.js";
+import { LiteGraphScript } from "../../../../../core/objects/script/LiteGraphScript.js";
 
 /**
  * Side bar is presented in the editor to add more objects to the scene.
@@ -510,6 +511,12 @@ return target.set(x, y, z);`;
 		{
 			Editor.addObject(new NodeScript(), self.editor.scene);
 		}, Locale.nodeGraph);
+
+		// LiteGraph script
+		scripts.addOption(Global.FILE_PATH + "icons/script/workflow.png", function()
+		{
+			Editor.addObject(new LiteGraphScript(), self.editor.scene);
+		}, Locale.litegraphGraph);
 	}
 
 	scripts.updateOptions();
