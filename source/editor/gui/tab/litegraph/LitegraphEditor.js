@@ -6,6 +6,7 @@ import {Locale} from "../../../locale/LocaleManager.js";
 import {TabComponent} from "../../../components/tabs/TabComponent.js";
 // import {SideBar} from "./SideBar.js";
 import { Editor } from "../../../Editor.js";
+// import { LiteGraphScript } from "../../../../core/objects/script/LiteGraphScript.js";
 
 function LitegraphEditor(parent, closeable, container, index)
 {
@@ -43,6 +44,10 @@ function LitegraphEditor(parent, closeable, container, index)
     this.LGraph = LGraph;
     this.LGraphCanvas = LGraphCanvas;
 
+	// init empty
+	this.graphcanvas = false;
+	this.graph = false;
+
     LiteGraph.log_info("LiteGraphEditor","CONSTRUCT",...arguments);
 }
 
@@ -54,21 +59,28 @@ LitegraphEditor.prototype.updateMetadata = function()
     this.setName("*LiteGraphEditor*");
 	if (this.node !== null)
 	{
-        if(this.node.graph && typeof(this.node.graph.attachCanvas)=="function"){
-            this.graphcanvas = new LGraphCanvas(this.canvas.element, this.node.graph);
-            this.graph = this.node.graph;
-        }else{
-            console.error("** graph is an object to be configured, it should be done by LiteGraphScript **", this.node);
-            //this.graph = new LGraph(this.node.graph);
-            //this.node.graph = this.graph;
-            //this.graphcanvas = new LGraphCanvas(this.canvas.element, this.node.graph);
-            //console.debug("** graph configured **", this.node.graph);
-        }
-        if(this.graphcanvas){
-            this.graphcanvas.registerCallbackHandler("getExtraMenuOptions",function(oCbInfo, graphCanvas, options){
-                console.info("**LG**","checkNunuEditor selection",Editor.selection);
-            });
-        }
+		if(this.graphcanvas && this.graph){
+
+		}else{
+			if(this.node.graph && typeof(this.node.graph.attachCanvas)=="function"){
+				this.graphcanvas = new LGraphCanvas(this.canvas.element, this.node.graph);
+				this.graph = this.node.graph;
+			}else{
+				console.error("** graph is an object to be configured, it should be done by LiteGraphScript **", this.node);
+				//this.graph = new LGraph(this.node.graph);
+				//this.node.graph = this.graph;
+				//this.graphcanvas = new LGraphCanvas(this.canvas.element, this.node.graph);
+				//console.debug("** graph configured **", this.node.graph);
+			}
+			if(this.graphcanvas){
+				this.graphcanvas.registerCallbackHandler("getExtraMenuOptions",function(oCbInfo, graphCanvas, options){
+					console.info("**LG**","checkNunuEditor selection",Editor.selection);
+					return ["nunucheck", function(){
+						console.info("**NUNU_MENU**",this,...arguments);
+					}]
+				});
+			}
+		}
 	}	
 };
 
@@ -83,6 +95,15 @@ LitegraphEditor.prototype.isAttached = function(par)
 {
     LiteGraph.log_info("LiteGraphEditor","isAttached",par);
 	return this.node === par;
+};
+
+LitegraphEditor.prototype.destroy = function()
+{
+	TabComponent.prototype.destroy.call(this);
+	LiteGraph.log_info("LiteGraphEditor","unbind LGraphCanvas events", this.graphcanvas);
+	if(this.graphcanvas && typeof(this.graphcanvas.unbindEvents)=="function"){
+		this.graphcanvas.unbindEvents();
+	}
 };
 
 LitegraphEditor.prototype.update = function()
