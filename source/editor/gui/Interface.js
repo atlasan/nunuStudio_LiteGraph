@@ -68,20 +68,20 @@ function Interface()
  *
  * @method saveProgram
  */
-Interface.prototype.saveProgram = function()
+Interface.prototype.saveProgram = function(binary = false)
 {
 	if (Nunu.runningOnDesktop())
 	{
 		FileSystem.chooseFile(function(files)
 		{
-			Editor.saveProgram(files[0].path, true);
+			Editor.saveProgram(files[0].path, binary);
 		}, ".nsp", true);
 	}
 	else
 	{
 		FileSystem.chooseFileName(function(fname)
 		{
-			Editor.saveProgram(fname, true);
+			Editor.saveProgram(fname, binary);
 		}, ".nsp", Editor.openFile !== null ? Editor.openFile : "file");
 	}
 };

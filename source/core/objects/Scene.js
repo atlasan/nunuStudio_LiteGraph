@@ -311,6 +311,39 @@ Scene.prototype.render = function(renderer)
 };
 
 /**
+ * Get object from scene using uuid.
+ *
+ * @method getObjectByUUID
+ * @param {string} uuid UUID to look for
+ * @param {Object3D} parent Object to start from, whole scene if not passed
+ * @return {Object3D} Object if found, else null
+ */
+Scene.prototype.getObjectByUUID = function(uuid, parent)
+{
+	if (parent === undefined)
+	{
+		parent = this;
+	}
+
+	if (uuid === parent.uuid)
+	{
+		return parent;
+	}
+
+	var children = parent.children;
+	for (var i = 0; i < children.length; i++)
+	{
+		var obj = this.getObjectByUUID(uuid, children[i]);
+		if (obj !== null)
+		{
+			return obj;
+		}
+	}
+
+	return null;
+};
+
+/**
  * Get camera from scene using cameras uuid.
  *
  * @method getCamera
