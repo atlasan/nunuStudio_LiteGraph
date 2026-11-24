@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head><meta charset="utf-8"><title>Visual script standalone verification</title>
-<style>html,body{height:100%;margin:0;background:#18212d;color:#e6edf7;font:16px system-ui}main{max-width:1000px;margin:auto;padding:24px}canvas{display:block;width:100%;height:480px;border:1px solid #506070}li{margin:8px 0}.pass{color:#9de2b4}.fail{color:#ff9393}</style></head>
-<body><main><h1>Visual scripting: standalone runtime</h1><p id="status" role="status">Checking saved scene and runtime…</p><ul id="checks"></ul><canvas id="preview" width="960" height="480"></canvas></main>
+<style>html,body{height:100%;margin:0;background:#18212d;color:#e6edf7;font:16px system-ui}main{max-width:1000px;margin:auto;padding:24px}canvas{display:block;width:100%;height:480px;border:1px solid #506070}#checks{display:grid;grid-template-columns:1fr 1fr;gap:4px 28px;padding-left:20px}li{margin:2px 0;font-size:13px}.pass{color:#9de2b4}.fail{color:#ff9393}</style></head>
+<body><main><h1>Visual scripting: standalone runtime</h1><p id="status" role="status">Checking saved scene and runtime…</p><ul id="checks"></ul><label>Live example <select id="example" aria-label="Live example"></select></label> <button id="run" type="button">Run example</button><p id="hint"></p><canvas tabindex="0" id="preview" width="960" height="480"></canvas></main>
 <script src="files/runtime/nunu.min.js"></script>
 <script>
 (async function()
@@ -15,31 +15,55 @@
  }
  try
  {
-  const data=await fetch('files/examples/visual-script-spin.isp').then(r=>r.json());
-  const original=new Nunu.ObjectLoader().parse(data);
-  const clone=original.clone();
-  const target=clone.getObjectByProperty('uuid','33333333-3333-4333-8333-333333333333');
-  const script=clone.getObjectByProperty('uuid','44444444-4444-4444-8444-444444444444');
-  check(script instanceof Nunu.LiteGraphScript && script.graphVersion===1,'Saved scene restores the visual script and schema');
-  clone.canvas=document.getElementById('preview');
-  clone.initialize();await script.ready;
-  clone.scene.update(0.25);
-  check(Math.abs(target.rotation.y-0.25)<0.00001,'Connected lifecycle graph rotates the loaded target using engine delta');
-  check(original.getObjectByProperty('uuid',target.uuid).rotation.y===0,'Program clone leaves the authored scene unchanged');
-  check(Math.abs(target.matrix.elements[0]-Math.cos(0.25))<0.00001,'Static object matrix follows the visual script');
-  const restored=new Nunu.ObjectLoader().parse(JSON.parse(JSON.stringify(clone.toJSON())));
-  check(restored.getObjectByProperty('uuid',script.uuid).graph._nodes.length===3,'Save and reopen retain the complete graph');
-  clone.dispose();restored.dispose();original.dispose();
-  const app=new Nunu.App(document.getElementById('preview'));
-  app.loadRunProgram('files/examples/visual-script-spin.nsp',function(running)
+  const manifest=await fetch('files/examples/visual-script-examples.json').then(r=>r.json());
+  const catalog=await fetch('files/examples/visual-script-catalog.json').then(r=>r.json());
+  check(catalog.nodes.length===20 && Nunu.getNunuNodeCatalog().length===20,'All 20 categorized nodes are present in the standalone runtime');
+  for(const example of manifest.examples)
   {
-   running.program.getObjectByProperty('uuid',script.uuid).ready.then(function()
+   const data=await fetch('files/examples/'+example.json).then(r=>r.json());
+   const original=new Nunu.ObjectLoader().parse(data);
+   const clone=original.clone();
+   const script=clone.getObjectByProperty('uuid','44444444-4444-4444-8444-444444444444');
+   const bound=script.graph._nodes.find(n=>n.type==='nunu/object').properties.nunu_uuid;
+   const target=clone.getObjectByProperty('uuid',bound);
+   check(script instanceof Nunu.LiteGraphScript && script.graphVersion===1,example.id+': saved scene restores visual script');
+   clone.canvas=document.getElementById('preview');clone.initialize();await script.ready;
+   let held=false,pressed=false;
+   clone.keyboard.keyPressed=()=>held;clone.keyboard.keyJustPressed=()=>pressed;clone.keyboard.keyJustReleased=()=>false;
+   clone.scene.update(0.25);
+   let ok=false;
+   if(example.id==='spin')ok=Math.abs(target.rotation.y-0.25)<0.00001 && Math.abs(target.matrix.elements[0]-Math.cos(0.25))<0.00001;
+   if(example.id==='move'){held=true;clone.scene.update(0.25);ok=Math.abs(target.position.z+0.5)<0.00001;}
+   if(example.id==='visibility'){pressed=true;clone.scene.update(0.25);ok=target.visible===false;}
+   if(example.id==='tint')ok=target.material.color.getHexString()==='55dd88';
+   if(example.id==='camera')ok=target.fov===35;
+   if(example.id==='light')ok=target.intensity===2;
+   check(ok,example.id+': connected graph performs expected operation');
+   const restored=new Nunu.ObjectLoader().parse(JSON.parse(JSON.stringify(clone.toJSON())));
+   check(restored.getObjectByProperty('uuid',script.uuid).graph._nodes.length===example.nodes.length,example.id+': clone saves and reopens graph');
+   if(example.id==='tint')check(original.getObjectByProperty('uuid',bound).material.color.getHexString()==='66bbff','Material tint leaves authored resources unchanged');
+   if(example.id==='spin')check(original.getObjectByProperty('uuid',bound).rotation.y===0,'Engine delta leaves authored transforms unchanged');
+   clone.dispose();restored.dispose();original.dispose();
+   const option=document.createElement('option');option.value=example.id;option.textContent=example.title;document.getElementById('example').appendChild(option);
+  }
+  let app=null;
+  function runExample()
+  {
+   const example=manifest.examples.find(e=>e.id===document.getElementById('example').value);
+   document.getElementById('hint').textContent=example.description+' Click the preview to focus keyboard input.';
+   if(app)app.exit();
+   app=new Nunu.App(document.getElementById('preview'));
+   app.loadRunProgram('files/examples/'+example.binary,function(running)
    {
-    check(running.program.getObjectByProperty('uuid',script.uuid).graph._nodes.length===3,'Binary NSP export restores the visual script in App');
-    status.textContent='PASS — standalone saved-scene verification complete. The box below runs from the exported runtime.';
-    status.className='pass';
-   }).catch(function(error){status.textContent='FAIL — '+error.message;status.className='fail';});
-  },function(){});
+    running.program.getObjectByProperty('uuid','44444444-4444-4444-8444-444444444444').ready.then(function()
+    {
+     status.textContent='PASS — six saved-scene examples verified. Binary App running: '+example.title;
+     status.className='pass';
+    }).catch(function(error){status.textContent='FAIL — '+error.message;status.className='fail';});
+   },function(){});
+  }
+  document.getElementById('run').addEventListener('click',runExample);
+  runExample();
  }
  catch(error){status.textContent='FAIL — '+error.message;status.className='fail';console.error(error);}
 })();

@@ -62,11 +62,17 @@ async function main()
 	const html = fs.readFileSync(path.join(output, "editor/index.html"), "utf8");
 	if (html.includes('href="litegraph.css"')) throw new Error("HTML references an unbundled stylesheet");
 	console.log("PASS LiteGraph CSS packaged in styles.css");
-	for (const format of ["isp", "nsp"])
+	const examples = JSON.parse(fs.readFileSync(path.join(output, "editor/files/examples/visual-script-examples.json"), "utf8"));
+	for (const example of examples.examples)
 	{
-		if (!fs.existsSync(path.join(output, "editor/files/examples/visual-script-spin." + format))) throw new Error("Visual script sample missing: " + format);
+		for (const file of [example.json, example.binary])
+		{
+			if (!fs.existsSync(path.join(output, "editor/files/examples", file))) throw new Error("Visual script sample missing: " + file);
+		}
 	}
-	console.log("PASS JSON and binary visual-script samples packaged");
+	const catalog = JSON.parse(fs.readFileSync(path.join(output, "editor/files/examples/visual-script-catalog.json"), "utf8"));
+	if (catalog.nodes.length < 20 || examples.examples.length !== 6) throw new Error("Incomplete visual script baseline");
+	console.log("PASS node catalog and six JSON/binary visual-script samples packaged");
 	fs.copyFileSync(path.join(__dirname, "../test/visual-script-runtime.html"), path.join(output, "editor/visual-script-runtime.html"));
 	console.log("Build artifacts: " + output);
 }

@@ -1,5 +1,5 @@
 /* eslint-disable camelcase -- LiteGraph public API and persisted UUID property names. */
-import {LiteGraph} from "../../../../lib/litegraph.js";
+import {registerNunuNode} from "../LiteGraphNodeCatalog.js";
 
 import {ownerGraph, canBindObject, updateObjectMatrix} from "../LiteGraphContext.js";
 
@@ -93,7 +93,7 @@ NunuPosition.prototype.onExecute = function()
 	updateObjectMatrix(object);
 };
 
-LiteGraph.registerNodeType("nunu/object", NunuObject);
-LiteGraph.registerNodeType("nunu/position_set", NunuPosition);
+registerNunuNode("nunu/object", NunuObject, {category: "Scene", accepts: "Object3D", effect: "read"});
+registerNunuNode("nunu/position_set", NunuPosition, {category: "Transforms", accepts: "Object3D", effect: "write"});
 
 export {NunuObject, NunuPosition};

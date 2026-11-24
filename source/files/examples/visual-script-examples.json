@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "examples": [
+    {
+      "id": "spin",
+      "title": "Spin selected",
+      "accepts": "Object3D",
+      "description": "Rotate at one radian per second using engine delta.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/rotate"
+      ],
+      "json": "visual-script-spin.isp",
+      "binary": "visual-script-spin.nsp"
+    },
+    {
+      "id": "move",
+      "title": "Move while W held",
+      "accepts": "Object3D",
+      "description": "Hold W to move along parent -Z at two units per second.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/events",
+        "events/branch",
+        "nunu/translate"
+      ],
+      "json": "visual-script-move.isp",
+      "binary": "visual-script-move.nsp"
+    },
+    {
+      "id": "visibility",
+      "title": "Space toggles visibility",
+      "accepts": "Object3D",
+      "description": "Press Space to hide/show the selected object.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/objects/visibility"
+      ],
+      "json": "visual-script-visibility.isp",
+      "binary": "visual-script-visibility.nsp"
+    },
+    {
+      "id": "tint",
+      "title": "Tint selected mesh",
+      "accepts": "Mesh",
+      "description": "Set the mesh green on start without recoloring shared objects.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/materials/color"
+      ],
+      "json": "visual-script-tint.isp",
+      "binary": "visual-script-tint.nsp"
+    },
+    {
+      "id": "camera",
+      "title": "Set camera projection",
+      "accepts": "PerspectiveCamera",
+      "description": "Set perspective FOV to 35 degrees and clipping to 0.1–100 on start.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/camera/projection"
+      ],
+      "json": "visual-script-camera.isp",
+      "binary": "visual-script-camera.nsp"
+    },
+    {
+      "id": "light",
+      "title": "Set light intensity",
+      "accepts": "Light",
+      "description": "Set light intensity to 2 and white color on start.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/lights/settings"
+      ],
+      "json": "visual-script-light.isp",
+      "binary": "visual-script-light.nsp"
+    }
+  ]
+}

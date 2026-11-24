@@ -75,11 +75,18 @@ Project execution notes, memories and plans are local files under the ignored
 4. **Undo/Redo** and Ctrl+Z / Ctrl+Y apply to the graph while its canvas has focus. The first edit is undoable; graph and scene histories remain separate. **Frame all** fits the graph; **Check** reports missing bindings, types or dependencies in the status bar.
 5. Save the project normally. Binary `.nsp` and JSON `.isp` files both include the graph and its schema version. Reopen and export through the normal project workflow; the standalone runtime registers the same nunu nodes.
 
-A ready-to-run sample is provided as [JSON](source/files/examples/visual-script-spin.isp)
-and [binary](source/files/examples/visual-script-spin.nsp). Load either through
-**File → Load**, then Run. The blue box rotates at one radian per second; the
-example contains its own camera and requires no external assets. Regenerate both
-with `node --experimental-vm-modules scripts/create-visual-script-example.cjs`.
+Use the second toolbar row to choose a **Node category** and **Nunu node**, then
+**Add node**. Descriptions explain each node's contract. Choose a **Starter
+example** and **Add example** with a compatible scene object selected; one example
+is one undoable edit. Camera and light examples require their respective object
+types. Existing graphs are appended to, never replaced.
+
+Six self-contained projects cover spin, W-held movement, Space visibility toggle,
+mesh tint, perspective camera projection and light intensity. Every project has
+JSON `.isp` and binary `.nsp` versions in [the example manifest](source/files/examples/visual-script-examples.json).
+Load one through **File → Load**, then Run. Each includes a camera, box and lights
+and requires no external assets. Regenerate projects and the published node
+catalog with `node --experimental-vm-modules scripts/create-visual-script-example.cjs`.
 
 | Node | First-release contract |
 | --- | --- |
@@ -92,6 +99,18 @@ with `node --experimental-vm-modules scripts/create-visual-script-example.cjs`.
 | Set Transform | Event-driven: on **apply**, write only connected fields and emit **done**. |
 | Translate / Rotate | Event-driven: on **apply**, integrate velocity by delta seconds; unconnected delta uses the engine frame delta. Static object matrices update too. |
 | Set Position | Compatibility node: writes the position every frame; new event graphs can use Set Transform instead. |
+
+| Find Object / Object Info | Exact-name lookup (first and all matches), identity and hierarchy reads in the current scene. UUID references remain preferable for stable bindings. |
+| World Transform / Look At | Parent-aware world position, quaternion, scale and forward; event-driven world target orientation. Look At requires positive uniform parent scale. |
+| Visibility | Event-driven toggle or explicit boolean set. Hidden objects remain in the scene. |
+| Get / Set Object Data | Read userData with fallback; write JSON scalars using safe keys. |
+| Camera Projection | Atomically validate and update perspective FOV and clipping; orthographic cameras support clipping. |
+| Light Settings | Atomically set non-negative intensity and color. |
+| Mesh Color | Tint color-capable materials; default isolates shared materials with one clone per object, with explicit shared-edit opt-in. |
+
+New mutation nodes expose **done**, **failed**, **success** and **message**. Invalid
+inputs leave their target unchanged. Their object inputs accept only objects in
+the script's owning scene. Colors accept `#RRGGBB` or normalized RGB vectors.
 
 Connect Scene Events **update** to a mutation node's **apply**, and **delta** to
 its delta input. Use LiteGraph's existing math, logic, branch, counter and data
@@ -111,8 +130,24 @@ version 1 is written on save; legacy unversioned scripts load as version 1.
 The production-build verifier also writes `visual-script-runtime.html` next to
 the temporary editor build. Serve that folder on loopback and open the page to
 exercise actual Program cloning, JSON save/reopen, static matrices and a binary
-NSP project running through App with only `nunu.min.js` loaded.
+NSP projects running through App with only `nunu.min.js` loaded. Its live example
+selector allows keyboard and object operations to be tried directly.
 
+
+### Growing the baseline
+
+Register stable `nunu/...` IDs through `registerNunuNode` with category, accepted
+object type, effect and description. The runtime catalog supplies the editor
+palette and generated [port/property schema](source/files/examples/visual-script-catalog.json).
+Keep runtime modules free of editor imports. Validate mutations before writing,
+report failures through ports, respect static matrices and shared resources,
+and preserve existing IDs and serialization contracts.
+
+Add starter builders in `LiteGraphStarter.js` so the editor and fixture generator
+use the same wiring. Regenerate all examples, test their connected behavior,
+invalid inputs and save/reopen, then run `npm test` and
+`npm run check-integration-builds`. This is the baseline for incremental growth;
+physics control, spawning/destruction, animation and audio nodes are future work.
 
 ## Screenshots
 

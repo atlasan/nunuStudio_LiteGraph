@@ -1,5 +1,5 @@
 /* eslint-disable camelcase -- LiteGraph public API and persisted UUID property names. */
-import {LGraphCanvas} from "../../../../lib/litegraph.js";
+import {LiteGraph, LGraphCanvas} from "../../../../lib/litegraph.js";
 import {Canvas} from "../../../components/Canvas.js";
 import {Global} from "../../../Global.js";
 import {Locale} from "../../../locale/LocaleManager.js";
@@ -7,7 +7,8 @@ import {TabComponent} from "../../../components/tabs/TabComponent.js";
 import {Editor} from "../../../Editor.js";
 import {Component} from "../../../components/Component.js";
 import {canBindObject} from "../../../../core/objects/script/LiteGraphContext.js";
-import {addRotationStarter} from "../../../../core/objects/script/LiteGraphStarter.js";
+import {addRotationStarter, getNunuExampleCatalog, acceptsExample, addVisualScriptExample} from "../../../../core/objects/script/LiteGraphStarter.js";
+import {getNunuNodeCatalog} from "../../../../core/objects/script/LiteGraphNodeCatalog.js";
 import {seedGraphHistory} from "./GraphHistory.js";
 
 function LitegraphEditor(parent, closeable, container, index)
@@ -23,6 +24,7 @@ function LitegraphEditor(parent, closeable, container, index)
 		return Editor.selection.length ? Editor.selection[0] : null;
 	};
 	this.createToolbar();
+	this.createPalette();
 	var self = this;
 	this.feedback = function(message) { self.setStatus(message); };
 	this.onGraphKey = function(event)
@@ -131,14 +133,20 @@ LitegraphEditor.prototype.resizeGraph = function()
 LitegraphEditor.prototype.updateSize = function()
 {
 	TabComponent.prototype.updateSize.call(this);
-	var top = this.toolbar ? 36 : 0;
+	var top = this.palette ? 76 : this.toolbar ? 36 : 0;
 	var bottom = this.status ? 26 : 0;
 	this.canvas.position.set(0, top);
 	this.canvas.size.set(this.size.x, Math.max(0, this.size.y - top - bottom));
 	if (this.toolbar)
 	{
 		this.toolbar.position.set(0, 0);
-		this.toolbar.size.set(this.size.x, top);
+		this.toolbar.size.set(this.size.x, 36);
+		if (this.palette)
+		{
+			this.palette.position.set(0, 36);
+			this.palette.size.set(this.size.x, 40);
+			this.palette.updateInterface();
+		}
 		this.toolbar.updateInterface();
 		this.status.position.set(0, this.size.y - bottom);
 		this.status.size.set(this.size.x, bottom);
@@ -187,6 +195,98 @@ LitegraphEditor.prototype.createToolbar = function()
 	});
 };
 
+LitegraphEditor.prototype.createPalette = function()
+{
+	this.palette = new Component(this, "div");
+	this.palette.element.className = "visual-script-toolbar visual-script-palette";
+	var self = this;
+	function select(label)
+	{
+		var element = document.createElement("select");
+		element.setAttribute("aria-label", label);
+		self.palette.element.appendChild(element);
+		return element;
+	}
+	function option(selectElement, value, title)
+	{
+		var element = document.createElement("option");
+		element.value = value;
+		element.textContent = title;
+		selectElement.appendChild(element);
+	}
+	function button(label, callback)
+	{
+		var element = document.createElement("button");
+		element.type = "button";
+		element.textContent = label;
+		element.addEventListener("click", callback);
+		self.palette.element.appendChild(element);
+		return element;
+	}
+	this.categorySelect = select("Node category");
+	this.nodeSelect = select("Nunu node");
+	var catalog = getNunuNodeCatalog();
+	for (var category of Array.from(new Set(catalog.map(function(item) { return item.category; })))) { option(this.categorySelect, category, category); }
+	this.categorySelect.value = "Scene";
+	function fillNodes()
+	{
+		self.nodeSelect.textContent = "";
+		for (var definition of catalog.filter(function(item) { return item.category === self.categorySelect.value; }))
+		{
+			option(self.nodeSelect, definition.type, definition.title);
+		}
+		self.nodeSelect.title = catalog.find(function(item) { return item.type === self.nodeSelect.value; }).description;
+	}
+	this.categorySelect.addEventListener("change", fillNodes);
+	this.nodeSelect.addEventListener("change", function()
+	{
+		var definition = catalog.find(function(item) { return item.type === self.nodeSelect.value; });
+		self.nodeSelect.title = definition.description;
+		self.setStatus(definition.title + ": " + definition.description);
+	});
+	fillNodes();
+	button("Add node", function() { self.addCatalogNode(self.nodeSelect.value); });
+	this.exampleSelect = select("Starter example");
+	for (var example of getNunuExampleCatalog()) { option(this.exampleSelect, example.id, example.title); }
+	this.exampleSelect.addEventListener("change", function()
+	{
+		self.updateStatus();
+		var example = getNunuExampleCatalog().find(function(item) { return item.id === self.exampleSelect.value; });
+		self.setStatus(example.description + " Select a " + example.accepts + " in this script's scene.");
+	});
+	this.exampleButton = button("Add example", function()
+	{
+		var object = self.selectionProvider();
+		var example = getNunuExampleCatalog().find(function(item) { return item.id === self.exampleSelect.value; });
+		if (!canBindObject(self.node, object) || !acceptsExample(example, object))
+		{
+			self.setStatus("Select a " + example.accepts + " in this script's scene first.");
+			return;
+		}
+		addVisualScriptExample(self.node.graph, example.id, object.uuid);
+		self.frameAll();
+		self.updateStatus();
+	});
+};
+
+LitegraphEditor.prototype.addCatalogNode = function(type)
+{
+	if (!this.graphcanvas) { return; }
+	var definition = getNunuNodeCatalog().find(function(item) { return item.type === type; });
+	if (!definition) { return; }
+	var canvas = this.graphcanvas;
+	var node;
+	canvas.graph.transact("Add " + definition.title, function()
+	{
+		node = LiteGraph.createNode(type);
+		node.pos = canvas.convertCanvasToOffset([canvas.cssWidth / 2, canvas.cssHeight / 2]);
+		canvas.graph.add(node);
+	});
+	canvas.selectNode(node);
+	this.canvas.element.focus();
+	this.updateStatus();
+};
+
 LitegraphEditor.prototype.setStatus = function(message)
 {
 	if (this.status)
@@ -202,6 +302,11 @@ LitegraphEditor.prototype.updateStatus = function()
 	var selected = this.selectionProvider();
 	var eligible = canBindObject(this.node, selected);
 	if (this.starterButton) { this.starterButton.disabled = !eligible || selected === this.node || selected.type === "Scene"; }
+	if (this.exampleSelect && this.exampleButton)
+	{
+		var example = getNunuExampleCatalog().find((item) => { return item.id === this.exampleSelect.value; });
+		this.exampleButton.disabled = !eligible || !acceptsExample(example, selected);
+	}
 	var issues = this.node.getDiagnostics();
 	if (issues.length)
 	{
@@ -212,7 +317,7 @@ LitegraphEditor.prototype.updateStatus = function()
 	}
 	else if (this.node.graph._nodes.length === 0)
 	{
-		this.setStatus("Select an object in Project Explorer, then choose Spin selected. Right-click to add other nodes.");
+		this.setStatus("Choose a category and Add node, or select a scene object and Add example.");
 	}
 	else
 	{

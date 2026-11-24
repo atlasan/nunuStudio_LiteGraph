@@ -152,3 +152,6 @@ export {MathUtils} from "./utils/MathUtils.js";
 export {ObjectUtils} from "./utils/ObjectUtils.js";
 export {PhysicsGenerator} from "./utils/PhysicsGenerator.js";
 export {UnitConverter} from "./utils/UnitConverter.js";
+
+export {getNunuNodeCatalog} from "./objects/script/LiteGraphNodeCatalog.js";
+export {getNunuExampleCatalog, addVisualScriptExample} from "./objects/script/LiteGraphStarter.js";

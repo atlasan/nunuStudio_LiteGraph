@@ -12,6 +12,8 @@ const actual = new Set([
 	"source/lib/litegraph.js",
 	"source/core/objects/script/LiteGraphRuntime.js",
 	"source/core/objects/script/LiteGraphContext.js",
+	"source/core/objects/script/LiteGraphNodeCatalog.js",
+	"source/core/objects/script/litegraph_nodes/LiteGraphObjectNodes.js",
 	"source/core/objects/script/LiteGraphStarter.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphEngineNodes.js",
 	"source/editor/gui/tab/litegraph/GraphHistory.js",
@@ -64,7 +66,8 @@ const entry = new vm.SourceTextModule(`
 export {LiteGraph,LGraph,LGraphCanvas} from './source/lib/litegraph.js';
 export {LiteGraphRuntime} from './source/core/objects/script/LiteGraphRuntime.js';
 export {LiteGraphScript} from './source/core/objects/script/LiteGraphScript.js';
-export {addRotationStarter} from './source/core/objects/script/LiteGraphStarter.js';
+export {addRotationStarter,getNunuExampleCatalog,acceptsExample,addVisualScriptExample} from './source/core/objects/script/LiteGraphStarter.js';
+export {getNunuNodeCatalog} from './source/core/objects/script/LiteGraphNodeCatalog.js';
 export {seedGraphHistory} from './source/editor/gui/tab/litegraph/GraphHistory.js';
 export {ObjectUtils} from './source/core/utils/ObjectUtils.js';
 export {ObjectLoader} from './source/core/loaders/ObjectLoader.js';
@@ -258,6 +261,7 @@ test("graph tab rebind and close dispose actual canvases and detach graphs", asy
 	await module.link((specifier) =>
 	{
 		if (specifier.endsWith("/litegraph.js")) return load("source/lib/litegraph.js");
+		if (specifier.endsWith("/LiteGraphNodeCatalog.js")) return load("source/core/objects/script/LiteGraphNodeCatalog.js");
 		if (specifier.endsWith("/LiteGraphContext.js")) return load("source/core/objects/script/LiteGraphContext.js");
 		if (specifier.endsWith("/LiteGraphStarter.js")) return load("source/core/objects/script/LiteGraphStarter.js");
 		if (specifier.endsWith("/GraphHistory.js")) return load("source/editor/gui/tab/litegraph/GraphHistory.js");
@@ -565,4 +569,116 @@ test("portable example saves the camera looking at its animated box", () =>
 	const direction=new THREE.Vector3(0,0,-1).transformDirection(new THREE.Matrix4().fromArray(camera.matrix));
 	const expected=new THREE.Vector3(-4,-3,-6).normalize();
 	assert.ok(direction.dot(expected)>0.99999);
+});
+
+test("catalog is complete, detached and matches the published node schema", async () =>
+{
+ const {getNunuNodeCatalog,LiteGraph}=await ready;
+ const catalog=getNunuNodeCatalog();
+ assert.equal(catalog.length,20);
+ assert.equal(new Set(catalog.map(n=>n.type)).size,20);
+ for(const item of catalog){assert.ok(item.description && item.accepts && item.category);assert.ok(LiteGraph.createNode(item.type));assert.ok(Array.isArray(item.inputs));}
+ const published=JSON.parse(fs.readFileSync(path.join(root,"source/files/examples/visual-script-catalog.json")));
+ assert.deepEqual(JSON.parse(JSON.stringify(catalog)),published.nodes);
+ catalog[0].title="changed";assert.notEqual(getNunuNodeCatalog()[0].title,"changed");
+});
+
+test("all six shared examples execute, round-trip and package identically", async () =>
+{
+ const {LiteGraphScript,getNunuExampleCatalog,addVisualScriptExample}=await ready;
+ const {StaticPair}=require("@as-com/pson");
+ for(const example of getNunuExampleCatalog())
+ {
+  const program=new THREE.Group();program.type="Program";
+  const scene=new THREE.Scene();program.add(scene);
+  const actor=example.id==="camera"?new THREE.PerspectiveCamera():example.id==="light"?new THREE.DirectionalLight():new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());
+  const script=new LiteGraphScript();scene.add(actor,script);
+  let held=false,pressed=false;
+  program.keyboard={keyPressed:()=>held,keyJustPressed:()=>pressed,keyJustReleased:()=>false};
+  addVisualScriptExample(script.graph,example.id,actor.uuid);
+  const saved=savedGraph(script.graph);script.graph.configure(saved);
+  await script.initialize();script.update(0.25);
+  if(example.id==="spin") assert.equal(actor.rotation.y,0.25);
+  if(example.id==="move"){assert.equal(actor.position.z,0);held=true;script.update(0.25);assert.equal(actor.position.z,-0.5);}
+  if(example.id==="visibility"){assert.equal(actor.visible,true);pressed=true;script.update(0.25);assert.equal(actor.visible,false);pressed=false;script.update(0.25);assert.equal(actor.visible,false);}
+  if(example.id==="camera") assert.equal(actor.fov,35);
+  if(example.id==="light") assert.equal(actor.intensity,2);
+  if(example.id==="tint") assert.equal(actor.material.color.getHexString(),"55dd88");
+  script.dispose();
+  const json=JSON.parse(fs.readFileSync(path.join(root,`source/files/examples/visual-script-${example.id}.isp`)));
+  assert.deepEqual(new StaticPair().decode(fs.readFileSync(path.join(root,`source/files/examples/visual-script-${example.id}.nsp`))),json);
+  const packaged=json.object.children[0].children.find(child=>child.type==="LiteGraphScript");
+  assert.deepEqual(packaged.graph.nodes.map(n=>n.type),Array.from(example.nodes));
+ }
+});
+
+async function operationsFixture()
+{
+ const {LiteGraphScript}=await ready;
+ const scene=new THREE.Scene(),script=new LiteGraphScript(),parent=new THREE.Group();
+ scene.add(parent,script);parent.position.set(2,0,0);parent.updateMatrix();
+ const actor=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());actor.name="Actor";parent.add(actor);
+ function operation(type,object=actor){const n=node(script.graph,type);n.getInputData=slot=>slot===1?object:undefined;return n;}
+ return {scene,script,parent,actor,operation};
+}
+
+test("scene readers and look-at use hierarchy and reject foreign scene objects", async () =>
+{
+ const {scene,script,parent,actor,operation}=await operationsFixture();
+ const find=node(script.graph,"nunu/objects/find");find.setProperty("name","Actor");find.onExecute();assert.equal(find.getOutputData(0),actor);
+ const info=node(script.graph,"nunu/objects/info");info.getInputData=()=>actor;info.onExecute();assert.equal(info.getOutputData(3),parent);
+ const world=node(script.graph,"nunu/objects/world_transform");world.getInputData=()=>actor;world.onExecute();assert.deepEqual(Array.from(world.getOutputData(0)),[2,0,0]);
+ const look=operation("nunu/objects/look_at");look.setProperty("target",[2,0,5]);look.onAction();assert.equal(look.getOutputData(2),true);assert.ok(actor.getWorldDirection(new THREE.Vector3()).z>0.999);
+ parent.scale.set(1,2,1);parent.updateMatrix();const before=actor.quaternion.clone();look.onAction();assert.equal(look.getOutputData(2),false);assert.ok(actor.quaternion.equals(before));
+ const foreign=new THREE.Group();new THREE.Scene().add(foreign);const hide=operation("nunu/objects/visibility",foreign);hide.onAction();assert.equal(foreign.visible,true);assert.equal(hide.getOutputData(2),false);
+ scene.remove(actor);script.dispose();
+});
+
+test("data writes validate keys and scalars and expose failure without mutation", async () =>
+{
+ const {script,actor,operation}=await operationsFixture();
+ const set=operation("nunu/data/set");set.onAction();assert.equal(actor.userData.health,100);
+ const get=node(script.graph,"nunu/data/get");get.getInputData=()=>actor;get.onExecute();assert.equal(get.getOutputData(0),100);assert.equal(get.getOutputData(1),true);
+ set.setProperty("value",Infinity);set.onAction();assert.equal(set.getOutputData(2),false);assert.equal(actor.userData.health,100);
+ set.setProperty("key","__proto__");set.setProperty("value",1);set.onAction();assert.equal(set.getOutputData(2),false);assert.equal(Object.getPrototypeOf(actor.userData),Object.prototype);
+ set.setProperty("key","enabled");set.setProperty("value",false);set.onAction();assert.equal(actor.userData.enabled,false);
+ get.setProperty("key","absent");get.onExecute();assert.equal(get.getOutputData(0),0);assert.equal(get.getOutputData(1),false);script.dispose();
+});
+
+test("camera, light and material writes validate atomically and isolate shared resources", async () =>
+{
+ const {scene,script,actor,operation}=await operationsFixture();
+ const camera=new THREE.PerspectiveCamera(50,1,0.1,100),ortho=new THREE.OrthographicCamera();const light=new THREE.DirectionalLight();scene.add(camera,ortho,light);
+ const projection=operation("nunu/camera/projection",camera);projection.setProperty("fov",35);projection.onAction();assert.equal(camera.fov,35);
+ const matrix=camera.projectionMatrix.clone();projection.setProperty("near",500);projection.setProperty("fov",60);projection.onAction();assert.equal(projection.getOutputData(2),false);assert.equal(camera.fov,35);assert.ok(matrix.equals(camera.projectionMatrix));
+ const clipping=operation("nunu/camera/projection",ortho);clipping.setProperty("near",0);clipping.onAction();assert.equal(clipping.getOutputData(2),true);
+ const settings=operation("nunu/lights/settings",light);settings.onAction();assert.equal(light.intensity,2);settings.setProperty("color","invalid");settings.setProperty("intensity",5);settings.onAction();assert.equal(light.intensity,2);assert.equal(settings.getOutputData(2),false);
+ const original=actor.material;const sibling=new THREE.Mesh(actor.geometry,original);scene.add(sibling);
+ const tint=operation("nunu/materials/color");tint.onAction();assert.notEqual(actor.material,original);assert.equal(sibling.material,original);assert.equal(original.color.getHexString(),"ffffff");
+ const owned=actor.material;tint.onAction();assert.equal(actor.material,owned);
+ const second=operation("nunu/materials/color");second.setProperty("color","#ff0000");second.onAction();assert.equal(actor.material,owned);assert.equal(owned.color.getHexString(),"ff0000");
+ const shared=operation("nunu/materials/color",sibling);shared.setProperty("shared",true);shared.onAction();assert.equal(sibling.material,original);assert.equal(original.color.getHexString(),"55dd88");
+ tint.setProperty("color",[NaN,0,0]);tint.onAction();assert.equal(tint.getOutputData(2),false);assert.equal(owned.color.getHexString(),"ff0000");script.dispose();
+});
+
+test("examples filter compatible actors and each insertion is one undoable transaction", async () =>
+{
+ const {LiteGraphScript,getNunuExampleCatalog,acceptsExample,addVisualScriptExample,seedGraphHistory}=await ready;
+ const scene=new THREE.Scene(),script=new LiteGraphScript(),mesh=new THREE.Mesh(),camera=new THREE.PerspectiveCamera(),light=new THREE.PointLight();scene.add(script,mesh,camera,light);
+ for(const example of getNunuExampleCatalog())
+ {
+  const actor=example.id==="camera"?camera:example.id==="light"?light:mesh;
+  assert.equal(acceptsExample(example,actor),true);
+  assert.equal(acceptsExample(example,scene),false);
+  assert.equal(acceptsExample(example,script),false);
+  if(example.accepts!=="Object3D")assert.equal(acceptsExample(example,new THREE.Group()),false);
+  seedGraphHistory(script.graph);addVisualScriptExample(script.graph,example.id,actor.uuid);
+  assert.equal(script.graph._nodes.length,example.nodes.length);
+  script.graph.actionHistoryBack();assert.equal(script.graph._nodes.length,0);
+  script.graph.actionHistoryForward();assert.equal(script.graph._nodes.length,example.nodes.length);
+  script.graph.clear();
+ }
+ assert.throws(()=>addVisualScriptExample(script.graph,"unknown",mesh.uuid),/Unknown/);
+ assert.throws(()=>addVisualScriptExample(script.graph,"spin",null),/Select/);
+ script.dispose();
 });

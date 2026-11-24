@@ -19,8 +19,11 @@
   "materials": [
     {
       "uuid": "22222222-2222-4222-8222-222222222222",
-      "type": "MeshBasicMaterial",
+      "type": "MeshStandardMaterial",
       "color": 6732799,
+      "roughness": 0.6,
+      "metalness": 0.1,
+      "emissive": 0,
       "depthFunc": 3,
       "depthTest": true,
       "depthWrite": true,
@@ -35,9 +38,9 @@
     }
   ],
   "object": {
-    "uuid": "3B4435C5-99E1-41DD-A5BB-F8CB8C44FD50",
+    "uuid": "00000000-0000-4000-8000-000000000001",
     "type": "Program",
-    "name": "Visual scripting — spin box",
+    "name": "Visual scripting — Spin selected",
     "layers": 1,
     "matrix": [
       1,
@@ -59,7 +62,7 @@
     ],
     "children": [
       {
-        "uuid": "A23292CA-18A2-4796-9D78-F21207680280",
+        "uuid": "00000000-0000-4000-8000-000000000002",
         "type": "Scene",
         "name": "Visual script example",
         "layers": 1,
@@ -111,7 +114,7 @@
             "visible": true
           },
           {
-            "uuid": "888654FA-8D0B-4C30-9AC7-A467E5E01925",
+            "uuid": "00000000-0000-4000-8000-000000000003",
             "type": "PerspectiveCamera",
             "name": "Camera",
             "layers": 1,
@@ -145,13 +148,83 @@
             "matrixAutoUpdate": true
           },
           {
+            "uuid": "00000000-0000-4000-8000-000000000004",
+            "type": "DirectionalLight",
+            "name": "Key light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              3,
+              5,
+              2,
+              1
+            ],
+            "color": 16777215,
+            "intensity": 0.7,
+            "shadow": {
+              "camera": {
+                "uuid": "00000000-0000-4000-8000-000000000006",
+                "type": "OrthographicCamera",
+                "layers": 1,
+                "zoom": 1,
+                "left": -5,
+                "right": 5,
+                "top": 5,
+                "bottom": -5,
+                "near": 0.5,
+                "far": 500
+              }
+            },
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000005",
+            "type": "AmbientLight",
+            "name": "Ambient light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "color": 16777215,
+            "intensity": 0.4,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
             "type": "LiteGraphScript",
-            "name": "Spin box",
+            "name": "Spin selected",
             "uuid": "44444444-4444-4444-8444-444444444444",
             "visible": true,
             "graphVersion": 1,
             "graph": {
-              "id": "614e0abe-6101-4ec8-97b6-b612c03970ef",
+              "id": "55555555-5555-4555-8555-555555555555",
               "revision": 1,
               "last_node_id": 3,
               "last_link_id": 3,
@@ -194,7 +267,7 @@
                   "type": "nunu/events",
                   "pos": [
                     40,
-                    240
+                    290
                   ],
                   "size": [
                     111.06400299072266,
@@ -262,7 +335,7 @@
                   "type": "nunu/rotate",
                   "pos": [
                     360,
-                    80
+                    60
                   ],
                   "size": [
                     260,
@@ -359,14 +432,14 @@
         "matrixAutoUpdate": true,
         "usePhysics": false,
         "cameras": [
-          "888654FA-8D0B-4C30-9AC7-A467E5E01925"
+          "00000000-0000-4000-8000-000000000003"
         ]
       }
     ],
     "visible": true,
     "matrixAutoUpdate": true,
     "author": "nunuStudio LiteGraph integration",
-    "description": "Scene Events update drives Rotate at one radian per second. The source scene is unchanged during preview.",
+    "description": "Rotate at one radian per second using engine delta.",
     "version": "1.0.0",
     "ar": false,
     "vr": false,

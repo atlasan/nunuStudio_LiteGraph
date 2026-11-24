@@ -113,3 +113,14 @@ input[type=number]::-webkit-outer-spin-button
 	font-size: 12px;
 	background: var(--bar-color);
 }
+
+.visual-script-palette select
+{
+	flex: 0 0 auto;
+	max-width: 220px;
+	color: #ddd;
+	background: var(--panel-color);
+	border: 1px solid #666;
+	border-radius: 3px;
+	padding: 4px 6px;
+}

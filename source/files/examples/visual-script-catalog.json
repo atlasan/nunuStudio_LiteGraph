@@ -1,0 +1,772 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "type": "nunu/camera/projection",
+      "title": "Camera Projection",
+      "description": "Set perspective FOV (degrees) and clipping planes. Orthographic cameras accept clipping only; projection matrices update atomically.",
+      "since": 1,
+      "category": "Camera",
+      "accepts": "Camera",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "fov",
+          "type": "number"
+        },
+        {
+          "name": "near",
+          "type": "number"
+        },
+        {
+          "name": "far",
+          "type": "number"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {
+        "fov": 50,
+        "near": 0.1,
+        "far": 100
+      }
+    },
+    {
+      "type": "nunu/data/get",
+      "title": "Get Object Data",
+      "description": "Read an own userData field without invoking inherited properties; fallback defaults to zero.",
+      "since": 1,
+      "category": "Data",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value",
+          "type": 0
+        },
+        {
+          "name": "found",
+          "type": "boolean"
+        }
+      ],
+      "properties": {
+        "key": "health",
+        "fallback": 0
+      }
+    },
+    {
+      "type": "nunu/data/set",
+      "title": "Set Object Data",
+      "description": "Set a userData field to a JSON scalar (finite number, string, boolean or null). This is not arbitrary object-property reflection.",
+      "since": 1,
+      "category": "Data",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "value",
+          "type": 0
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {
+        "key": "health",
+        "value": 100
+      }
+    },
+    {
+      "type": "nunu/keyboard",
+      "title": "Keyboard",
+      "description": "Read nunuStudio's frame-synchronized input. 32 = Space, 65 = A, 87 = W.",
+      "since": 1,
+      "category": "Input",
+      "accepts": "Program",
+      "effect": "read",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "down",
+          "type": "boolean"
+        },
+        {
+          "name": "pressed",
+          "type": -1
+        },
+        {
+          "name": "released",
+          "type": -1
+        }
+      ],
+      "properties": {
+        "key": 32
+      }
+    },
+    {
+      "type": "nunu/mouse",
+      "title": "Mouse",
+      "description": "Read the running program's mouse; position and movement use canvas pixels.",
+      "since": 1,
+      "category": "Input",
+      "accepts": "Program",
+      "effect": "read",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "position",
+          "type": "vec2"
+        },
+        {
+          "name": "delta",
+          "type": "vec2"
+        },
+        {
+          "name": "wheel",
+          "type": "number"
+        },
+        {
+          "name": "down",
+          "type": "boolean"
+        },
+        {
+          "name": "pressed",
+          "type": -1
+        },
+        {
+          "name": "released",
+          "type": -1
+        }
+      ],
+      "properties": {
+        "button": 0
+      }
+    },
+    {
+      "type": "nunu/events",
+      "title": "Scene Events",
+      "description": "Engine lifecycle. Update fires once per frame; delta and time are seconds.",
+      "since": 1,
+      "category": "Lifecycle",
+      "accepts": "Program",
+      "effect": "events",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "started",
+          "type": -1
+        },
+        {
+          "name": "update",
+          "type": -1
+        },
+        {
+          "name": "stopped",
+          "type": -1
+        },
+        {
+          "name": "resized",
+          "type": -1
+        },
+        {
+          "name": "app data",
+          "type": -1
+        },
+        {
+          "name": "delta",
+          "type": "number"
+        },
+        {
+          "name": "time",
+          "type": "number"
+        },
+        {
+          "name": "size",
+          "type": "vec2"
+        },
+        {
+          "name": "data",
+          "type": 0
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "type": "nunu/lights/settings",
+      "title": "Light Settings",
+      "description": "Set a light's finite non-negative intensity and color (#RRGGBB or normalized RGB). Does not alter shadow configuration.",
+      "since": 1,
+      "category": "Light",
+      "accepts": "Light",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "intensity",
+          "type": "number"
+        },
+        {
+          "name": "color",
+          "type": "color,vec3,string"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {
+        "intensity": 2,
+        "color": "#ffffff"
+      }
+    },
+    {
+      "type": "nunu/materials/color",
+      "title": "Mesh Color",
+      "description": "Tint a mesh's color-capable materials. By default clone once per object; opt in to modifying shared materials.",
+      "since": 1,
+      "category": "Material",
+      "accepts": "Mesh",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "color",
+          "type": "color,vec3,string"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {
+        "color": "#55dd88",
+        "shared": false
+      }
+    },
+    {
+      "type": "nunu/objects/find",
+      "title": "Find Object",
+      "description": "Find exact names under a root (default: current scene). First match and all matches; UUID bindings are more stable.",
+      "since": 1,
+      "category": "Scene",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [
+        {
+          "name": "root",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "object",
+          "type": "nunu_object"
+        },
+        {
+          "name": "found",
+          "type": "boolean"
+        },
+        {
+          "name": "matches",
+          "type": "array"
+        }
+      ],
+      "properties": {
+        "name": "Spinning box"
+      }
+    },
+    {
+      "type": "nunu/object",
+      "title": "Nunu Object",
+      "description": "Reference a scene object by UUID; use selected in the editor to bind it.",
+      "since": 1,
+      "category": "Scene",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "object",
+          "type": "nunu_object"
+        },
+        {
+          "name": "found",
+          "type": "boolean"
+        }
+      ],
+      "properties": {
+        "nunu_uuid": null
+      }
+    },
+    {
+      "type": "nunu/objects/info",
+      "title": "Object Info",
+      "description": "Read identity and hierarchy of an object in this scene. Children is a copied list; hierarchy is not changed.",
+      "since": 1,
+      "category": "Scene",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "uuid",
+          "type": "string"
+        },
+        {
+          "name": "parent",
+          "type": "nunu_object"
+        },
+        {
+          "name": "children",
+          "type": "array"
+        },
+        {
+          "name": "visible",
+          "type": "boolean"
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "type": "nunu/context",
+      "title": "Script Context",
+      "description": "Objects belonging to this running script, never the editor preview.",
+      "since": 1,
+      "category": "Scene",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "self",
+          "type": "nunu_object"
+        },
+        {
+          "name": "parent",
+          "type": "nunu_object"
+        },
+        {
+          "name": "scene",
+          "type": "nunu_object"
+        },
+        {
+          "name": "program",
+          "type": "object"
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "type": "nunu/objects/visibility",
+      "title": "Visibility",
+      "description": "Toggle visibility, or set it from the boolean input/widget. Hidden objects remain in the hierarchy and scripts still run.",
+      "since": 1,
+      "category": "Scene",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "visible",
+          "type": "boolean"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {
+        "operation": "toggle",
+        "visible": true
+      }
+    },
+    {
+      "type": "nunu/transform_get",
+      "title": "Get Transform",
+      "description": "Read local position, Euler rotation in radians, scale and visibility.",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "position",
+          "type": "vec3"
+        },
+        {
+          "name": "rotation",
+          "type": "vec3"
+        },
+        {
+          "name": "scale",
+          "type": "vec3"
+        },
+        {
+          "name": "visible",
+          "type": "boolean"
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "type": "nunu/objects/look_at",
+      "title": "Look At",
+      "description": "Face a world-space target. Uses Three.js camera/object forward conventions; non-uniformly scaled parents are not supported.",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "target",
+          "type": "vec3"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {
+        "target": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "nunu/rotate",
+      "title": "Rotate",
+      "description": "On apply, integrate velocity using delta seconds (engine delta if unconnected). Local Euler rotation, radians/sec.",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "velocity",
+          "type": "vec3"
+        },
+        {
+          "name": "delta",
+          "type": "number"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        }
+      ],
+      "properties": {
+        "velocity": [
+          0,
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "type": "nunu/position_set",
+      "title": "Set Position",
+      "description": "Set a scene object's position from a three-component vector.",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "vec3",
+          "type": "vec3"
+        }
+      ],
+      "outputs": [],
+      "properties": {}
+    },
+    {
+      "type": "nunu/transform_set",
+      "title": "Set Transform",
+      "description": "On apply, set connected local transform values. Rotation is radians; unconnected fields stay unchanged.",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "position",
+          "type": "vec3"
+        },
+        {
+          "name": "rotation",
+          "type": "vec3"
+        },
+        {
+          "name": "scale",
+          "type": "vec3"
+        },
+        {
+          "name": "visible",
+          "type": "boolean"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "type": "nunu/translate",
+      "title": "Translate",
+      "description": "On apply, integrate velocity using delta seconds (engine delta if unconnected). Position in parent axes, units/sec.",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "velocity",
+          "type": "vec3"
+        },
+        {
+          "name": "delta",
+          "type": "number"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        }
+      ],
+      "properties": {
+        "velocity": [
+          1,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "nunu/objects/world_transform",
+      "title": "World Transform",
+      "description": "Read parent-aware world position, quaternion, scale and forward direction (camera looks along -Z).",
+      "since": 1,
+      "category": "Transforms",
+      "accepts": "Object3D",
+      "effect": "read",
+      "inputs": [
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "position",
+          "type": "vec3"
+        },
+        {
+          "name": "quaternion",
+          "type": "vec4"
+        },
+        {
+          "name": "scale",
+          "type": "vec3"
+        },
+        {
+          "name": "forward",
+          "type": "vec3"
+        }
+      ],
+      "properties": {}
+    }
+  ]
+}

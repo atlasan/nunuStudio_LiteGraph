@@ -4,6 +4,7 @@ import {LiteGraph} from "../../../lib/litegraph.js";
 import {LiteGraphRuntime} from "./LiteGraphRuntime.js";
 import "./litegraph_nodes/LiteGraphNunuNodes.js";
 import "./litegraph_nodes/LiteGraphEngineNodes.js";
+import "./litegraph_nodes/LiteGraphObjectNodes.js";
 
 /**
  * Visual script stored with the scene and executed by its frame lifecycle.

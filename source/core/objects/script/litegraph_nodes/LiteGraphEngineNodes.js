@@ -1,5 +1,6 @@
 /* eslint-disable camelcase -- LiteGraph and persisted node APIs. */
 import {LiteGraph} from "../../../../lib/litegraph.js";
+import {registerNunuNode} from "../LiteGraphNodeCatalog.js";
 import {scriptContext, vectorComponents, updateObjectMatrix} from "../LiteGraphContext.js";
 
 function NunuContext()
@@ -211,11 +212,11 @@ function motionNode(rotation)
 	return Motion;
 }
 
-LiteGraph.registerNodeType("nunu/context", NunuContext);
-LiteGraph.registerNodeType("nunu/events", NunuEvents);
-LiteGraph.registerNodeType("nunu/keyboard", NunuKeyboard);
-LiteGraph.registerNodeType("nunu/mouse", NunuMouse);
-LiteGraph.registerNodeType("nunu/transform_get", NunuGetTransform);
-LiteGraph.registerNodeType("nunu/transform_set", NunuSetTransform);
-LiteGraph.registerNodeType("nunu/translate", motionNode(false));
-LiteGraph.registerNodeType("nunu/rotate", motionNode(true));
+registerNunuNode("nunu/context", NunuContext, {category: "Scene", accepts: "Object3D", effect: "read"});
+registerNunuNode("nunu/events", NunuEvents, {category: "Lifecycle", accepts: "Program", effect: "events"});
+registerNunuNode("nunu/keyboard", NunuKeyboard, {category: "Input", accepts: "Program", effect: "read"});
+registerNunuNode("nunu/mouse", NunuMouse, {category: "Input", accepts: "Program", effect: "read"});
+registerNunuNode("nunu/transform_get", NunuGetTransform, {category: "Transforms", accepts: "Object3D", effect: "read"});
+registerNunuNode("nunu/transform_set", NunuSetTransform, {category: "Transforms", accepts: "Object3D", effect: "write"});
+registerNunuNode("nunu/translate", motionNode(false), {category: "Transforms", accepts: "Object3D", effect: "write"});
+registerNunuNode("nunu/rotate", motionNode(true), {category: "Transforms", accepts: "Object3D", effect: "write"});
