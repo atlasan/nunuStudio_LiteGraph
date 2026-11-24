@@ -11,6 +11,10 @@ const root = path.resolve(__dirname, "..");
 const actual = new Set([
 	"source/lib/litegraph.js",
 	"source/core/objects/script/LiteGraphRuntime.js",
+	"source/core/objects/script/LiteGraphContext.js",
+	"source/core/objects/script/LiteGraphStarter.js",
+	"source/core/objects/script/litegraph_nodes/LiteGraphEngineNodes.js",
+	"source/editor/gui/tab/litegraph/GraphHistory.js",
 	"source/core/objects/script/LiteGraphScript.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphNunuNodes.js",
 	"source/core/utils/ObjectUtils.js",
@@ -60,6 +64,8 @@ const entry = new vm.SourceTextModule(`
 export {LiteGraph,LGraph,LGraphCanvas} from './source/lib/litegraph.js';
 export {LiteGraphRuntime} from './source/core/objects/script/LiteGraphRuntime.js';
 export {LiteGraphScript} from './source/core/objects/script/LiteGraphScript.js';
+export {addRotationStarter} from './source/core/objects/script/LiteGraphStarter.js';
+export {seedGraphHistory} from './source/editor/gui/tab/litegraph/GraphHistory.js';
 export {ObjectUtils} from './source/core/utils/ObjectUtils.js';
 export {ObjectLoader} from './source/core/loaders/ObjectLoader.js';
 `, {context, identifier: "entry.js"});
@@ -231,6 +237,7 @@ test("node selection uses editor injection and position node updates real object
 	const script = new LiteGraphScript();
 	const object = new THREE.Group();
 	const reference = node(script.graph, "nunu/object");
+	new THREE.Scene().add(script, object);
 	script.graph.nunuSelection = () => object;
 	reference.widgets[0].callback();
 	assert.equal(reference.properties.nunu_uuid, object.uuid);
@@ -251,6 +258,10 @@ test("graph tab rebind and close dispose actual canvases and detach graphs", asy
 	await module.link((specifier) =>
 	{
 		if (specifier.endsWith("/litegraph.js")) return load("source/lib/litegraph.js");
+		if (specifier.endsWith("/LiteGraphContext.js")) return load("source/core/objects/script/LiteGraphContext.js");
+		if (specifier.endsWith("/LiteGraphStarter.js")) return load("source/core/objects/script/LiteGraphStarter.js");
+		if (specifier.endsWith("/GraphHistory.js")) return load("source/editor/gui/tab/litegraph/GraphHistory.js");
+		if (specifier.endsWith("/Component.js")) return synthetic("test/component", {Component: function() {}});
 		if (specifier.endsWith("/Canvas.js")) return synthetic("test/canvas", {Canvas: function() {}});
 		if (specifier.endsWith("/Global.js")) return synthetic("test/global", {Global: {FILE_PATH: ""}});
 		if (specifier.endsWith("/LocaleManager.js")) return synthetic("test/locale", {Locale: {litegraphGraph: "LiteGraph"}});
@@ -344,4 +355,214 @@ test("saved graph drives a live scene object's position through connected nodes"
 	script.update(0.1);
 	assert.deepEqual(target.position.toArray(), [4, 5, 6]);
 	script.dispose();
+});
+
+test("starter survives project-object loading and rotates only the cloned target", async () =>
+{
+	const {LiteGraphScript, addRotationStarter, ObjectLoader} = await ready;
+	const target = new THREE.Group();
+	target.name = "box";
+	target.matrixAutoUpdate = false;
+	const script = new LiteGraphScript();
+	addRotationStarter(script.graph, target.uuid);
+	const serialized = {object: {type:"Group", uuid:"copied-root", name:"selection", visible:true, children:[
+		{type:"Group",uuid:target.uuid,name:"box",visible:true,matrixAutoUpdate:false},
+		{type:"LiteGraphScript",uuid:script.uuid,name:script.name,visible:true,graphVersion:1,graph:savedGraph(script.graph)}
+	]}};
+	const loader = new ObjectLoader();
+	for (const method of ["parseResources", "parseShape", "parseImages", "parseGeometries", "parseVideos", "parseAudio", "parseFonts", "parseTextures", "parseMaterials"]) loader[method] = function() {};
+	const copy = loader.parse(serialized);
+	new THREE.Scene().add(copy);
+	const clonedScript = copy.children[1];
+	assert.equal(clonedScript.graphVersion, 1);
+	await clonedScript.initialize();
+	for (let i = 0; i < 60; i++) clonedScript.update(1 / 60);
+	assert.ok(Math.abs(copy.children[0].rotation.y - 1) < 1e-6);
+	assert.notEqual(copy.children[0].matrix.elements[0], 1);
+	assert.equal(target.rotation.y, 0);
+	clonedScript.dispose();
+});
+
+test("scene lifecycle delivers initial resize and app data after readiness", async () =>
+{
+	const {LiteGraph, LiteGraphScript} = await ready;
+	const received = [];
+	probe(LiteGraph, "test/lifecycle-events", {onAction(action, data) { received.push({action,data}); }});
+	const script = new LiteGraphScript();
+	const events = node(script.graph, "nunu/events");
+	const recorder = node(script.graph, "test/lifecycle-events");
+	recorder.mode = LiteGraph.ON_EVENT;
+	for (const name of ["start","update","stop","resize","data"]) recorder.addInput(name, LiteGraph.ACTION);
+	for (let i = 0; i < 5; i++) events.connect(i, recorder, i);
+	const startup = script.initialize();
+	script.resize(640,480);
+	script.appData({hello:"scene"});
+	await startup;
+	script.update(0.5);
+	assert.equal(events.getOutputData(5), 0.5);
+	assert.equal(events.getOutputData(6), 0.5);
+	script.dispose();
+	assert.deepEqual(received.map((event) => event.action), ["start","resize","data","update","stop"]);
+	assert.equal(received[2].data.hello, "scene");
+});
+
+test("context and input nodes use the owning program without adding DOM listeners", async () =>
+{
+	const {LiteGraphScript} = await ready;
+	const program = new THREE.Group(); program.type = "Program";
+	const scene = new THREE.Scene(); program.add(scene);
+	const script = new LiteGraphScript(); scene.add(script);
+	program.keyboard = {keyPressed:(key) => key===32,keyJustPressed:() => false,keyJustReleased:() => false};
+	program.mouse = {position:{x:20,y:30},delta:{x:2,y:-1},wheel:1,buttonPressed:(button) => button===0,buttonJustPressed:() => false,buttonJustReleased:() => false};
+	const contextNode = node(script.graph,"nunu/context");
+	const keyboard = node(script.graph,"nunu/keyboard");
+	const mouse = node(script.graph,"nunu/mouse");
+	await script.initialize(); script.update(0.1);
+	assert.equal(contextNode.getOutputData(0),script);
+	assert.equal(contextNode.getOutputData(1),scene);
+	assert.equal(contextNode.getOutputData(2),scene);
+	assert.equal(contextNode.getOutputData(3),program);
+	assert.equal(keyboard.getOutputData(0),true);
+	assert.deepEqual(Array.from(mouse.getOutputData(0)),[20,30]);
+	assert.equal(mouse.getOutputData(3),true);
+	keyboard.setProperty("key",65); mouse.setProperty("button",1);
+	script.update(0.1);
+	assert.equal(keyboard.getOutputData(0),false);
+	assert.equal(mouse.getOutputData(3),false);
+	script.dispose();
+});
+
+test("event transforms apply connected fields only and update static matrices", async () =>
+{
+	const {LiteGraphScript} = await ready;
+	const script = new LiteGraphScript();
+	const target = new THREE.Group(); target.matrixAutoUpdate = false; target.scale.set(2,2,2);
+	new THREE.Scene().add(script,target);
+	const events = node(script.graph,"nunu/events");
+	const reference = node(script.graph,"nunu/object"); reference.setProperty("nunu_uuid",target.uuid);
+	const vector = node(script.graph,"math3d/xyz-to-vec3"); Object.assign(vector.properties,{x:2,y:3,z:4});
+	const setter = node(script.graph,"nunu/transform_set");
+	events.connect(0,setter,0); reference.connect(0,setter,1); vector.connect(0,setter,2);
+	await script.initialize();
+	assert.deepEqual(target.position.toArray(),[2,3,4]);
+	assert.deepEqual(target.scale.toArray(),[2,2,2]);
+	assert.equal(target.matrix.elements[12],2);
+	assert.equal(target.visible,true);
+	script.dispose();
+});
+
+test("movement integrates seconds, ignores invalid input and supports nested script ownership", async () =>
+{
+	const {LiteGraphScript} = await ready;
+	const script = new LiteGraphScript(); const target = new THREE.Group();
+	new THREE.Scene().add(script,target);
+	const sub = node(script.graph,"graph/subgraph");
+	const events = node(sub.subgraph,"nunu/events");
+	const reference = node(sub.subgraph,"nunu/object"); reference.setProperty("nunu_uuid",target.uuid);
+	const movement = node(sub.subgraph,"nunu/translate"); movement.setProperty("velocity",[2,0,-1]);
+	events.connect(1,movement,0); reference.connect(0,movement,1);
+	await script.initialize(); script.update(0.25); script.update(0.25);
+	assert.deepEqual(target.position.toArray(),[1,0,-0.5]);
+	movement.setProperty("velocity",[Infinity,0,0]); script.update(1);
+	assert.deepEqual(target.position.toArray(),[1,0,-0.5]);
+	script.dispose();
+});
+
+test("first graph edit and nested edits undo, redo and survive close/reopen", async () =>
+{
+	const {LiteGraphScript, addRotationStarter, seedGraphHistory} = await ready;
+	const script = new LiteGraphScript();
+	const revision = script.graph.revision;
+	seedGraphHistory(script.graph);
+	assert.equal(script.graph.revision,revision);
+	addRotationStarter(script.graph,"target");
+	assert.equal(script.graph._nodes.length,3);
+	assert.equal(script.graph.actionHistoryBack(),true);
+	assert.equal(script.graph._nodes.length,0);
+	assert.equal(script.graph.actionHistoryForward(),true);
+	assert.equal(script.graph._nodes.length,3);
+	seedGraphHistory(script.graph); // reopening must not clear history
+	assert.equal(script.graph.actionHistoryBack(),true);
+	assert.equal(script.graph._nodes.length,0);
+	const sub = node(script.graph,"graph/subgraph");
+	seedGraphHistory(script.graph);
+	sub.subgraph.transact("Add nested reference", () => node(sub.subgraph,"nunu/object"));
+	assert.equal(sub.subgraph.actionHistoryBack(),true);
+	assert.equal(sub.subgraph._nodes.length,0);
+});
+
+test("bindings reject other scenes and diagnostics identify unbound and missing references", async () =>
+{
+	const {LiteGraphScript} = await ready;
+	const script = new LiteGraphScript(); const target = new THREE.Group();
+	new THREE.Scene().add(script);
+	new THREE.Scene().add(target);
+	const reference = node(script.graph,"nunu/object");
+	script.graph.nunuSelection=() => target;
+	let message; script.graph.nunuFeedback=(text) => {message=text;};
+	reference.widgets[0].callback();
+	assert.equal(reference.properties.nunu_uuid,null);
+	assert.match(message,/this script's scene/);
+	assert.match(script.getDiagnostics()[0].message,/unbound/);
+	reference.setProperty("nunu_uuid",target.uuid);
+	assert.match(script.getDiagnostics()[0].message,/missing/);
+	assert.match(reference.getTitle(),/Missing/);
+	script.parent.add(target);
+	assert.equal(script.getDiagnostics().length,0);
+	assert.equal(reference.getTitle(),target.type);
+});
+
+test("graph schema metadata round-trips and newer versions never run", async () =>
+{
+	const {LiteGraphScript, ObjectLoader} = await ready;
+	const script = new LiteGraphScript();
+	assert.equal(script.toJSON().object.graphVersion,1);
+	const future = new LiteGraphScript(undefined,99);
+	assert.match(future.getDiagnostics()[0].message,/Unsupported/);
+	await assert.rejects(future.initialize(),/version 99/);
+	const loader = new ObjectLoader();
+	assert.equal(loader.parseObject({type:"LiteGraphScript",uuid:"legacy",name:"Legacy"}).graphVersion,1);
+});
+
+test("keyboard data gates movement through LiteGraph's standard branch", async () =>
+{
+	const {LiteGraphScript} = await ready;
+	const program=new THREE.Group(); program.type="Program";
+	const scene=new THREE.Scene();program.add(scene);
+	const target=new THREE.Group();const script=new LiteGraphScript();scene.add(target,script);
+	let held=false;
+	program.keyboard={keyPressed:()=>held,keyJustPressed:()=>false,keyJustReleased:()=>false};
+	const keyboard=node(script.graph,"nunu/keyboard");
+	const events=node(script.graph,"nunu/events");
+	const reference=node(script.graph,"nunu/object");reference.setProperty("nunu_uuid",target.uuid);
+	const branch=node(script.graph,"events/branch");
+	const move=node(script.graph,"nunu/translate");
+	keyboard.connect(0,branch,1);events.connect(1,branch,0);branch.connect(0,move,0);reference.connect(0,move,1);
+	await script.initialize();
+	script.update(0.5);assert.equal(target.position.x,0);
+	held=true;script.update(0.5);assert.equal(target.position.x,0.5);
+	held=false;script.update(0.5);assert.equal(target.position.x,0.5);
+	script.dispose();
+});
+
+test("packaged JSON and binary examples encode the same portable project", () =>
+{
+	const {StaticPair}=require("@as-com/pson");
+	const json=JSON.parse(fs.readFileSync(path.join(root,"source/files/examples/visual-script-spin.isp"),"utf8"));
+	const data=fs.readFileSync(path.join(root,"source/files/examples/visual-script-spin.nsp"));
+	const decoded=new StaticPair().decode(data);
+	assert.deepEqual(decoded,json);
+	const script=decoded.object.children[0].children.find((child)=>child.type==="LiteGraphScript");
+	assert.equal(script.graphVersion,1);
+	assert.equal(script.graph.nodes.length,3);
+	assert.equal(script.graph.nodes[0].properties.nunu_uuid,"33333333-3333-4333-8333-333333333333");
+});
+
+test("portable example saves the camera looking at its animated box", () =>
+{
+	const json=JSON.parse(fs.readFileSync(path.join(root,"source/files/examples/visual-script-spin.isp"),"utf8"));
+	const camera=json.object.children[0].children.find((child)=>child.type==="PerspectiveCamera");
+	const direction=new THREE.Vector3(0,0,-1).transformDirection(new THREE.Matrix4().fromArray(camera.matrix));
+	const expected=new THREE.Vector3(-4,-3,-6).normalize();
+	assert.ok(direction.dot(expected)>0.99999);
 });

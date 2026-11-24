@@ -73,3 +73,43 @@ input[type=number]::-webkit-outer-spin-button
 	-webkit-appearance: none;
 	margin: 0;
 }
+
+/* Embedded visual scripting controls. */
+.visual-script-toolbar
+{
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 8px;
+	box-sizing: border-box;
+	overflow-x: auto !important;
+	background: var(--bar-color);
+}
+.visual-script-toolbar button
+{
+	flex: 0 0 auto;
+	color: var(--font-color, #ddd);
+	background: var(--panel-color);
+	border: 1px solid #666;
+	border-radius: 3px;
+	padding: 4px 8px;
+	cursor: pointer;
+}
+.visual-script-toolbar button:disabled
+{
+	opacity: 0.45;
+	cursor: default;
+}
+.visual-script-toolbar button:focus-visible
+{
+	outline: 2px solid #80bfff;
+}
+.visual-script-status
+{
+	padding: 4px 8px;
+	box-sizing: border-box;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 12px;
+	background: var(--bar-color);
+}

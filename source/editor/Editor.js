@@ -218,6 +218,13 @@ Editor.initialize = function()
 	Editor.manager.add(document.body, "keydown", function(event)
 	{
 		var key = event.keyCode;
+		var target = event.target;
+		var editingText = target && (target.localName === "input" || target.localName === "textarea" || target.isContentEditable);
+		// Text edits in graph/property dialogs must never undo or delete scene objects.
+		if (editingText && (key === Keyboard.DEL || event.ctrlKey && (key === Keyboard.Z || key === Keyboard.Y)))
+		{
+			return;
+		}
 
 		if (event.ctrlKey)
 		{
@@ -820,6 +827,17 @@ Editor.pasteObject = function(target)
  */
 Editor.redo = function()
 {
+	// Graph history is independent of scene/object history.
+	var tabs = Editor.gui.tab.getActiveTab();
+	for (var tab of tabs)
+	{
+		if (typeof tab.ownsKeyboardFocus === "function" && tab.ownsKeyboardFocus())
+		{
+			tab.changeHistory(true);
+			return;
+		}
+	}
+
 	if (Editor.history.redo())
 	{
 		Editor.updateObjectsViewsGUI();
@@ -837,6 +855,17 @@ Editor.redo = function()
  */
 Editor.undo = function()
 {
+	// Graph history is independent of scene/object history.
+	var tabs = Editor.gui.tab.getActiveTab();
+	for (var tab of tabs)
+	{
+		if (typeof tab.ownsKeyboardFocus === "function" && tab.ownsKeyboardFocus())
+		{
+			tab.changeHistory(false);
+			return;
+		}
+	}
+
 	if (Editor.history.undo())
 	{
 		Editor.updateObjectsViewsGUI();

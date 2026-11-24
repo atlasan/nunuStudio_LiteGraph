@@ -15,6 +15,7 @@ const config = {
 		hints: false,
 	},
 	plugins: [
+		new Webpack.DefinePlugin({VERSION: JSON.stringify(require("./package.json").version)}),
 		new Webpack.ProvidePlugin({
 			THREE: "three",
 			"window.THREE": "three"

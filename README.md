@@ -67,6 +67,53 @@ Project execution notes, memories and plans are local files under the ignored
 `.idea/` directory, named `YYYYMMDD_XXX.md`.
 
 
+### First visual-script workflow
+
+1. Add a **LiteGraph Graph** from the scene sidebar's script drawer, then double-click **Visual Script** in Project Explorer.
+2. Select the **box** in Project Explorer while keeping the graph tab open. Click **Spin selected**. This appends a bound object reference, Scene Events and Rotate; it leaves the authored scene unchanged.
+3. Click **Run**. Stop the preview to return to editing. Set Rotate's X/Y/Z rates in radians per second; use Translate for units per second in the object's parent axes.
+4. **Undo/Redo** and Ctrl+Z / Ctrl+Y apply to the graph while its canvas has focus. The first edit is undoable; graph and scene histories remain separate. **Frame all** fits the graph; **Check** reports missing bindings, types or dependencies in the status bar.
+5. Save the project normally. Binary `.nsp` and JSON `.isp` files both include the graph and its schema version. Reopen and export through the normal project workflow; the standalone runtime registers the same nunu nodes.
+
+A ready-to-run sample is provided as [JSON](source/files/examples/visual-script-spin.isp)
+and [binary](source/files/examples/visual-script-spin.nsp). Load either through
+**File → Load**, then Run. The blue box rotates at one radian per second; the
+example contains its own camera and requires no external assets. Regenerate both
+with `node --experimental-vm-modules scripts/create-visual-script-example.cjs`.
+
+| Node | First-release contract |
+| --- | --- |
+| Nunu Object | Bind an object in this script's scene; outputs the object and a found flag. Missing/deleted targets are reported. |
+| Script Context | Current script (`self`), parent, scene and running program. |
+| Scene Events | Started, per-frame update, stopped, resized and app-data events, with delta/time (seconds), size and data outputs. |
+| Keyboard | Program keyboard state and pressed/released events; key codes, e.g. Space 32, A 65, W 87. |
+| Mouse | Program canvas position/delta, wheel and selected-button state/events (left 0). No extra browser listeners. |
+| Get Transform | Local position, Euler rotation in radians, scale and visibility. |
+| Set Transform | Event-driven: on **apply**, write only connected fields and emit **done**. |
+| Translate / Rotate | Event-driven: on **apply**, integrate velocity by delta seconds; unconnected delta uses the engine frame delta. Static object matrices update too. |
+| Set Position | Compatibility node: writes the position every frame; new event graphs can use Set Transform instead. |
+
+Connect Scene Events **update** to a mutation node's **apply**, and **delta** to
+its delta input. Use LiteGraph's existing math, logic, branch, counter and data
+nodes between engine nodes. To move only while a key is held, connect update to
+an `events/branch` event input, Keyboard **down** to its condition, and its true
+output to Translate **apply**. Engine nodes resolve context correctly inside
+subgraphs. Rotations are local Euler angles, not world-axis rotations; animated
+transforms do not teleport physics bodies in this first pass.
+
+Bindings are UUID-based. **Bind selected** binds selected Nunu Object graph nodes
+to the current scene selection. Resources and objects in other scenes are not
+accepted. Run follows the editor's existing immediate-mode setting; the status
+bar explicitly identifies that mode because it can mutate the authored scene.
+App data/initial resize received during startup wait for node readiness. Graph
+version 1 is written on save; legacy unversioned scripts load as version 1.
+
+The production-build verifier also writes `visual-script-runtime.html` next to
+the temporary editor build. Serve that folder on loopback and open the page to
+exercise actual Program cloning, JSON save/reopen, static matrices and a binary
+NSP project running through App with only `nunu.min.js` loaded.
+
+
 ## Screenshots
 
 <img src="https://raw.githubusercontent.com/tentone/nunuStudio/master/source/page/src/assets/github/2.png"><img src="https://raw.githubusercontent.com/tentone/nunuStudio/master/source/page/src/assets/github/3.png">

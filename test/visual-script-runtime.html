@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Visual script standalone verification</title>
+<style>html,body{height:100%;margin:0;background:#18212d;color:#e6edf7;font:16px system-ui}main{max-width:1000px;margin:auto;padding:24px}canvas{display:block;width:100%;height:480px;border:1px solid #506070}li{margin:8px 0}.pass{color:#9de2b4}.fail{color:#ff9393}</style></head>
+<body><main><h1>Visual scripting: standalone runtime</h1><p id="status" role="status">Checking saved scene and runtime…</p><ul id="checks"></ul><canvas id="preview" width="960" height="480"></canvas></main>
+<script src="files/runtime/nunu.min.js"></script>
+<script>
+(async function()
+{
+ const status=document.getElementById('status');
+ function check(condition,message)
+ {
+  if(!condition)throw new Error(message);
+  const row=document.createElement('li');row.className='pass';row.textContent='PASS — '+message;document.getElementById('checks').appendChild(row);
+ }
+ try
+ {
+  const data=await fetch('files/examples/visual-script-spin.isp').then(r=>r.json());
+  const original=new Nunu.ObjectLoader().parse(data);
+  const clone=original.clone();
+  const target=clone.getObjectByProperty('uuid','33333333-3333-4333-8333-333333333333');
+  const script=clone.getObjectByProperty('uuid','44444444-4444-4444-8444-444444444444');
+  check(script instanceof Nunu.LiteGraphScript && script.graphVersion===1,'Saved scene restores the visual script and schema');
+  clone.canvas=document.getElementById('preview');
+  clone.initialize();await script.ready;
+  clone.scene.update(0.25);
+  check(Math.abs(target.rotation.y-0.25)<0.00001,'Connected lifecycle graph rotates the loaded target using engine delta');
+  check(original.getObjectByProperty('uuid',target.uuid).rotation.y===0,'Program clone leaves the authored scene unchanged');
+  check(Math.abs(target.matrix.elements[0]-Math.cos(0.25))<0.00001,'Static object matrix follows the visual script');
+  const restored=new Nunu.ObjectLoader().parse(JSON.parse(JSON.stringify(clone.toJSON())));
+  check(restored.getObjectByProperty('uuid',script.uuid).graph._nodes.length===3,'Save and reopen retain the complete graph');
+  clone.dispose();restored.dispose();original.dispose();
+  const app=new Nunu.App(document.getElementById('preview'));
+  app.loadRunProgram('files/examples/visual-script-spin.nsp',function(running)
+  {
+   running.program.getObjectByProperty('uuid',script.uuid).ready.then(function()
+   {
+    check(running.program.getObjectByProperty('uuid',script.uuid).graph._nodes.length===3,'Binary NSP export restores the visual script in App');
+    status.textContent='PASS — standalone saved-scene verification complete. The box below runs from the exported runtime.';
+    status.className='pass';
+   }).catch(function(error){status.textContent='FAIL — '+error.message;status.className='fail';});
+  },function(){});
+ }
+ catch(error){status.textContent='FAIL — '+error.message;status.className='fail';console.error(error);}
+})();
+</script></body></html>

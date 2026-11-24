@@ -1,20 +1,12 @@
 /* eslint-disable camelcase -- LiteGraph public API and persisted UUID property names. */
 import {LiteGraph} from "../../../../lib/litegraph.js";
 
-/** Find the owning script even when this node is inside a subgraph. */
-function ownerGraph(node)
-{
-	var graph = node.graph;
-	while (graph && !graph.nunu_lgscript)
-	{
-		graph = graph._subgraph_node ? graph._subgraph_node.graph : null;
-	}
-	return graph;
-}
+import {ownerGraph, canBindObject, updateObjectMatrix} from "../LiteGraphContext.js";
 
 function NunuObject()
 {
 	this.addOutput("object", "nunu_object");
+	this.addOutput("found", "boolean");
 	this.properties = {nunu_uuid: null};
 	this._value = null;
 	var self = this;
@@ -22,12 +14,16 @@ function NunuObject()
 	{
 		var graph = ownerGraph(self);
 		var selected = graph && graph.nunuSelection ? graph.nunuSelection() : null;
-		if (selected)
+		if (graph && canBindObject(graph.nunu_lgscript, selected))
 		{
 			self.graph.transact("Bind scene object", function()
 			{
 				self.setProperty("nunu_uuid", selected.uuid);
 			});
+		}
+		else if (graph && graph.nunuFeedback)
+		{
+			graph.nunuFeedback("Select an object in this script's scene, then bind it.");
 		}
 	});
 }
@@ -50,19 +46,26 @@ NunuObject.prototype.refreshObjectByUUID = function()
 
 NunuObject.prototype.getTitle = function()
 {
-	return this._value ? this._value.name : "Nunu Object";
+	var object = this.refreshObjectByUUID();
+	return object ? object.name || object.type : this.properties.nunu_uuid ? "Missing object" : "Nunu Object (unbound)";
 };
 
 NunuObject.prototype.onPropertyChanged = function(name)
 {
-	if (name === "nunu_uuid") { this._value = null; }
+	if (name === "nunu_uuid")
+	{
+		this.refreshObjectByUUID();
+		this.setDirtyCanvas(true, true);
+	}
 };
 
 NunuObject.prototype.onExecute = function()
 {
 	// Resolve against the current scene, so detached, deleted and reattached
 	// targets never retain references to an editor preview or an old program.
-	this.setOutputData(0, this.refreshObjectByUUID());
+	var object = this.refreshObjectByUUID();
+	this.setOutputData(0, object);
+	this.setOutputData(1, object !== null);
 };
 
 function NunuPosition()
@@ -87,6 +90,7 @@ NunuPosition.prototype.onExecute = function()
 	{
 		object.position.set(vector[0], vector[1], vector[2]);
 	}
+	updateObjectMatrix(object);
 };
 
 LiteGraph.registerNodeType("nunu/object", NunuObject);

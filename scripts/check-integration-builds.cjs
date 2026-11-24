@@ -62,6 +62,12 @@ async function main()
 	const html = fs.readFileSync(path.join(output, "editor/index.html"), "utf8");
 	if (html.includes('href="litegraph.css"')) throw new Error("HTML references an unbundled stylesheet");
 	console.log("PASS LiteGraph CSS packaged in styles.css");
+	for (const format of ["isp", "nsp"])
+	{
+		if (!fs.existsSync(path.join(output, "editor/files/examples/visual-script-spin." + format))) throw new Error("Visual script sample missing: " + format);
+	}
+	console.log("PASS JSON and binary visual-script samples packaged");
+	fs.copyFileSync(path.join(__dirname, "../test/visual-script-runtime.html"), path.join(output, "editor/visual-script-runtime.html"));
 	console.log("Build artifacts: " + output);
 }
 main().catch((error) =>

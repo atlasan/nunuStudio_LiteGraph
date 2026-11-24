@@ -802,7 +802,7 @@ ObjectLoader.prototype.parseObject = function(data)
 			break;
 
 		case "LiteGraphScript":
-			object = new LiteGraphScript(data.graph);
+			object = new LiteGraphScript(data.graph, data.graphVersion);
 			break;
 
 		case "RectAreaLight":
