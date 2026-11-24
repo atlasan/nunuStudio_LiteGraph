@@ -1,5 +1,6 @@
 import {Object3D, Material, Texture, Geometry, BufferGeometry, Shape, Math, BoxBufferGeometry, MeshStandardMaterial, SpriteMaterial} from "three";
 import {StaticPair} from "@as-com/pson";
+import {ObjectUtils} from "../core/utils/ObjectUtils.js";
 import {EventManager} from "../core/utils/EventManager.js";
 import {Video} from "../core/resources/Video.js";
 import {TextFile} from "../core/resources/TextFile.js";
@@ -790,12 +791,10 @@ Editor.pasteObject = function(target)
 		for (var i = 0; i < data.length; i++) 
 		{
 			var obj = new ObjectLoader().parse(data[i]);
-			obj.traverse(function(child) 
-			{
-				child.uuid = Math.generateUUID();
-			});
 			objs.push(obj);
 		}
+
+		ObjectUtils.regenerateUUIDs(objs);
 
 		// Add objs to target
 		if (target !== undefined && !target.locked) 

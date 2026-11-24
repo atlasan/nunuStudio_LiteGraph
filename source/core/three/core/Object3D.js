@@ -219,12 +219,6 @@ THREE.Object3D.prototype.getScene = function()
 		}
 	}
 
-	console.warn("Looking for scene but not found",node);
-	console.warn("Do I have a children scene?",node.children.length);
-	if(node.children.length){
-		console.warn("Do I have a children scene?",node.children[0].toJSON());
-	}
-
 	return null;
 };
 

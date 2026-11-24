@@ -1,150 +1,105 @@
+/* eslint-disable camelcase -- LiteGraph public API and persisted UUID property names. */
 import {Group, Object3D} from "three";
-import { LiteGraph, LGraph, LGraphCanvas } from "../../../lib/litegraph";
-import { NunuObject } from "./litegraph_nodes/LiteGraphNunuNodes";
-import { Program } from "../Program";
-import { ObjectUtils } from "../../utils/ObjectUtils";
+import {LiteGraphRuntime} from "./LiteGraphRuntime.js";
+import "./litegraph_nodes/LiteGraphNunuNodes.js";
 
 /**
- * Node scripts are build using a graph composed of operations.
- *
- * They can be used to create interaction without requiring any coding, logic can be build from provided blocks.
+ * Visual script stored with the scene and executed by its frame lifecycle.
  *
  * @class LiteGraphScript
- * @extends {Object}
  * @module Script
  */
 function LiteGraphScript(dataGraph)
 {
 	Group.call(this);
-
-	console.debug("LiteGraphScript", "***CONSTRUCTING***", ...arguments);
-	
-	console.debug("LiteGraphScript", "***this***", this);
-	console.debug("LiteGraphScript", "***looking for Program, Scene, App, Tab***");
-
 	this.type = "LiteGraphScript";
 	this.name = "LGScript";
-
-	/**
-	 * Node graph that composes this script.
-	 *
-	 * @attribute graph
-	 * @type {LGraph}
-	 */
-	this.graph = new LGraph();
+	this.graph = new LiteGraphRuntime();
 	this.graph.nunu_lgscript = this;
-	
-	if(dataGraph) this.configure(dataGraph);
+	this.ready = Promise.resolve(false);
+	if (dataGraph) { this.configure(dataGraph); }
 }
 
 LiteGraphScript.prototype = Object.create(Group.prototype);
 
-LiteGraphScript.prototype.configure = function(dataGraph){
+LiteGraphScript.prototype.configure = function(dataGraph)
+{
 	this.graph.configure(dataGraph);
-}
+};
 
-LiteGraphScript.prototype.getProgram = function(){
-	return ObjectUtils.getRoot(this);
-	// NO NEED: use ObjectUtils.getRoot
-	// 	let parent = this.parent;
-	// 	while(parent !== null){
-	// 		if(typeof(parent.parent) == "undefined"){
-	// 			break;
-	// 		}
-	// 		parent = parent.parent;
-	// 	}
-	// 	if(typeof(parent) == Program){
-	// 		return parent;
-	// 	}else{
-	// 		return false;
-	// 	}
-}
+LiteGraphScript.prototype.getProgram = function()
+{
+	var node = this.parent;
+	while (node !== null)
+	{
+		if (node.type === "Program") { return node; }
+		node = node.parent;
+	}
+	return null;
+};
 
-/**
- * Initialize script, automatically called by the runtime.
- *
- * Compiles the script code and calls the script initialize method if it exists after the code is compiled.
- *
- * @method initialize
- */
 LiteGraphScript.prototype.initialize = function()
 {
 	Object3D.prototype.initialize.call(this);
-
-	// PLAY
-	if(this.graph && typeof(this.graph.start)=="function"){
-		console.debug("LiteGraphScript","***GRAN CAN RUN***");
-		// this.graph.start();
-	}else{
-		console.debug("LiteGraphScript","***GRAN CANNOT RUN***",this.graph);
-	}
-
-	console.debug("LiteGraphScript","***INITIALIZE***",...arguments);
+	this.ready = this.graph.start();
+	// Scene initialization is synchronous. Preserve rejection for callers while
+	// also reporting it when the host does not await script.ready.
+	this.ready.catch(function(error)
+	{
+		console.error("nunuStudio: Visual script initialization failed", error);
+	});
+	return this.ready;
 };
 
-/**
- * Update node script state runs the update methods from the node graph.
- *
- * @method update
- */
 LiteGraphScript.prototype.update = function(delta)
 {
-	// WORKING, in PLAY WILL RUN
-	// console.debug("LiteGraphScript","update",...arguments);
-	if(this.graph && typeof(this.graph.runStep)=="function"){
-		this.graph.runStep();
-	}
-
+	this.graph.tick(delta);
 	Object3D.prototype.update.call(this, delta);
 };
 
-/**
- * Disposes the script, can be used to clear resources when the program exits.
- *
- * Calls the script dispose method if it exists.
- *
- * @method dispose
- */
 LiteGraphScript.prototype.dispose = function()
 {
-	// STOP
-	if(this.graph && typeof(this.graph.stop)=="function"){
-		console.debug("LiteGraphScript","***GRAN CAN STOP***");
-		this.graph.stop();
-	}else{
-		console.debug("LiteGraphScript","***GRAN CANNOT STOP***",this.graph);
+	try
+	{
+		this.graph.stop({dropQueued: true});
 	}
-	console.debug("LiteGraphScript","***DISPOSE***",...arguments);
-
-	Object3D.prototype.dispose.call(this);
+	finally
+	{
+		Object3D.prototype.dispose.call(this);
+	}
 };
 
-/**
- * Call resize method if available.
- *
- * The resize method receives width and height as arguments.
- *
- * @method resize
- */
 LiteGraphScript.prototype.resize = function(x, y)
 {
-	// TODO <ADD CODE HERE>
-	console.debug("LiteGraphScript","resize",...arguments);
+	this.graph.sendEventToAllNodes("onResize", [x, y], null);
+};
+
+LiteGraphScript.prototype.appData = function(data)
+{
+	this.graph.sendEventToAllNodes("onAppData", [data], null);
+};
+
+/** Remap references internal to a pasted selection, preserving external UUIDs. */
+LiteGraphScript.prototype.remapReferences = function(uuids)
+{
+	function remap(graph)
+	{
+		for (var node of graph._nodes)
+		{
+			if (node.type === "nunu/object" && uuids.has(node.properties.nunu_uuid))
+			{
+				node.setProperty("nunu_uuid", uuids.get(node.properties.nunu_uuid));
+			}
+			if (node.subgraph) { remap(node.subgraph); }
+		}
+	}
+	remap(this.graph);
 };
 
 LiteGraphScript.prototype.toJSON = function(meta)
 {
 	var data = Object3D.prototype.toJSON.call(this, meta);
-
-	console.debug("LiteGraphScript","toJSON", this.graph, ...arguments);
-
-	if(this.graph && typeof(this.graph.serialize)=="function"){
-		data.object.graph = this.graph.serialize();
-		console.warn("LiteGraphScript","toJSON","serialized", data.object.graph);
-	}else{
-		console.warn("LiteGraphScript","toJSON","serialize not valid", "this.graph", this.graph, "data.object", data.object);
-	}
-
+	data.object.graph = this.graph.serialize();
 	return data;
 };
 

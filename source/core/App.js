@@ -1,5 +1,4 @@
 import {StaticPair} from "@as-com/pson";
-import {Component} from "../editor/components/Component.js";
 import {EventManager} from "./utils/EventManager.js";
 import {Program} from "./objects/Program.js";
 import {PerspectiveCamera} from "./objects/cameras/PerspectiveCamera.js";

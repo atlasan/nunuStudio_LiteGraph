@@ -1,3 +1,9 @@
+/* LiteGraph menus measure body height; editor panels are absolutely positioned. */
+html, body
+{
+	height: 100%;
+}
+
 body
 {
 	-webkit-touch-callout: none;

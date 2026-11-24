@@ -1,3 +1,4 @@
+import {Object2D} from "escher.js/build/escher.module.js";
 import {AnimationClip, Bone, BufferAttribute, Color, DefaultLoadingManager, FileLoader, Fog, FogExp2, LOD, Line, LineLoop, LineSegments, Points, Skeleton} from "three";
 import {AmbientLight} from "../objects/lights/AmbientLight.js";
 import {AudioEmitter} from "../objects/audio/AudioEmitter.js";
@@ -36,6 +37,8 @@ import {TextFile} from "../resources/TextFile.js";
 import {TextMesh} from "../objects/text/TextMesh.js";
 import {TextSprite} from "../objects/text/TextSprite.js";
 import {BillboardGroup} from "../objects/misc/BillboardGroup";
+import {LiteGraphScript} from "../objects/script/LiteGraphScript.js";
+import {NodeScript} from "../objects/script/NodeScript.js";
 import {MaterialLoader} from "./MaterialLoader.js";
 import {ImageLoader} from "./ImageLoader.js";
 import {GeometryLoader} from "./GeometryLoader.js";
@@ -43,9 +46,6 @@ import {FontLoader} from "./FontLoader.js";
 import {AudioLoader} from "./AudioLoader.js";
 import {TextureLoader} from "./TextureLoader.js";
 import {VideoLoader} from "./VideoLoader.js";
-import { LiteGraphScript } from "../objects/script/LiteGraphScript.js";
-import { NodeScript } from "../objects/script/NodeScript.js";
-import { LGraph } from "../../lib/litegraph.js";
 
 /**
  * Objectloader can be used to load external objects from files.
@@ -65,8 +65,6 @@ function ObjectLoader(manager)
 	this.manager = manager !== undefined ? manager : DefaultLoadingManager;
 	this.texturePath = "";
 
-	// called when finished loading
-	this.postActions = [];
 }
 
 ObjectLoader.prototype = Object.create(ResourceContainer.prototype);
@@ -89,19 +87,6 @@ ObjectLoader.prototype.load = function(url, onLoad, onProgress, onError)
 	
 	var self = this;
 
-	// called when finished loading
-	this.postActions = [];
-
-	// moving this inside [parse] as it seems not called from load file
-	// const fOnParsed = function(){
-	// 	// calling postponed actions
-	// 	console.info("**loader**","processing postActions",self.postActions);
-	// 	for(let fA in self.postActions){
-	// 		fA();
-	// 	}
-	// 	console.info("**loader**","postActions processed");
-	// 	onLoad(...arguments);
-	// }
 
 	var loader = new FileLoader(this.manager);
 	loader.load(url, function(text)
@@ -141,21 +126,12 @@ ObjectLoader.prototype.parse = function(json, onLoad)
 		this.bindSkeletons(object);
 	}
 
-	// Load images and process callback
-	if (json.images === undefined || json.images.length === 0)
+	// Resource parsers and graph configuration are synchronous. Complete the
+	// object tree before notifying consumers, including projects with images.
+	if (onLoad !== undefined)
 	{
-		if (onLoad !== undefined)
-		{
-			onLoad(object);
-		}
+		onLoad(object);
 	}
-
-	// calling postponed actions
-	console.info("**loader**","processing postActions",this.postActions);
-	for(let fA of this.postActions){
-		fA();
-	}
-	console.info("**loader**","postActions processed");
 
 	return object;
 };
@@ -822,24 +798,11 @@ ObjectLoader.prototype.parseObject = function(data)
 
 		case "NodeScript":
 			object = new NodeScript();
-			object.graph = data.graph;
+			object.graph = Object2D.parse(data.graph);
 			break;
 
 		case "LiteGraphScript":
-			// object = new LiteGraphScript(data.graph);
-			// graph configure postponed after adding to scene
-			// need to be done while cycling scene object, after adding children of this type
-			object = new LiteGraphScript();
-
-			// V3 using post configurations callbacks
-			let LGScript = object;
-			let LGGraphData = data.graph;
-			let fConfigure = function(){
-				console.info("**loader**","post configuring Graph",LGScript,LGGraphData);
-				LGScript.graph.configure(LGGraphData);
-			}
-			this.postActions.push(fConfigure);
-
+			object = new LiteGraphScript(data.graph);
 			break;
 
 		case "RectAreaLight":
@@ -1023,17 +986,6 @@ ObjectLoader.prototype.parseObject = function(data)
 		for (var child in data.children)
 		{
 			object.add(this.parseObject(data.children[child]));
-
-			// Not enough yet: we want the LiteGraphScript to have everything ready to run when configuring it
-			//// Post added to scene 
-			//if(data.children[child].type === "LiteGraphScript"){
-			//	if(data.children[child].graph){
-			//		object.configure(data.children[child].graph);
-			//	}else{
-			//		console.warn("LiteGraphScript NoDataGraph to configure",object,data.children[child]);
-			//	}
-			//}
-
 		}
 	}
 
@@ -1083,16 +1035,7 @@ ObjectLoader.prototype.parseObject = function(data)
 				object.addLevel(child, level.distance);
 			}
 		}
-	}/*
-	// graph configure postponed after adding to scene
-	// need to be done while cycling scene object, after adding children of this type
-	else if(data.type === "LiteGraphScript"){
-		if(data.graph){
-			object.configure(data.graph);
-		}else{
-			console.warn("LiteGraphScript NoDataGraph to configure",object,data);
-		}
-	}*/
+	}
 
 	return object;
 };

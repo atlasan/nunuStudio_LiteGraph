@@ -22,6 +22,12 @@ module.exports = [
 		module: {
 			rules: [
 				{
+					// Preserve LiteGraph library imports as native imports. Its optional
+					// Node modules must not be resolved into the browser distribution.
+					test: /[\\/]lib[\\/]litegraph\.js$/,
+					parser: {import: false}
+				},
+				{
 					test: /\.glsl$/i,
 					use: "raw-loader"
 				},
@@ -71,7 +77,8 @@ module.exports = [
 					],
 					"styles.css": [
 						"source/editor/style.css",
-						"source/editor/theme/dark.css"
+						"source/editor/theme/dark.css",
+						"source/lib/litegraph.css"
 					],
 					"draco_encoder.js": [
 						"source/lib/draco_encoder.js"

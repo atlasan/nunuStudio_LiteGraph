@@ -1,4 +1,4 @@
-import {Vector3, Object3D, Box3, Matrix4, BufferGeometry} from "three";
+import {Vector3, Object3D, Box3, Matrix4, BufferGeometry, Math as MathUtils} from "three";
 
 /**
  * Object utils is a collection of methods to apply operations to Object3D instances.
@@ -31,20 +31,31 @@ ObjectUtils.getRoot = function(obj)
 };
 
 /**
- * Get first parent by given type
+ * Assign fresh UUIDs to a pasted selection and remap its visual-script links.
  *
- * @method searchParentByType
- * @param {Object3D} obj
- * @return {Object3D} parent
+ * All objects are mapped first, including siblings pasted together. References
+ * to objects outside the selection deliberately retain their existing UUIDs.
  */
-ObjectUtils.searchParentByType = function(obj, type)
+ObjectUtils.regenerateUUIDs = function(objects)
 {
-	var node = obj;
-	while (node.parent !== null && node.type !== type)
+	var uuids = new Map();
+	for (var object of objects)
 	{
-		node = node.parent;
+		object.traverse(function(child)
+		{
+			var uuid = child.uuid;
+			child.uuid = MathUtils.generateUUID();
+			uuids.set(uuid, child.uuid);
+		});
 	}
-	return node;
+	for (var root of objects)
+	{
+		root.traverse(function(child)
+		{
+			if (typeof child.remapReferences === "function") { child.remapReferences(uuids); }
+		});
+	}
+	return uuids;
 };
 
 /**

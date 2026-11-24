@@ -23,6 +23,12 @@ const config = {
 	module: {
 		rules: [
 			{
+				// Preserve LiteGraph library imports as native imports. Its optional
+				// Node modules must not be resolved into the browser distribution.
+				test: /[\\/]lib[\\/]litegraph\.js$/,
+				parser: {import: false}
+			},
+			{
 				test: /\.glsl$/i,
 				use: "raw-loader"
 			},

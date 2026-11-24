@@ -50,6 +50,7 @@ ObjectIcons.icons = new Map([
 
 	["Script", ObjectIcons.path + "script/javascript.png"],
 	["PythonScript", ObjectIcons.path + "script/python.png"],
+	["LiteGraphScript", ObjectIcons.path + "script/workflow.png"],
 	["NodeScript", ObjectIcons.path + "script/workflow.png"],
 
 	// Text

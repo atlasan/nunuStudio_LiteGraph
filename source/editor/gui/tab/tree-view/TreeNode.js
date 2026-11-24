@@ -35,8 +35,8 @@ import {DocumentBody} from "../../../components/DocumentBody.js";
 import {Component} from "../../../components/Component.js";
 import {NodeScript} from "../../../../core/Main.js";
 import {NodeEditor} from "../node-editor/NodeEditor.js";
-import { LiteGraphScript } from "../../../../core/objects/script/LiteGraphScript.js";
-import { LitegraphEditor } from "../litegraph/LitegraphEditor.js";
+import {LiteGraphScript} from "../../../../core/objects/script/LiteGraphScript.js";
+import {LitegraphEditor} from "../litegraph/LitegraphEditor.js";
 
 /**
  * Represents a tree node element.

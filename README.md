@@ -24,6 +24,49 @@
 
 
 
+## LiteGraph integration fork
+
+The `nunu_litegraph` branch combines the `first_litegraph` prototype with upstream
+`tentone/master`. Visual scripts are available from the scene sidebar in both
+production and development editors; double-click a visual script in the tree to
+open its graph. Use the **Nunu Object** node's **use selected** button to bind a
+scene object by UUID, then connect it to **Set Position** and a three-component
+vector. Save normally to persist the graph with the scene.
+
+The custom library is developed separately in the sibling `../litegraph.js`
+checkout. This repository vendors a browser distribution, CSS, MIT license and
+`source/lib/litegraph.provenance.json`; builds do not depend on that sibling
+checkout being present. To refresh from its current source without modifying it:
+
+```sh
+npm run sync-litegraph -- --rebuild
+# A different local source checkout can be passed before --rebuild:
+npm run sync-litegraph -- /path/to/litegraph.js --rebuild
+npm test
+npm run check-integration-builds
+```
+
+Use Node.js 22 and Python 3 for this workflow. Rebuilding the library requires its
+own installed build dependencies. Omitting `--rebuild` copies its existing build
+instead; provenance explicitly distinguishes that from a fresh source snapshot.
+Local uncommitted changes are included when rebuilding and recorded as such.
+
+The engine owns graph timing and execution; the graph does not run an independent
+animation/interval loop. Startup waits for node readiness (`script.ready`), stop
+cancels pending startup, and restart waits for asynchronous node cleanup. Scene
+object bindings resolve after attachment and follow the current scene; paste
+remaps references inside the copied selection and preserves external UUIDs.
+Editor selection access is injected by the graph tab, outside runtime code.
+
+Regression checks cover lifecycle, references, loading, paste and canvas disposal.
+`check-integration-builds` produces both production runtime bundles and the editor
+under a temporary directory, verifies runtime/editor separation and CSS packaging,
+and leaves the package version and tracked generated `docs/` files untouched.
+The historical `npm run build` script still increments the package version.
+Project execution notes, memories and plans are local files under the ignored
+`.idea/` directory, named `YYYYMMDD_XXX.md`.
+
+
 ## Screenshots
 
 <img src="https://raw.githubusercontent.com/tentone/nunuStudio/master/source/page/src/assets/github/2.png"><img src="https://raw.githubusercontent.com/tentone/nunuStudio/master/source/page/src/assets/github/3.png">

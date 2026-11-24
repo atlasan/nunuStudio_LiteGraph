@@ -1,0 +1,42 @@
+{
+	"repository": "https://github.com/atlasan/litegraph.js.git",
+	"revision": "e81bd8ab60458778c1aa2ede37bfe88ecce53de3",
+	"branch": "LG/dev_hmd_usability",
+	"version": "0.18.0-dev.2",
+	"sourceDirty": true,
+	"sourceStatus": [
+		"M apps/editor/examples/index.json",
+		" M apps/editor/js/code.js",
+		" M apps/editor/js/examples.js",
+		" M build/litegraph.core.js",
+		" M build/litegraph.full.js",
+		" M build/litegraph.full.mini.js",
+		" M build/litegraph.js",
+		" M build/litegraph.mini.js",
+		" M build/litegraph_nodejs.full.js",
+		" M build_node/litegraph.cjs",
+		" M build_node/litegraph.core.cjs",
+		" M build_node/litegraph.full.cjs",
+		" M build_node/litegraph.full.mini.cjs",
+		" M build_node/litegraph.mini.cjs",
+		" M build_node/litegraph_nodejs.full.cjs",
+		" M css/litegraph-editor.css",
+		" M src/lgraphcanvas.js",
+		" M src/lgraphnode.js",
+		" M src/litegraph-editor.js",
+		" M src/litegraph.d.cts",
+		" M src/litegraph.js",
+		" M src/nodes/base.js",
+		" M src/palette.js",
+		" M tools/fixtures/examples-outputs.json",
+		"?? apps/editor/examples/essentials/",
+		"?? test/hmd-usability.test.js"
+	],
+	"rebuiltFromSource": true,
+	"inputDigest": "5204404c34e20be1b386f8dafbe21fd891b253ff4105b0f1a7f5f3e1f1e66370",
+	"files": {
+		"litegraph.js": "215f013ed34f6024fec36f6adf0880ebf3ae4f08d28b6f13665ed996ef8d6437",
+		"litegraph.css": "052c4d52d7e7645b6cd1c67e44990c89565d47f90cc334996275c15ab76f08da",
+		"litegraph.LICENSE": "27b7022115b1f561ea4186b7f2ffe29145cee9449006ff3ac7d143c2c37d804d"
+	}
+}

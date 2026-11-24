@@ -1,2 +1,10 @@
 nwjs/* linguist-vendored
 docs/* linguist-documentation
+
+# Preserve the exact local LiteGraph distribution and its upstream whitespace.
+source/lib/litegraph.js linguist-vendored -whitespace
+source/lib/litegraph.css linguist-vendored -whitespace
+source/lib/litegraph.LICENSE whitespace=cr-at-eol
+# This upstream stylesheet uses CRLF; preserve its existing line endings.
+source/editor/style.css whitespace=cr-at-eol
+README.md whitespace=cr-at-eol

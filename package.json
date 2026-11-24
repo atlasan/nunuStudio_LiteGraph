@@ -26,7 +26,10 @@
 		"build-runtime": "webpack --config webpack.runtime.js",
 		"build-editor": "webpack --config webpack.prod.js",
 		"build-nwjs-win": "build --mirror https://dl.nwjs.io/ --concurrent --with-ffmpeg --tasks win-x64 ./build/editor/",
-		"build-nwjs": "build --mirror https://dl.nwjs.io/ --concurrent --with-ffmpeg --tasks win-x64,mac-x64,linux-x64 ./build/editor/"
+		"build-nwjs": "build --mirror https://dl.nwjs.io/ --concurrent --with-ffmpeg --tasks win-x64,mac-x64,linux-x64 ./build/editor/",
+		"sync-litegraph": "node scripts/sync-litegraph.cjs",
+		"test": "node --experimental-vm-modules --experimental-test-isolation=none --test test/*.test.cjs",
+		"check-integration-builds": "node scripts/check-integration-builds.cjs"
 	},
 	"repository": {
 		"type": "git",

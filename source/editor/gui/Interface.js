@@ -68,7 +68,7 @@ function Interface()
  *
  * @method saveProgram
  */
-Interface.prototype.saveProgram = function(binary = false)
+Interface.prototype.saveProgram = function(binary = true)
 {
 	if (Nunu.runningOnDesktop())
 	{

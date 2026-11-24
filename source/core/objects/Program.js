@@ -10,7 +10,6 @@ import {ARHandler} from "../xr/ARHandler.js";
 import {ObjectLoader} from "../loaders/ObjectLoader.js";
 import {Mouse} from "../input/Mouse.js";
 import {Keyboard} from "../input/Keyboard.js";
-import {Script} from "./script/Script.js";
 
 /**
  * Program class contains all the data of a app.
@@ -716,7 +715,7 @@ Program.prototype.receiveDataApp = function(data)
 	// Check if there is a script with onAppData method available
 	this.traverse(function(child)
 	{
-		if (child instanceof Script)
+		if (typeof child.appData === "function")
 		{
 			child.appData(data);
 			found = true;
