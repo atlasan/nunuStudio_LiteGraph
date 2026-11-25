@@ -258,7 +258,7 @@ class InspectorContainer extends TabComponent {
 			this.panel = new ObjectInspector(this, object);
 		}
 	}
-	else if (object instanceof Geometry || object instanceof BufferGeometry)
+	else if (object instanceof BufferGeometry)
 	{
 		this.panel = new GeometryInspector(this, object);
 	}

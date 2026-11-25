@@ -1,5 +1,5 @@
 import {Locale} from "../../../../locale/LocaleManager.js";
-import {RoundedBoxGeometry} from "../../../../../core/geometries/RoundedBoxGeometry.js";
+import {RoundedBoxBufferGeometry} from "../../../../../core/geometries/RoundedBoxBufferGeometry.js";
 import {ChangeAction} from "../../../../history/action/ChangeAction.js";
 import {Editor} from "../../../../Editor.js";
 import {NumberBox} from "../../../../components/input/NumberBox.js";
@@ -66,7 +66,7 @@ class RoundedBoxGeometryForm {
 	updateGeometry() {
 	this.object.geometry.dispose();
 
-	var geometry = new RoundedBoxGeometry(this.width.getValue(), this.height.getValue(), this.depth.getValue(), this.radius.getValue(), this.radiusSegments.getValue());
+	var geometry = new RoundedBoxBufferGeometry(this.width.getValue(), this.height.getValue(), this.depth.getValue(), this.radius.getValue(), this.radiusSegments.getValue());
 
 	Editor.addAction(new ChangeAction(this.object, "geometry", geometry));
 	}

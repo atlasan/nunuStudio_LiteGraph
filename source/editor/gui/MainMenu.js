@@ -1,7 +1,7 @@
 import {StaticPair} from "@as-com/pson";
 import {BufferGeometry} from "three";
+import {mergeGeometries} from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {SimplifyModifier} from "three/examples/jsm/modifiers/SimplifyModifier";
-import {SubdivisionModifier} from "three/examples/jsm/modifiers/SubdivisionModifier";
 import {Locale} from "../locale/LocaleManager.js";
 import {UnitConverter} from "../../core/utils/UnitConverter.js";
 import {Mesh} from "../../core/objects/mesh/Mesh.js";
@@ -446,17 +446,7 @@ class MainMenu extends Component {
 	// Create BSP for CSG operation
 	function createBSP(object)
 	{
-		var geometry = object.geometry;
-
-		if (geometry instanceof BufferGeometry)
-		{
-			geometry = new Geometry().fromBufferGeometry(geometry);
-		}
-		else
-		{
-			geometry = geometry.clone();
-		}
-		
+		var geometry = object.geometry.clone();
 		geometry.applyMatrix4(object.matrixWorld);
 
 		return new BSP(geometry);
@@ -568,19 +558,6 @@ class MainMenu extends Component {
 
 	}, Global.FILE_PATH + "icons/models/triangle.png");
 
-	modifiers.addOption(Locale.subdivide, function()
-	{
-		if (Editor.selection.length < 1 || Editor.selection[0].geometry === undefined)
-		{
-			Editor.alert(Locale.needsObjectGeometry);
-			return;
-		}
-
-		var modifier = new SubdivisionModifier();
-		var geometry = modifier.modify(Editor.selection[0].geometry);
-		var mesh = new Mesh(geometry, Editor.defaultMaterial);
-		Editor.addObject(mesh);
-	}, Global.FILE_PATH + "icons/misc/subdivide.png");
 
 	modifiers.addOption(Locale.twist, function()
 	{
@@ -654,26 +631,48 @@ class MainMenu extends Component {
 			return;
 		}
 
-		var geometry = new Geometry();
+		var geometries = [];
 
 		for (var i = 0; i < Editor.selection.length; i++)
-		{	
+		{
 			var obj = Editor.selection[i];
 			if (obj.geometry !== undefined)
 			{
-				// Convert to geometry and merge
-				if (obj.geometry instanceof BufferGeometry)
+				obj.updateMatrixWorld();
+				var converted = obj.geometry.index !== null ? obj.geometry.toNonIndexed() : obj.geometry.clone();
+				converted.applyMatrix4(obj.matrixWorld);
+				geometries.push(converted);
+			}
+		}
+
+		if (geometries.length < 2)
+		{
+			Editor.alert(Locale.needsTwoObjectMesh);
+			return;
+		}
+
+		// Keep only the attributes shared by every geometry so they can be merged
+		var names = Object.keys(geometries[0].attributes).filter(function(name)
+		{
+			return geometries.every(function(g) { return g.attributes[name] !== undefined; });
+		});
+		for (var i = 0; i < geometries.length; i++)
+		{
+			for (var name in geometries[i].attributes)
+			{
+				if (names.indexOf(name) === -1)
 				{
-					var converted = new Geometry();
-					converted.fromBufferGeometry(obj.geometry);
-					geometry.merge(converted, obj.matrixWorld);
-				}
-				// Merge geometry
-				else
-				{
-					geometry.merge(obj.geometry, obj.matrixWorld);
+					geometries[i].deleteAttribute(name);
 				}
 			}
+			geometries[i].morphAttributes = {};
+		}
+
+		var geometry = mergeGeometries(geometries, false);
+		if (geometry === null)
+		{
+			Editor.alert(Locale.needsTwoObjectMesh);
+			return;
 		}
 
 		var mesh = new Mesh(geometry, Editor.defaultMaterial);

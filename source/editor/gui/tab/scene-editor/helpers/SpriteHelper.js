@@ -1,4 +1,4 @@
-import {Object3D, Sprite, SpriteMaterial, Mesh} from "three";
+import {Object3D, Sprite, SpriteMaterial} from "three";
 
 /** 
  * Sprite helper is used to preview sprite objects.
@@ -7,9 +7,9 @@ import {Object3D, Sprite, SpriteMaterial, Mesh} from "three";
  * @param {Object3D} object
  * @param {number} hex Helper color in hexadecimal.
  */
-class SpriteHelper extends Mesh {
+class SpriteHelper extends Sprite {
 	constructor(object, hex) {
-	Sprite.call(this, new SpriteMaterial(
+	super(new SpriteMaterial(
 		{color: hex !== undefined ? hex : 0xFFFFFF}));
 
 	/**

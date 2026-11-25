@@ -47,7 +47,6 @@ class BokehPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("Bokeh", BokehPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -58,4 +57,6 @@ PassNode.registerPass("Bokeh", BokehPassNode);
 	}
 
 }
+
+PassNode.registerPass("Bokeh", BokehPassNode);
 export {BokehPassNode};

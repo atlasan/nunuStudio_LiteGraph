@@ -1,4 +1,9 @@
-THREE.LightShadow.prototype.toJSON = function()
+import {DirectionalLight} from "three";
+
+// LightShadow is not exported by three.js anymore, reach its prototype through a light shadow instance.
+var LightShadowPrototype = Object.getPrototypeOf(Object.getPrototypeOf(new DirectionalLight().shadow));
+
+LightShadowPrototype.toJSON = function()
 {
 	var data = {};
 
@@ -24,7 +29,7 @@ THREE.LightShadow.prototype.toJSON = function()
 	return data;
 };
 
-THREE.LightShadow.prototype.fromJSON = function(data)
+LightShadowPrototype.fromJSON = function(data)
 {
 	if (data.bias !== undefined)
 	{

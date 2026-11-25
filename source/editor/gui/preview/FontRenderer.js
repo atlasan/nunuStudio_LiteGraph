@@ -22,14 +22,6 @@ class FontRenderer extends PreviewRenderer {
 	this.scene.add(this.text);
 	}
 
-FontRenderer.render = function(font, onRender)
-{
-	if (FontRenderer.instance === undefined)
-	{
-	}
-
-	FontRenderer.instance.render(font, onRender);
-};
 
 	render(font, onRender) {
 	this.text.setFont(font);
@@ -50,6 +42,15 @@ FontRenderer.render = function(font, onRender)
 	}
 
 }
+
+FontRenderer.render = function(font, onRender)
+{
+	if (FontRenderer.instance === undefined)
+	{
+	}
+
+	FontRenderer.instance.render(font, onRender);
+};
 
 FontRenderer.instance = new FontRenderer();
 

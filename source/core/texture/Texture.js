@@ -1,4 +1,4 @@
-import {Texture as TTexture, RGBAFormat, RGBFormat, LinearFilter} from "three";
+import {Texture as TTexture, RGBAFormat, LinearFilter} from "three";
 import {Image} from "../resources/Image.js";
 
 /**
@@ -47,7 +47,7 @@ class Texture extends TTexture
 		 * @property source
 		 * @type {Image}
 		 */
-		this.source = resolvedSource;
+		this.sourceImage = resolvedSource;
 
 		var self = this;
 
@@ -71,12 +71,12 @@ class Texture extends TTexture
 		 */
 		this.disposed = false;
 
-		this.format = this.source.hasTransparency() ? RGBAFormat : RGBFormat;
+		this.format = RGBAFormat;
 
 		this.updateSource();
 
 		// Check if image is animated format and start an update cycle
-		if (this.source.encoding === "gif")
+		if (this.sourceImage.encoding === "gif")
 		{
 			this.generateMipmaps = false;
 			this.magFilter = LinearFilter;
@@ -103,21 +103,21 @@ class Texture extends TTexture
 	 */
 	updateSource()
 	{
-		if (this.source !== null)
+		if (this.sourceImage !== null)
 		{
 			var self = this;
 
 			this.image.crossOrigin = "anonymous";
-			this.image.src = this.source.data;
+			this.image.src = this.sourceImage.data;
 			this.image.onload = function()
 			{
 				self.needsUpdate = true;
 			};
 			this.image.onerror = function()
 			{
-				console.log("nunuStudio: Failed to load image " + self.source.uuid + " data.");
-				self.source.createSolidColor();
-				self.image.src = self.source.data;
+				console.log("nunuStudio: Failed to load image " + self.sourceImage.uuid + " data.");
+				self.sourceImage.createSolidColor();
+				self.image.src = self.sourceImage.data;
 				self.needsUpdate = true;
 			};
 		}
@@ -125,8 +125,8 @@ class Texture extends TTexture
 		{
 			console.warn("nunuStudio: Texture source is null.");
 
-			this.source.createSolidColor();
-			this.image.src = self.source.data;
+			this.sourceImage.createSolidColor();
+			this.image.src = self.sourceImage.data;
 			this.needsUpdate = true;
 		}
 	}
@@ -153,7 +153,7 @@ class Texture extends TTexture
 	toJSON(meta)
 	{
 		var data = super.toJSON(meta);
-		var image = this.source.toJSON(meta);
+		var image = this.sourceImage.toJSON(meta);
 
 		data.image = image.uuid;
 

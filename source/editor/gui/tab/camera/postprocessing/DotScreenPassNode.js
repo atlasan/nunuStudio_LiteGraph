@@ -49,7 +49,6 @@ class DotScreenPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("DotScreen", DotScreenPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -60,4 +59,6 @@ PassNode.registerPass("DotScreen", DotScreenPassNode);
 	}
 
 }
+
+PassNode.registerPass("DotScreen", DotScreenPassNode);
 export {DotScreenPassNode};

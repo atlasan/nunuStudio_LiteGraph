@@ -1,4 +1,4 @@
-import {DepthTexture, UnsignedShortType, NearestFilter, MeshNormalMaterial, NoBlending, WebGLRenderTarget, LinearFilter, RGBAFormat, ShaderMaterial, UniformsUtils, DstColorFactor, ZeroFactor, AddEquation, DstAlphaFactor, Vector3, Math as TMath, DataTexture, LuminanceFormat, FloatType, RepeatWrapping, CustomBlending} from "three";
+import {DepthTexture, UnsignedShortType, NearestFilter, MeshNormalMaterial, NoBlending, WebGLRenderTarget, LinearFilter, RGBAFormat, ShaderMaterial, UniformsUtils, DstColorFactor, ZeroFactor, AddEquation, DstAlphaFactor, Vector3, MathUtils as TMath, DataTexture, LuminanceFormat, FloatType, RepeatWrapping, CustomBlending} from "three";
 import {SSAOShader, SSAOBlurShader} from "three/examples/jsm/shaders/SSAOShader";
 import {CopyShader} from "three/examples/jsm/shaders/CopyShader";
 import {Pass} from "../Pass.js";
@@ -17,9 +17,11 @@ import {SimplexNoise} from "../../utils/SimplexNoise.js";
  * @class SSAONOHPass
  * @module Postprocessing
  */
-function SSAONOHPass()
+class SSAONOHPass extends Pass
 {
-	Pass.call(this);
+	constructor()
+	{
+	super();
 
 	this.type = "SSAONOH";
 	
@@ -182,9 +184,9 @@ function SSAONOHPass()
 	this.kernelRadius = 8;
 	this.minDistance = 0.1;
 	this.maxDistance = 1000;
+	}
 }
 
-SSAONOHPass.prototype = Object.create(Pass.prototype);
 
 /** 
  * Generate a sample kernel based on the kernelSize value.
@@ -265,7 +267,7 @@ SSAONOHPass.prototype.render = function(renderer, writeBuffer, readBuffer, delta
 	this.ssaoMaterial.uniforms["cameraNear"].value = camera.near;
 	this.ssaoMaterial.uniforms["cameraFar"].value = camera.far;
 	this.ssaoMaterial.uniforms["cameraProjectionMatrix"].value.copy(camera.projectionMatrix);
-	this.ssaoMaterial.uniforms["cameraInverseProjectionMatrix"].value.getInverse(camera.projectionMatrix); 
+	this.ssaoMaterial.uniforms["cameraInverseProjectionMatrix"].value.copy(camera.projectionMatrix).invert(); 
 	this.renderPass(renderer, this.ssaoMaterial, this.ssaoRenderTarget);
 
 	// Render blur

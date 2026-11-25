@@ -25,6 +25,27 @@ class TextureRenderer extends PreviewRenderer {
 	this.scene.add(this.plane);
 	}
 
+
+
+	render(texture, onRender) {
+	if (texture.isCubeTexture)
+	{
+		var cube = new CubemapFlatRenderer(texture, 64/4, 0, 64/8);
+		cube.setSize(64, 64);
+		cube.render(this.renderer);
+		onRender(this.canvas.toDataURL());
+	}
+	else
+	{
+		this.material.map = texture;
+		this.material.needsUpdate = true;
+		this.renderer.render(this.scene, this.camera);
+		onRender(this.canvas.toDataURL());
+	}
+	}
+
+}
+
 /**
  * Create a DOM element with the texture preview render.
  *
@@ -51,25 +72,6 @@ TextureRenderer.render = function(texture, onRender)
 
 	TextureRenderer.instance.render(texture, onRender);
 };
-
-	render(texture, onRender) {
-	if (texture.isCubeTexture)
-	{
-		var cube = new CubemapFlatRenderer(texture, 64/4, 0, 64/8);
-		cube.setSize(64, 64);
-		cube.render(this.renderer);
-		onRender(this.canvas.toDataURL());
-	}
-	else
-	{
-		this.material.map = texture;
-		this.material.needsUpdate = true;
-		this.renderer.render(this.scene, this.camera);
-		onRender(this.canvas.toDataURL());
-	}
-	}
-
-}
 
 TextureRenderer.instance = new TextureRenderer();
 

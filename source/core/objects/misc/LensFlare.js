@@ -1,4 +1,4 @@
-import {Mesh, MeshBasicMaterial, Vector3, DataTexture, RGBFormat, NearestFilter, ClampToEdgeWrapping, RawShaderMaterial, Color, Vector2, AdditiveBlending, Box2, Vector4, Object3D} from "three";
+import {Mesh, MeshBasicMaterial, Vector3, DataTexture, RGBAFormat, NearestFilter, ClampToEdgeWrapping, RawShaderMaterial, Color, Vector2, AdditiveBlending, Box2, Vector4, Object3D} from "three";
 import {Lensflare as TLensflare, LensflareElement} from "three/examples/jsm/objects/Lensflare";
 import {Texture} from "../../texture/Texture.js";
 
@@ -37,14 +37,14 @@ class LensFlare extends Mesh
 		var positionScreen = new Vector3();
 
 		// textures
-		var tempMap = new DataTexture(new Uint8Array(16 * 16 * 3), 16, 16, RGBFormat);
+		var tempMap = new DataTexture(new Uint8Array(16 * 16 * 4), 16, 16, RGBAFormat);
 		tempMap.minFilter = NearestFilter;
 		tempMap.magFilter = NearestFilter;
 		tempMap.wrapS = ClampToEdgeWrapping;
 		tempMap.wrapT = ClampToEdgeWrapping;
 		tempMap.needsUpdate = true;
 
-		var occlusionMap = new DataTexture(new Uint8Array(16 * 16 * 3), 16, 16, RGBFormat);
+		var occlusionMap = new DataTexture(new Uint8Array(16 * 16 * 4), 16, 16, RGBAFormat);
 		occlusionMap.minFilter = NearestFilter;
 		occlusionMap.magFilter = NearestFilter;
 		occlusionMap.wrapS = ClampToEdgeWrapping;

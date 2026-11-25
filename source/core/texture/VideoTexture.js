@@ -1,4 +1,4 @@
-import {Texture, LinearFilter, RGBFormat} from "three";
+import {Texture, LinearFilter, RGBAFormat} from "three";
 import {Video} from "../resources/Video.js";
 
 /**
@@ -20,7 +20,7 @@ class VideoTexture extends Texture
 {
 	constructor(video, mapping, wrapS, wrapT, type, anisotropy)
 	{
-		super(document.createElement("video"), mapping, wrapS, wrapT, LinearFilter, LinearFilter, RGBFormat, type, anisotropy);
+		super(document.createElement("video"), mapping, wrapS, wrapT, LinearFilter, LinearFilter, RGBAFormat, type, anisotropy);
 
 		this.disposed = false;
 		this.generateMipmaps = false;

@@ -1,4 +1,4 @@
-import {DirectionalLight, AmbientLight, Mesh, MeshPhongMaterial, Vector3} from "three";
+import {DirectionalLight, AmbientLight, Mesh, MeshPhongMaterial, Vector3, BufferGeometry} from "three";
 import {OrthographicCamera} from "../../../core/objects/cameras/OrthographicCamera.js";
 import {PreviewRenderer} from "./PreviewRenderer.js";
 
@@ -21,18 +21,10 @@ class GeometryRenderer extends PreviewRenderer {
 	this.scene.add(directional);
 	this.scene.add(new AmbientLight(0x888888));
 
-	this.mesh = new Mesh(new Geometry(), new MeshPhongMaterial({color: 0xFFFFFF}));
+	this.mesh = new Mesh(new BufferGeometry(), new MeshPhongMaterial({color: 0xFFFFFF}));
 	this.scene.add(this.mesh);
 	}
 
-GeometryRenderer.render = function(material, onRender)
-{
-	if (GeometryRenderer.instance === undefined)
-	{
-	}
-
-	GeometryRenderer.instance.render(material, onRender);
-};
 
 	render(geometry, onRender) {
 	geometry.computeBoundingBox();
@@ -57,6 +49,15 @@ GeometryRenderer.render = function(material, onRender)
 	}
 
 }
+
+GeometryRenderer.render = function(material, onRender)
+{
+	if (GeometryRenderer.instance === undefined)
+	{
+	}
+
+	GeometryRenderer.instance.render(material, onRender);
+};
 
 GeometryRenderer.instance = new GeometryRenderer();
 

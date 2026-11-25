@@ -15,12 +15,11 @@ import {TransformGizmo} from "./TransformGizmo.js";
  */
 class TransformGizmoTranslate extends TransformGizmo {
 	constructor() {
-	var arrowGeometry = new Geometry();
 	var mesh = new Mesh(new CylinderGeometry(0, 0.05, 0.2, 12, 1, false));
 	mesh.position.y = 0.5;
 	mesh.updateMatrix();
 
-	arrowGeometry.merge(mesh.geometry, mesh.matrix);
+	var arrowGeometry = mesh.geometry.clone().applyMatrix4(mesh.matrix);
 
 	var lineXGeometry = new BufferGeometry();
 	lineXGeometry.setAttribute("position", new Float32BufferAttribute([0, 0, 0, 1, 0, 0], 3));
@@ -31,7 +30,7 @@ class TransformGizmoTranslate extends TransformGizmo {
 	var lineZGeometry = new BufferGeometry();
 	lineZGeometry.setAttribute("position", new Float32BufferAttribute([0, 0, 0, 0, 0, 1], 3));
 
-	this.handleGizmos =
+	var handleGizmos =
 	{
 		X: [[new Mesh(arrowGeometry, GizmoMaterial.red), [0.5, 0, 0], [0, 0, - Math.PI / 2]], [new Line(lineXGeometry, GizmoLineMaterial.red)]],
 		Y: [[new Mesh(arrowGeometry, GizmoMaterial.green), [0, 0.5, 0]], [new Line(lineYGeometry, GizmoLineMaterial.green)]],
@@ -42,7 +41,7 @@ class TransformGizmoTranslate extends TransformGizmo {
 		XYZ: [[new Mesh(TransformGizmoTranslate.box, GizmoMaterial.whiteAlpha), [0, 0, 0], [0, 0, 0]]]
 	};
 
-	this.pickerGizmos =
+	var pickerGizmos =
 	{
 		X: [[new Mesh(TransformGizmoTranslate.cylinder, TransformGizmo.pickerMaterial), [0.6, 0, 0], [0, 0, - Math.PI / 2]]],
 		Y: [[new Mesh(TransformGizmoTranslate.cylinder, TransformGizmo.pickerMaterial), [0, 0.6, 0]]],
@@ -53,13 +52,13 @@ class TransformGizmoTranslate extends TransformGizmo {
 		XYZ: [[new Mesh(TransformGizmoTranslate.box, TransformGizmo.pickerMaterial)]]
 	};
 
-	super();
+	super(handleGizmos, pickerGizmos);
 	}
 
 
 	setActivePlane(axis, eye) {
 	var tempMatrix = new Matrix4();
-	eye.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(this.planes["XY"].matrixWorld)));
+	eye.applyMatrix4(tempMatrix.copy(tempMatrix.extractRotation(this.planes["XY"].matrixWorld)).invert());
 
 	if (axis === "X")
 	{
@@ -145,7 +144,7 @@ class TransformGizmoTranslate extends TransformGizmo {
 				
 		if (controls.space === TransformControls.WORLD || controls.axis.search("XYZ") !== -1)
 		{
-			controls.point.applyMatrix4(controls.tempMatrix.getInverse(controls.attributes[i].parentRotationMatrix));
+			controls.point.applyMatrix4(controls.tempMatrix.copy(controls.attributes[i].parentRotationMatrix).invert());
 
 			for (var j = 0; j < controls.objects.length; j++)
 			{
@@ -157,7 +156,7 @@ class TransformGizmoTranslate extends TransformGizmo {
 		{
 			if (controls.axis.length > 1)
 			{
-				controls.point.applyMatrix4(controls.tempMatrix.getInverse(controls.attributes[i].worldRotationMatrix));
+				controls.point.applyMatrix4(controls.tempMatrix.copy(controls.attributes[i].worldRotationMatrix).invert());
 				controls.point.applyMatrix4(controls.attributes[i].oldRotationMatrix);
 			}
 			else
@@ -176,7 +175,7 @@ class TransformGizmoTranslate extends TransformGizmo {
 		{
 			if (controls.space === TransformControls.LOCAL)
 			{
-				controls.objects[i].position.applyMatrix4(controls.tempMatrix.getInverse(controls.attributes[i].worldRotationMatrix));
+				controls.objects[i].position.applyMatrix4(controls.tempMatrix.copy(controls.attributes[i].worldRotationMatrix).invert());
 			}
 
 			if (controls.axis.search("X") !== -1)

@@ -31,7 +31,7 @@ import {CubeCamera} from "../../../../../core/objects/cameras/CubeCamera.js";
 import {PositionalAudio} from "../../../../../core/objects/audio/PositionalAudio.js";
 import {AudioEmitter} from "../../../../../core/objects/audio/AudioEmitter.js";
 import {TerrainBufferGeometry} from "../../../../../core/geometries/TerrainBufferGeometry.js";
-import {RoundedBoxGeometry} from "../../../../../core/geometries/RoundedBoxGeometry.js";
+import {RoundedBoxBufferGeometry} from "../../../../../core/geometries/RoundedBoxBufferGeometry.js";
 import {ParametricBufferGeometry} from "../../../../../core/geometries/ParametricBufferGeometry.js";
 import {CapsuleBufferGeometry} from "../../../../../core/geometries/CapsuleBufferGeometry.js";
 import {FileSystem} from "../../../../../core/FileSystem.js";
@@ -321,7 +321,7 @@ class SideBar extends Component {
 	// Rounded box
 	models.addOption(Global.FILE_PATH + "icons/models/cube.png", function()
 	{
-		var geometry = new RoundedBoxGeometry(1, 1, 1, 0.1, 8);
+		var geometry = new RoundedBoxBufferGeometry(1, 1, 1, 0.1, 8);
 		geometry.name = "box";
 
 		var model = new Mesh(geometry, Editor.defaultMaterial);

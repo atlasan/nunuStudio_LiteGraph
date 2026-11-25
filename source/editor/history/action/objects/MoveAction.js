@@ -15,9 +15,9 @@ import {Editor} from "../../../Editor.js";
  * @param {Object3D} newParent New parent of the object.
  * @param {number} newIndex Index to insert the object.
  */
-class MoveAction {
+class MoveAction extends Action {
 	constructor(object, newParent, newIndex, keepGlobalPose) {
-	Action.call(this);
+	super();
 	
 	this.object = object;
 
@@ -76,7 +76,7 @@ class MoveAction {
 
 	// Get inverse of the world matrix of the new parent
 	var inverse = new Matrix4();
-	inverse.getInverse(newParent.matrixWorld);
+	inverse.copy(newParent.matrixWorld).invert();
 
 	// Apply inverse transform to the object matrix
 	matrix.multiplyMatrices(inverse, matrix);

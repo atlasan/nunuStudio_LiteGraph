@@ -303,6 +303,48 @@ class EditorOrbitControls extends EditorControls {
 	}
 	}
 
+
+	applyLimits() {
+	if (this.orientation.y < this.limitDown)
+	{
+		this.orientation.y = this.limitDown;
+	}
+	else if (this.orientation.y > this.limitUp)
+	{
+		this.orientation.y = this.limitUp;
+	}
+
+	if (this.distance < this.minDistance)
+	{
+		this.distance = this.minDistance;
+	}
+	else if (this.distance > this.maxDistance)
+	{
+		this.distance = this.maxDistance;
+	}
+	}
+
+	updateControls() {
+	this.applyLimits();
+
+	var cos = this.distance * Math.cos(this.orientation.y);
+	this.position.set(Math.cos(this.orientation.x) * cos, this.distance * Math.sin(this.orientation.y), Math.sin(this.orientation.x) * cos);
+	this.position.add(this.center);
+
+	this.tempMatrix.lookAt(this.position, this.center, EditorOrbitControls.UP);
+	this.quaternion.setFromRotationMatrix(this.tempMatrix);
+
+	this.updateMatrixWorld(true);
+
+	if (this.camera instanceof OrthographicCamera)
+	{
+		this.camera.size = this.distance;
+		this.camera.updateProjectionMatrix();
+	}
+	}
+
+}
+
 OrbitControls.prototype.keyboardMovement = function(keyboard)
 {
 	if (keyboard === undefined)
@@ -357,47 +399,6 @@ OrbitControls.prototype.keyboardMovement = function(keyboard)
 
 	return needsUpdate;
 };
-
-	applyLimits() {
-	if (this.orientation.y < this.limitDown)
-	{
-		this.orientation.y = this.limitDown;
-	}
-	else if (this.orientation.y > this.limitUp)
-	{
-		this.orientation.y = this.limitUp;
-	}
-
-	if (this.distance < this.minDistance)
-	{
-		this.distance = this.minDistance;
-	}
-	else if (this.distance > this.maxDistance)
-	{
-		this.distance = this.maxDistance;
-	}
-	}
-
-	updateControls() {
-	this.applyLimits();
-
-	var cos = this.distance * Math.cos(this.orientation.y);
-	this.position.set(Math.cos(this.orientation.x) * cos, this.distance * Math.sin(this.orientation.y), Math.sin(this.orientation.x) * cos);
-	this.position.add(this.center);
-
-	this.tempMatrix.lookAt(this.position, this.center, EditorOrbitControls.UP);
-	this.quaternion.setFromRotationMatrix(this.tempMatrix);
-
-	this.updateMatrixWorld(true);
-
-	if (this.camera instanceof OrthographicCamera)
-	{
-		this.camera.size = this.distance;
-		this.camera.updateProjectionMatrix();
-	}
-	}
-
-}
 
 EditorOrbitControls.UP = new Vector3(0, 1, 0);
 

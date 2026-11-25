@@ -151,3 +151,8 @@ export {MathUtils} from "./utils/MathUtils.js";
 export {ObjectUtils} from "./utils/ObjectUtils.js";
 export {PhysicsGenerator} from "./utils/PhysicsGenerator.js";
 export {UnitConverter} from "./utils/UnitConverter.js";
+
+// Expose the engine namespace to user scripts (see Script.library)
+import * as NUNU from "./Main.js";
+import {Script as ScriptRegistry} from "./objects/script/Script.js";
+ScriptRegistry.library = NUNU;

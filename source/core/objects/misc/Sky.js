@@ -1,4 +1,4 @@
-import {Group, Color, HemisphereLight, SphereBufferGeometry, ShaderMaterial, BackSide, Mesh, Object3D} from "three";
+import {Group, Color, HemisphereLight, SphereGeometry, ShaderMaterial, BackSide, Mesh, Object3D} from "three";
 import {MathUtils} from "../../utils/MathUtils.js";
 import {DirectionalLight} from "../lights/DirectionalLight.js";
 import SkyFragmentShader from "./sky_fragment.glsl";
@@ -106,7 +106,7 @@ class Sky extends Group
 		uniforms.topColor.value.copy(this.hemisphere.color);
 
 		// Sky
-		var geometry = new SphereBufferGeometry(1500, 16, 16);
+		var geometry = new SphereGeometry(1500, 16, 16);
 		var material = new ShaderMaterial(
 			{
 				vertexShader: SkyVertexShader,

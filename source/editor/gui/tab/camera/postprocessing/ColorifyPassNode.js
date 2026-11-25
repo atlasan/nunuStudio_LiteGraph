@@ -26,7 +26,6 @@ class ColorifyPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("Colorify", ColorifyPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -35,4 +34,6 @@ PassNode.registerPass("Colorify", ColorifyPassNode);
 	}
 
 }
+
+PassNode.registerPass("Colorify", ColorifyPassNode);
 export {ColorifyPassNode};

@@ -1,7 +1,7 @@
 import {UniformsUtils, ShaderMaterial, NoBlending, WebGLRenderTarget, LinearMipMapLinearFilter, LinearFilter, RGBAFormat, MeshBasicMaterial} from "three";
 import {CopyShader} from "three/examples/jsm/shaders/CopyShader";
 import {LuminosityShader} from "three/examples/jsm/shaders/LuminosityShader";
-import {ToneMapShader} from "three/examples/jsm/shaders/ToneMapShader";
+import {ToneMapShader} from "../../../lib/three/ToneMapShader.js";
 import {Pass} from "../Pass.js";
 
 /**
@@ -16,9 +16,11 @@ import {Pass} from "../Pass.js";
  * @module Postprocessing
  * @author miibond
  */
-function AdaptiveToneMappingPass(adaptive, resolution)
+class AdaptiveToneMappingPass extends Pass
 {
-	Pass.call(this);
+	constructor(adaptive, resolution)
+	{
+	super();
 	var self = this;
 	
 	this.type = "AdaptiveToneMapping";
@@ -120,11 +122,10 @@ function AdaptiveToneMappingPass(adaptive, resolution)
 			}
 		}
 		});
-};
+	}
+}
 
-AdaptiveToneMappingPass.prototype = Object.create(Pass.prototype);
 
-AdaptiveToneMappingPass.prototype.constructor = AdaptiveToneMappingPass;
 
 AdaptiveToneMappingPass.prototype.render = function(renderer, writeBuffer, readBuffer, delta, maskActive)
 {

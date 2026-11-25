@@ -9,9 +9,9 @@ import {Action} from "./Action.js";
  * @extends {Action}
  * @param {Array} actions Array of actions to create the bundle.
  */
-class ActionBundle {
+class ActionBundle extends Action {
 	constructor(actions) {
-	Action.call(this);
+	super();
 
 	this.actions = actions;
 	}

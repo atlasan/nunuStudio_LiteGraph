@@ -71,28 +71,30 @@ var AWDLoader = (function()
 			}
 		}
 	};
-	var AWDLoader = function(manager)
+	class AWDLoader extends Loader
 	{
-		Loader.call(this, manager);
-		this.trunk = new Object3D();
-		this.materialFactory = undefined;
-		this._url = '';
-		this._baseDir = '';
-		this.data = undefined;
-		this._ptr = 0;
-		this._version = [];
-		this._streaming = false;
-		this._optimizedForAccuracy = false;
-		this._compression = 0;
-		this._bodylen = 0xFFFFFFFF;
-		this._blocks = [new Block()];
-		this._accuracyMatrix = false;
-		this._accuracyGeo = false;
-		this._accuracyProps = false;
-	};
-	AWDLoader.prototype = Object.assign(Object.create(Loader.prototype),
+		constructor(manager)
 		{
-			constructor: AWDLoader,
+			super(manager);
+			this.trunk = new Object3D();
+			this.materialFactory = undefined;
+			this._url = '';
+			this._baseDir = '';
+			this.data = undefined;
+			this._ptr = 0;
+			this._version = [];
+			this._streaming = false;
+			this._optimizedForAccuracy = false;
+			this._compression = 0;
+			this._bodylen = 0xFFFFFFFF;
+			this._blocks = [new Block()];
+			this._accuracyMatrix = false;
+			this._accuracyGeo = false;
+			this._accuracyProps = false;
+		}
+	}
+	Object.assign(AWDLoader.prototype,
+		{
 			load: function(url, onLoad, onProgress, onError)
 			{
 				var scope = this;
@@ -211,7 +213,7 @@ var AWDLoader = (function()
 					parId = this.readU32(),
 					mtx = this.parseMatrix4();
 				ctr.name = this.readUTF();
-				ctr.applyMatrix(mtx);
+				ctr.applyMatrix4(mtx);
 				parent = this._blocks[parId].data || this.trunk;
 				parent.add(ctr);
 				this.parseProperties(
@@ -266,7 +268,7 @@ var AWDLoader = (function()
 					mesh = new Mesh(geometries[0]);
 					meshes.push(mesh);
 				}
-				mesh.applyMatrix(mtx);
+				mesh.applyMatrix4(mtx);
 				mesh.name = name;
 				parent = this.getBlock(parId) || this.trunk;
 				parent.add(mesh);

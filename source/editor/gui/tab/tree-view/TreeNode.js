@@ -1,6 +1,6 @@
 import {Vector2, Object3D, Mesh, SkinnedMesh, InstancedMesh, Vector3, Quaternion, MathUtils, Material, Camera} from "three";
 import {ConvexGeometry} from "three/examples/jsm/geometries/ConvexGeometry";
-import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
+import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {Locale} from "../../../locale/LocaleManager.js";
 import {PhysicsGenerator} from "../../../../core/utils/PhysicsGenerator.js";
 import {ObjectUtils} from "../../../../core/utils/ObjectUtils.js";
@@ -46,92 +46,94 @@ import {NodeEditor} from "../node-editor/NodeEditor.js";
  */
 class TreeNode extends Component {
 	constructor(container) {
+	// Built without calling super(), keeping the original ES5 semantics
+	var self = Object.create(new.target.prototype);
+
 	// Container
-	this.container = container;
+	self.container = container;
 
 	// Attributes
-	this.size = new Vector2(0, 0);
-	this.position = new Vector2(0, 0);
-	this.visible = true;
+	self.size = new Vector2(0, 0);
+	self.position = new Vector2(0, 0);
+	self.visible = true;
 
 	// Object attached
-	this.object = null;
-	this.uuid = null;
-	this.folded = false;
-	this.selected = false;
+	self.object = null;
+	self.uuid = null;
+	self.folded = false;
+	self.selected = false;
 
 	// Children and parent tree nodes
-	this.parent = null;
-	this.children = [];
-	this.level = 0;
+	self.parent = null;
+	self.children = [];
+	self.level = 0;
 
 	// Element
-	this.element = document.createElement("div");
-	this.element.style.position = "absolute";
-	this.element.draggable = true;
-	this.element.style.left = "0px";
-	this.element.style.height = "20px";
-	this.element.style.width = "100%";
-	this.element.style.cursor = "pointer";
-	this.element.style.boxSizing = "border-box";
-	this.container.element.appendChild(this.element);
+	self.element = document.createElement("div");
+	self.element.style.position = "absolute";
+	self.element.draggable = true;
+	self.element.style.left = "0px";
+	self.element.style.height = "20px";
+	self.element.style.width = "100%";
+	self.element.style.cursor = "pointer";
+	self.element.style.boxSizing = "border-box";
+	self.container.element.appendChild(self.element);
 
 	// Arrow
-	this.arrow = document.createElement("img");
-	this.arrow.draggable = false;
-	this.arrow.style.position = "absolute";
-	this.arrow.style.opacity = 0.5;
-	this.arrow.style.width = "15px";
-	this.arrow.style.height = "15px";
-	this.arrow.style.left = "5px";
-	this.arrow.style.top = "3px";
-	this.element.appendChild(this.arrow);
+	self.arrow = document.createElement("img");
+	self.arrow.draggable = false;
+	self.arrow.style.position = "absolute";
+	self.arrow.style.opacity = 0.5;
+	self.arrow.style.width = "15px";
+	self.arrow.style.height = "15px";
+	self.arrow.style.left = "5px";
+	self.arrow.style.top = "3px";
+	self.element.appendChild(self.arrow);
 
 	// Icon
-	this.icon = document.createElement("img");
-	this.icon.draggable = false;
-	this.icon.style.position = "absolute";
-	this.icon.style.pointerEvents = "none";
-	this.icon.style.width = "15px";
-	this.icon.style.height = "15px";
-	this.icon.style.left = "25px";
-	this.icon.style.top = "3px";
-	this.element.appendChild(this.icon);
+	self.icon = document.createElement("img");
+	self.icon.draggable = false;
+	self.icon.style.position = "absolute";
+	self.icon.style.pointerEvents = "none";
+	self.icon.style.width = "15px";
+	self.icon.style.height = "15px";
+	self.icon.style.left = "25px";
+	self.icon.style.top = "3px";
+	self.element.appendChild(self.icon);
 
 	// Label
-	this.label = document.createElement("span");
-	this.label.style.overflow = "hidden";
-	this.label.style.position = "absolute";
-	this.label.style.pointerEvents = "none";
-	this.label.style.whiteSpace = "nowrap";
-	this.label.style.top = "3px";
-	this.element.appendChild(this.label);
+	self.label = document.createElement("span");
+	self.label.style.overflow = "hidden";
+	self.label.style.position = "absolute";
+	self.label.style.pointerEvents = "none";
+	self.label.style.whiteSpace = "nowrap";
+	self.label.style.top = "3px";
+	self.element.appendChild(self.label);
 
 	// Label text
-	this.labelText = document.createTextNode("");
-	this.label.appendChild(this.labelText);
+	self.labelText = document.createTextNode("");
+	self.label.appendChild(self.labelText);
 
-	var self = this;
 	var dragState = TreeNode.NONE;
 
-	this.arrow.onmouseenter = function()
+	self.arrow.onmouseenter = function()
 	{
 		this.style.opacity = 1.0;
 	};
 
-	this.arrow.onmouseleave = function()
+	self.arrow.onmouseleave = function()
 	{
 		this.style.opacity = 0.5;
 	};
 
-	this.arrow.onclick = function(event)
+	self.arrow.onclick = function(event)
 	{
 		event.stopPropagation();
 
 		self.updateFoldedState(!self.folded);
 	};
 
-	this.element.onmouseenter = function()
+	self.element.onmouseenter = function()
 	{
 		if (!self.selected)
 		{
@@ -139,7 +141,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.onmouseleave = function()
+	self.element.onmouseleave = function()
 	{
 		if (!self.selected)
 		{
@@ -147,7 +149,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.ondragstart = function(event)
+	self.element.ondragstart = function(event)
 	{
 		if (!self.object.locked)
 		{
@@ -156,7 +158,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.ondragend = function(event)
+	self.element.ondragend = function(event)
 	{
 		event.preventDefault();
 
@@ -169,7 +171,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.ondragleave = function()
+	self.element.ondragleave = function()
 	{
 		event.preventDefault();
 
@@ -177,7 +179,7 @@ class TreeNode extends Component {
 		self.clearBorder();
 	};
 
-	this.element.oncontextmenu = function(event)
+	self.element.oncontextmenu = function(event)
 	{
 		if (!self.object.locked)
 		{
@@ -478,7 +480,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.ondragover = function(event)
+	self.element.ondragover = function(event)
 	{
 		event.preventDefault();
 
@@ -517,7 +519,7 @@ class TreeNode extends Component {
 	};
 
 	// Drop event (fired on the drop target)
-	this.element.ondrop = function(event)
+	self.element.ondrop = function(event)
 	{
 		event.preventDefault();
 		self.clearBorder();
@@ -611,7 +613,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.onclick = function(event)
+	self.element.onclick = function(event)
 	{
 		if (event.shiftKey && Editor.selection.length > 0 && Editor.selection[Editor.selection.length - 1].isObject3D === true)
 		{
@@ -674,7 +676,7 @@ class TreeNode extends Component {
 		}
 	};
 
-	this.element.ondblclick = function()
+	self.element.ondblclick = function()
 	{
 		if (!self.object.locked)
 		{
@@ -735,6 +737,8 @@ class TreeNode extends Component {
 	{
 		openTab(ParticleEditor, self.object);
 	}
+	
+	return self;
 	}
 
 

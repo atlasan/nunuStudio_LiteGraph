@@ -140,7 +140,7 @@ transform.setPosition(this.body.position.x, this.body.position.y, this.body.posi
 
 // Get inverse of the world matrix
 var inverse = new Matrix4();
-inverse.getInverse(this.parent.matrixWorld);
+inverse.copy(this.parent.matrixWorld).invert();
 
 // Get position, scale and quaternion
 var scale = new Vector3();

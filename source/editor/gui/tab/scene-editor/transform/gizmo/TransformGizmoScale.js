@@ -16,12 +16,11 @@ import {TransformGizmo} from "./TransformGizmo.js";
  */
 class TransformGizmoScale extends TransformGizmo {
 	constructor() {
-	var arrowGeometry = new Geometry();
 	var mesh = new Mesh(new BoxGeometry(0.125, 0.125, 0.125));
 	mesh.position.y = 0.5;
 	mesh.updateMatrix();
 
-	arrowGeometry.merge(mesh.geometry, mesh.matrix);
+	var arrowGeometry = mesh.geometry.clone().applyMatrix4(mesh.matrix);
 
 	var x = new BufferGeometry();
 	x.setAttribute("position", new Float32BufferAttribute([0, 0, 0, 1, 0, 0], 3));
@@ -32,7 +31,7 @@ class TransformGizmoScale extends TransformGizmo {
 	var z = new BufferGeometry();
 	z.setAttribute("position", new Float32BufferAttribute([0, 0, 0, 0, 0, 1], 3));
 
-	this.handleGizmos =
+	var handleGizmos =
 	{
 		X: [[new Mesh(arrowGeometry, GizmoMaterial.red), [0.5, 0, 0], [0, 0, - Math.PI / 2]], [new Line(x, GizmoLineMaterial.red)]],
 		Y: [[new Mesh(arrowGeometry, GizmoMaterial.green), [0, 0.5, 0]], [new Line(y, GizmoLineMaterial.green)]],
@@ -40,7 +39,7 @@ class TransformGizmoScale extends TransformGizmo {
 		XYZ: [[new Mesh(new BoxGeometry(0.125, 0.125, 0.125), GizmoMaterial.whiteAlpha)]]
 	};
 
-	this.pickerGizmos =
+	var pickerGizmos =
 	{
 		X: [[new Mesh(new CylinderGeometry(0.2, 0, 1, 4, 1, false), TransformGizmo.pickerMaterial), [0.6, 0, 0], [0, 0, - Math.PI / 2]]],
 		Y: [[new Mesh(new CylinderGeometry(0.2, 0, 1, 4, 1, false), TransformGizmo.pickerMaterial), [0, 0.6, 0]]],
@@ -48,12 +47,12 @@ class TransformGizmoScale extends TransformGizmo {
 		XYZ: [[new Mesh(new BoxGeometry(0.4, 0.4, 0.4), TransformGizmo.pickerMaterial)]]
 	};
 
-	super();
+	super(handleGizmos, pickerGizmos);
 	}
 
 	setActivePlane(axis, eye) {
 	var tempMatrix = new Matrix4();
-	eye.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(this.planes["XY"].matrixWorld)));
+	eye.applyMatrix4(tempMatrix.copy(tempMatrix.extractRotation(this.planes["XY"].matrixWorld)).invert());
 
 	if (axis === "X")
 	{
@@ -126,7 +125,7 @@ class TransformGizmoScale extends TransformGizmo {
 		}
 		else
 		{
-			controls.point.applyMatrix4(controls.tempMatrix.getInverse(controls.attributes[i].worldRotationMatrix));
+			controls.point.applyMatrix4(controls.tempMatrix.copy(controls.attributes[i].worldRotationMatrix).invert());
 
 			if (controls.axis === "X")
 			{

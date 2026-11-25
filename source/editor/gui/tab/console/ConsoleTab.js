@@ -276,34 +276,6 @@ class ConsoleTab extends TabComponent {
 	this.historyPointer = this.history.length - 1;
 	}
 
-/**
- * Get stack trace up until the point that this method was called.
- *
- * Includes the place were this method was called.
- *
- * Result is returned as a array of strings and may be different from browser to browser.
- *
- * @static
- * @method getStackTrace
- */
-ConsoleTab.getStackTrace = function()
-{
-	var stack;
-
-	try
-	{
-		throw new Error("");
-	}
-	catch (error)
-	{
-		stack = error.stack || "";
-		stack = stack.split("\n").map(function(line)
-		{
-			return line.trim();
-		});
-		return stack.splice(stack[0] === "Error" ? 2 : 1);
-	}
-};
 
 /**
  * Use this console as the predefined console.
@@ -441,6 +413,35 @@ ConsoleTab.getStackTrace = function()
 	}
 
 }
+
+/**
+ * Get stack trace up until the point that this method was called.
+ *
+ * Includes the place were this method was called.
+ *
+ * Result is returned as a array of strings and may be different from browser to browser.
+ *
+ * @static
+ * @method getStackTrace
+ */
+ConsoleTab.getStackTrace = function()
+{
+	var stack;
+
+	try
+	{
+		throw new Error("");
+	}
+	catch (error)
+	{
+		stack = error.stack || "";
+		stack = stack.split("\n").map(function(line)
+		{
+			return line.trim();
+		});
+		return stack.splice(stack[0] === "Error" ? 2 : 1);
+	}
+};
 
 /**
  * Create a new log division element and fill with information from the object.

@@ -232,25 +232,6 @@ class TransformControls extends Object3D {
 	this.quaternionE = new Quaternion();
 	}
 
-/**
- * Attributes that need to be stored for each object to keep their transform state.
- *
- * Each selected object has one state.
- *
- * @class TransformControlAtttributes
- */
-function TransformControlAtttributes()
-{
-	this.parentRotationMatrix = new Matrix4();
-	this.parentScale = new Vector3();
-	this.worldRotationMatrix = new Matrix4();
-	this.worldPosition = new Vector3();
-	this.worldRotation = new Euler();
-	this.oldPosition = new Vector3();
-	this.oldScale = new Vector3();
-	this.oldQuaternion = new Quaternion();
-	this.oldRotationMatrix = new Matrix4();
-}
 
 
 
@@ -493,7 +474,7 @@ function TransformControlAtttributes()
 				this.attributes[i].oldRotationMatrix.extractRotation(this.objects[i].matrix);
 				this.attributes[i].worldRotationMatrix.extractRotation(this.objects[i].matrixWorld);
 				this.attributes[i].parentRotationMatrix.extractRotation(this.objects[i].parent.matrixWorld);
-				this.attributes[i].parentScale.setFromMatrixScale(this.tempMatrix.getInverse(this.objects[i].parent.matrixWorld));
+				this.attributes[i].parentScale.setFromMatrixScale(this.tempMatrix.copy(this.objects[i].parent.matrixWorld).invert());
 			}
 
 			this.offset.copy(planeIntersect.point);
@@ -558,6 +539,26 @@ function TransformControlAtttributes()
 	return intersections.length > 0 ? intersections[0] : false;
 	}
 
+}
+
+/**
+ * Attributes that need to be stored for each object to keep their transform state.
+ *
+ * Each selected object has one state.
+ *
+ * @class TransformControlAtttributes
+ */
+function TransformControlAtttributes()
+{
+	this.parentRotationMatrix = new Matrix4();
+	this.parentScale = new Vector3();
+	this.worldRotationMatrix = new Matrix4();
+	this.worldPosition = new Vector3();
+	this.worldRotation = new Euler();
+	this.oldPosition = new Vector3();
+	this.oldScale = new Vector3();
+	this.oldQuaternion = new Quaternion();
+	this.oldRotationMatrix = new Matrix4();
 }
 
 TransformControls.NONE = "none";

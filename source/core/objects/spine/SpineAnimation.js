@@ -46,7 +46,7 @@ class SpineAnimation extends SkeletonMesh
 			}
 
 			var element = texture.texture.image;
-			var image = texture.texture.source;
+			var image = texture.texture.sourceImage;
 
 			if (image.width > 0 && image.height > 0)
 			{

@@ -2,16 +2,13 @@ import {ShaderMaterial, SphereGeometry, Mesh} from "three";
 
 class LightProbeHelper extends Mesh {
 	constructor(lightProbe, size) {
-	this.lightProbe = lightProbe;
-	this.size = size;
-
 	var material = new ShaderMaterial({
 
 		type: 'LightProbeHelperMaterial',
 
 		uniforms: {
-			sh: {value: this.lightProbe.sh.coefficients}, // by reference
-			intensity: {value: this.lightProbe.intensity}
+			sh: {value: lightProbe.sh.coefficients}, // by reference
+			intensity: {value: lightProbe.intensity}
 		},
 
 		vertexShader: [
@@ -71,6 +68,9 @@ class LightProbeHelper extends Mesh {
 	var geometry = new SphereGeometry(1, 32, 16);
 
 	super(geometry, material);
+
+	this.lightProbe = lightProbe;
+	this.size = size;
 
 	this.onBeforeRender();
 

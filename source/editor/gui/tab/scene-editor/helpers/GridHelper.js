@@ -12,9 +12,6 @@ import {LineSegments, BufferGeometry, LineBasicMaterial, Float32BufferAttribute}
  */
 class GridHelper extends LineSegments {
 	constructor(size, spacing, color) {
-	this.size = size !== undefined ? size : 100;
-	this.spacing = spacing !== undefined ? spacing : 1;
-
 	super(new BufferGeometry(), new LineBasicMaterial(
 		{
 			color: color !== undefined ? color : 0x888888,
@@ -23,8 +20,11 @@ class GridHelper extends LineSegments {
 			opacity: 0.5
 		}));
 
+	this.size = size !== undefined ? size : 100;
+	this.spacing = spacing !== undefined ? spacing : 1;
+
 	this.update();
-	};
+	}
 
 	setSize(size) {
 	this.size = size;

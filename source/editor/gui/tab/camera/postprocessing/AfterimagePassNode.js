@@ -22,7 +22,6 @@ class AfterimagePassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("Afterimage", AfterimagePassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -31,4 +30,6 @@ PassNode.registerPass("Afterimage", AfterimagePassNode);
 	}
 
 }
+
+PassNode.registerPass("Afterimage", AfterimagePassNode);
 export {AfterimagePassNode};

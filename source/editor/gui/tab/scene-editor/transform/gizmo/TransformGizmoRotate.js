@@ -14,7 +14,7 @@ import {TransformGizmo} from "./TransformGizmo.js";
  */
 class TransformGizmoRotate extends TransformGizmo {
 	constructor() {
-	this.handleGizmos =
+	var handleGizmos =
 	{
 		X: [[new Line(new CircleGeometry(1, "x", 0.5), GizmoLineMaterial.red)]],
 		Y: [[new Line(new CircleGeometry(1, "y", 0.5), GizmoLineMaterial.green)]],
@@ -23,51 +23,19 @@ class TransformGizmoRotate extends TransformGizmo {
 		XYZE: [[new Line(new CircleGeometry(1, "z", 1), GizmoLineMaterial.grey)]]
 	};
 
-	this.pickerGizmos =
+	var pickerGizmos =
 	{
 		X: [[new Mesh(TransformGizmoRotate.torus, TransformGizmo.pickerMaterial), [0, 0, 0], [0, - Math.PI / 2, - Math.PI / 2]]],
 		Y: [[new Mesh(TransformGizmoRotate.torus, TransformGizmo.pickerMaterial), [0, 0, 0], [Math.PI / 2, 0, 0]]],
 		Z: [[new Mesh(TransformGizmoRotate.torus, TransformGizmo.pickerMaterial), [0, 0, 0], [0, 0, - Math.PI / 2]]],
 		E: [[new Mesh(TransformGizmoRotate.torusBig, TransformGizmo.pickerMaterial)]],
-		XYZE: [[new Mesh(new Geometry())]]
+		XYZE: [[new Mesh(new BufferGeometry())]]
 	};
 
-	super();
+	super(handleGizmos, pickerGizmos);
 	}
 
 
-/**
- * Circle geometry used for the rotation gizmo rings.
- *
- * @class CircleGeometry
- */
-class CircleGeometry extends BufferGeometry {
-	constructor(radius, facing, arc) {
-	super();
-	var vertices = [];
-
-	var arcLen = arc !== undefined ? arc * 64 : 64;
-
-	for (var i = 0; i < arcLen; i++)
-	{
-		if (facing === "x")
-		{
-			vertices.push(0, Math.cos(i / 32 * Math.PI) * radius, Math.sin(i / 32 * Math.PI) * radius);
-		}
-		else if (facing === "y")
-		{
-			vertices.push(Math.cos(i / 32 * Math.PI) * radius, 0, Math.sin(i / 32 * Math.PI) * radius);
-		}
-		else if (facing === "z")
-		{
-			vertices.push(Math.sin(i / 32 * Math.PI) * radius, Math.cos(i / 32 * Math.PI) * radius, 0);
-		}
-	}
-
-	this.setAttribute("position", new Float32BufferAttribute(vertices, 3));
-	}
-}
-;
 
 	setActivePlane(axis) {
 	if (axis === "E")
@@ -89,7 +57,7 @@ class CircleGeometry extends BufferGeometry {
 	}
 
 	update(rotation, eye2) {
-	super.update(arguments);
+	super.update(...arguments);
 
 	var tempMatrix = new Matrix4();
 	var worldRotation = new Euler(0, 0, 1);
@@ -105,7 +73,7 @@ class CircleGeometry extends BufferGeometry {
 	worldRotation.copy(this.planes["XY"].rotation);
 	tempQuaternion.setFromEuler(worldRotation);
 
-	tempMatrix.makeRotationFromQuaternion(tempQuaternion).getInverse(tempMatrix);
+	tempMatrix.makeRotationFromQuaternion(tempQuaternion).copy(tempMatrix).invert();
 	eye.applyMatrix4(tempMatrix);
 
 	this.traverse(function(child)
@@ -165,13 +133,13 @@ class CircleGeometry extends BufferGeometry {
 
 		if (controls.axis === "E")
 		{
-			controls.point.applyMatrix4(controls.tempMatrix.getInverse(controls.lookAtMatrix));
-			controls.tempVector.applyMatrix4(controls.tempMatrix.getInverse(controls.lookAtMatrix));
+			controls.point.applyMatrix4(controls.tempMatrix.copy(controls.lookAtMatrix).invert());
+			controls.tempVector.applyMatrix4(controls.tempMatrix.copy(controls.lookAtMatrix).invert());
 
 			controls.toolRotation.set(Math.atan2(controls.point.z, controls.point.y), Math.atan2(controls.point.x, controls.point.z), Math.atan2(controls.point.y, controls.point.x));
 			controls.offsetRotation.set(Math.atan2(controls.tempVector.z, controls.tempVector.y), Math.atan2(controls.tempVector.x, controls.tempVector.z), Math.atan2(controls.tempVector.y, controls.tempVector.x));
 
-			controls.tempQuaternion.setFromRotationMatrix(controls.tempMatrix.getInverse(controls.attributes[i].parentRotationMatrix));
+			controls.tempQuaternion.setFromRotationMatrix(controls.tempMatrix.copy(controls.attributes[i].parentRotationMatrix).invert());
 
 			controls.quaternionE.setFromAxisAngle(controls.eye, controls.toolRotation.z - controls.offsetRotation.z);
 			controls.quaternionXYZ.setFromRotationMatrix(controls.attributes[i].worldRotationMatrix);
@@ -185,7 +153,7 @@ class CircleGeometry extends BufferGeometry {
 		{
 			controls.quaternionE.setFromEuler(controls.point.clone().cross(controls.tempVector).normalize()); // rotation axis
 
-			controls.tempQuaternion.setFromRotationMatrix(controls.tempMatrix.getInverse(controls.attributes[i].parentRotationMatrix));
+			controls.tempQuaternion.setFromRotationMatrix(controls.tempMatrix.copy(controls.attributes[i].parentRotationMatrix).invert());
 			controls.quaternionX.setFromAxisAngle(controls.quaternionE, - controls.point.clone().angleTo(controls.tempVector));
 			controls.quaternionXYZ.setFromRotationMatrix(controls.attributes[i].worldRotationMatrix);
 
@@ -196,9 +164,9 @@ class CircleGeometry extends BufferGeometry {
 		}
 		else if (controls.space === TransformControls.LOCAL)
 		{
-			controls.point.applyMatrix4(controls.tempMatrix.getInverse(controls.attributes[i].worldRotationMatrix));
+			controls.point.applyMatrix4(controls.tempMatrix.copy(controls.attributes[i].worldRotationMatrix).invert());
 
-			controls.tempVector.applyMatrix4(controls.tempMatrix.getInverse(controls.attributes[i].worldRotationMatrix));
+			controls.tempVector.applyMatrix4(controls.tempMatrix.copy(controls.attributes[i].worldRotationMatrix).invert());
 
 			controls.toolRotation.set(Math.atan2(controls.point.z, controls.point.y), Math.atan2(controls.point.x, controls.point.z), Math.atan2(controls.point.y, controls.point.x));
 			controls.offsetRotation.set(Math.atan2(controls.tempVector.z, controls.tempVector.y), Math.atan2(controls.tempVector.x, controls.tempVector.z), Math.atan2(controls.tempVector.y, controls.tempVector.x));
@@ -237,7 +205,7 @@ class CircleGeometry extends BufferGeometry {
 		{
 			controls.toolRotation.set(Math.atan2(controls.point.z, controls.point.y), Math.atan2(controls.point.x, controls.point.z), Math.atan2(controls.point.y, controls.point.x));
 			controls.offsetRotation.set(Math.atan2(controls.tempVector.z, controls.tempVector.y), Math.atan2(controls.tempVector.x, controls.tempVector.z), Math.atan2(controls.tempVector.y, controls.tempVector.x));
-			controls.tempQuaternion.setFromRotationMatrix(controls.tempMatrix.getInverse(controls.attributes[i].parentRotationMatrix));
+			controls.tempQuaternion.setFromRotationMatrix(controls.tempMatrix.copy(controls.attributes[i].parentRotationMatrix).invert());
 
 			if (controls.snap)
 			{
@@ -275,6 +243,38 @@ class CircleGeometry extends BufferGeometry {
 	}
 
 }
+
+/**
+ * Circle geometry used for the rotation gizmo rings.
+ *
+ * @class CircleGeometry
+ */
+class CircleGeometry extends BufferGeometry {
+	constructor(radius, facing, arc) {
+	super();
+	var vertices = [];
+
+	var arcLen = arc !== undefined ? arc * 64 : 64;
+
+	for (var i = 0; i < arcLen; i++)
+	{
+		if (facing === "x")
+		{
+			vertices.push(0, Math.cos(i / 32 * Math.PI) * radius, Math.sin(i / 32 * Math.PI) * radius);
+		}
+		else if (facing === "y")
+		{
+			vertices.push(Math.cos(i / 32 * Math.PI) * radius, 0, Math.sin(i / 32 * Math.PI) * radius);
+		}
+		else if (facing === "z")
+		{
+			vertices.push(Math.sin(i / 32 * Math.PI) * radius, Math.cos(i / 32 * Math.PI) * radius, 0);
+		}
+	}
+
+	this.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+	}
+};
 
 TransformGizmoRotate.torus = new TorusGeometry(1, 0.12, 4, 12, Math.PI);
 TransformGizmoRotate.torusBig = new TorusGeometry(1.25, 0.12, 2, 24);

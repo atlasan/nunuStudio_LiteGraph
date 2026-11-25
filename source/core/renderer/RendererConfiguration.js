@@ -1,4 +1,7 @@
-import {PCFSoftShadowMap, NoToneMapping, WebGLRenderer} from "three";
+import {PCFSoftShadowMap, NoToneMapping, WebGLRenderer, ColorManagement, LinearSRGBColorSpace} from "three";
+
+// Keep the pre r152 color pipeline (no automatic sRGB conversion) so existing projects render as before.
+ColorManagement.enabled = false;
 
 /**
  * Renderer configuration stores all the WebGL renderer related parameters.
@@ -325,8 +328,9 @@ RendererConfiguration.prototype.apply = function(renderer)
 	renderer.debug.checkShaderErrors = this.checkShaderErrors;
 	renderer.sortObjects = this.sortObjects;
 
-	renderer.gammaFactor = this.gammaFactor;
-	renderer.physicallyCorrectLights = this.physicallyCorrectLights;
+	// three.js r152+ removed gamma factor and r155 made physically correct lights the default, keep the previous behavior unless requested.
+	renderer.outputColorSpace = LinearSRGBColorSpace;
+	renderer.useLegacyLights = !this.physicallyCorrectLights;
 
 	renderer.maxMorphTargets = this.maxMorphTargets;
 	renderer.maxMorphNormals = this.maxMorphNormals;

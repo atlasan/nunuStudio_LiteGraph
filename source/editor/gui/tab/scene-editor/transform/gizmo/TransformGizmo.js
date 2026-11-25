@@ -10,8 +10,11 @@ import {GizmoMaterial} from "../GizmoMaterial.js";
  * @class TransformGizmo
  */
 class TransformGizmo extends Object3D {
-	constructor() {
+	constructor(handleGizmos, pickerGizmos) {
 	super();
+
+	this.handleGizmos = handleGizmos !== undefined ? handleGizmos : {};
+	this.pickerGizmos = pickerGizmos !== undefined ? pickerGizmos : {};
 
 	this.handles = new Object3D();
 	this.pickers = new Object3D();

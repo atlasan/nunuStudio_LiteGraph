@@ -93,26 +93,6 @@ class TweenAnimation {
 	});
 	}
 
-/**
- * Check if a attribute is a THREE vectorial data type.
- * 
- * Vetorial types have some common methods (toArray, copy, fromArray).
- *
- * (Matrix3, Matrix4, Vector2, Vector3, Vector4, Quaternion, Euler).
- * 
- * @method isVetorial
- * @param {Object} object To be checked.
- * @return {boolean} True if the object is of a vectorial type.
- */
-TweenAnimation.isVetorial = function(object)
-{
-	if (object === null || object === undefined)
-	{
-		return false;
-	}
-	
-	return object.isVector3 === true || object.isEuler === true || object instanceof Quaternion || object.isVector2 === true || object.isVector4 === true || object.isMatrix3 === true || object.isMatrix4 === true;
-};
 
 /**
  * Set an on complete callback function, that is executed when the animation finishes.
@@ -134,4 +114,25 @@ TweenAnimation.isVetorial = function(object)
 	}
 
 }
+
+/**
+ * Check if a attribute is a THREE vectorial data type.
+ * 
+ * Vetorial types have some common methods (toArray, copy, fromArray).
+ *
+ * (Matrix3, Matrix4, Vector2, Vector3, Vector4, Quaternion, Euler).
+ * 
+ * @method isVetorial
+ * @param {Object} object To be checked.
+ * @return {boolean} True if the object is of a vectorial type.
+ */
+TweenAnimation.isVetorial = function(object)
+{
+	if (object === null || object === undefined)
+	{
+		return false;
+	}
+	
+	return object.isVector3 === true || object.isEuler === true || object instanceof Quaternion || object.isVector2 === true || object.isVector4 === true || object.isMatrix3 === true || object.isMatrix4 === true;
+};
 export {TweenAnimation};

@@ -38,6 +38,22 @@ class ObjectIconHelper extends Sprite {
  * @type {Map}
  */
 
+
+	update() {
+	// Position
+	this.matrix.elements[12] = this.object.matrixWorld.elements[12];
+	this.matrix.elements[13] = this.object.matrixWorld.elements[13];
+	this.matrix.elements[14] = this.object.matrixWorld.elements[14];
+
+	// Scale
+	this.matrix.elements[0] = this.size;
+	this.matrix.elements[5] = this.size / this.material.ratio;
+	this.matrix.elements[10] = this.size;
+
+	}
+
+}
+
 /**
  * Get the sprite material for a icon url.
  *
@@ -77,21 +93,6 @@ ObjectIconHelper.getMaterial = function(icon)
 
 	return material;
 };
-
-	update() {
-	// Position
-	this.matrix.elements[12] = this.object.matrixWorld.elements[12];
-	this.matrix.elements[13] = this.object.matrixWorld.elements[13];
-	this.matrix.elements[14] = this.object.matrixWorld.elements[14];
-
-	// Scale
-	this.matrix.elements[0] = this.size;
-	this.matrix.elements[5] = this.size / this.material.ratio;
-	this.matrix.elements[10] = this.size;
-
-	}
-
-}
 
 ObjectIconHelper.MATERIALS = new Map();
 

@@ -12,9 +12,9 @@ import {Action} from "./Action.js";
  * @param {Object} newValue New value for the object attribute.
  * @param {Object} oldValue Optionally we can pass the old value.
  */
-class ChangeAction {
+class ChangeAction extends Action {
 	constructor(object, attribute, newValue, oldValue) {
-	Action.call(this);
+	super();
 
 	this.object = object;
 	this.attribute = attribute;

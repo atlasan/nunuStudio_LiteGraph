@@ -13,9 +13,9 @@ import {RemoveResourceAction} from "./RemoveResourceAction.js";
  * @param {ResourceManager} manager Manager to insert the resource into.
  * @param {string} category Category of the resource.
  */
-class AddResourceAction {
+class AddResourceAction extends Action {
 	constructor(resource, manager, category) {
-	Action.call(this);
+	super();
 	
 	this.resource = resource;
 	this.manager = manager;

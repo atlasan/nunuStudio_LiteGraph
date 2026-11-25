@@ -47,7 +47,6 @@ class OrientationCube {
 
 	// Cube faces
 	var texture = new Texture(Global.FILE_PATH + "camera/xPos.png");
-	texture.format = ;
 	this.xPos = new Mesh(plane, new MeshBasicMaterial({map: texture}));
 	this.xPos.code = OrientationCube.X_POS;
 	this.xPos.position.set(0.5, 0, 0);
@@ -57,7 +56,6 @@ class OrientationCube {
 	this.scene.add(this.xPos);
 
 	var texture = new Texture(Global.FILE_PATH + "camera/xNeg.png");
-	texture.format = ;
 	this.xNeg = new Mesh(plane, new MeshBasicMaterial({map: texture}));
 	this.xNeg.code = OrientationCube.X_NEG;
 	this.xNeg.position.set(-0.5, 0, 0);
@@ -67,7 +65,6 @@ class OrientationCube {
 	this.scene.add(this.xNeg);
 
 	var texture = new Texture(Global.FILE_PATH + "camera/yPos.png");
-	texture.format = ;
 	this.yPos = new Mesh(plane, new MeshBasicMaterial({map: texture}));
 	this.yPos.code = OrientationCube.Y_POS;
 	this.yPos.position.set(0, 0.5, 0);
@@ -77,7 +74,6 @@ class OrientationCube {
 	this.scene.add(this.yPos);
 
 	var texture = new Texture(Global.FILE_PATH + "camera/yNeg.png");
-	texture.format = ;
 	this.yNeg = new Mesh(plane, new MeshBasicMaterial({map: texture}));
 	this.yNeg.code = OrientationCube.Y_NEG;
 	this.yNeg.position.set(0, -0.5, 0);
@@ -87,7 +83,6 @@ class OrientationCube {
 	this.scene.add(this.yNeg);
 
 	var texture = new Texture(Global.FILE_PATH + "camera/zPos.png");
-	texture.format = ;
 	this.zPos = new Mesh(plane, new MeshBasicMaterial({map: texture}));
 	this.zPos.code = OrientationCube.Z_POS;
 	this.zPos.position.set(0, 0, 0.5);
@@ -96,7 +91,6 @@ class OrientationCube {
 	this.scene.add(this.zPos);
 
 	var texture = new Texture(Global.FILE_PATH + "camera/zNeg.png");
-	texture.format = ;
 	this.zNeg = new Mesh(plane, new MeshBasicMaterial({map: texture}));
 	this.zNeg.code = OrientationCube.Z_NEG;
 	this.zNeg.position.set(0, 0, -0.5);
@@ -147,7 +141,7 @@ class OrientationCube {
 	updateRotation(camera) {
 	this.scene.quaternion.copy(camera.quaternion);
 	this.scene.updateMatrix();
-	this.scene.matrix.getInverse(this.scene.matrix);
+	this.scene.matrix.copy(this.scene.matrix).invert();
 	}
 
 /**

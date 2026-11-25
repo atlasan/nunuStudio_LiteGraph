@@ -1,4 +1,4 @@
-import {Geometry, Font, ExtrudeBufferGeometry, ShapeBufferGeometry, Object3D} from "three";
+import {BufferGeometry, ExtrudeGeometry, ShapeGeometry, Object3D} from "three";
 import {Mesh} from "../mesh/Mesh.js";
 
 /**
@@ -175,7 +175,7 @@ class TextMesh extends Mesh
 
 			if (this.extruded)
 			{
-				this.geometry = new ExtrudeBufferGeometry(shapes,
+				this.geometry = new ExtrudeGeometry(shapes,
 					{
 						curveSegments: this.curveSegments,
 						depth: this.height,
@@ -187,7 +187,7 @@ class TextMesh extends Mesh
 			}
 			else
 			{
-				this.geometry = new ShapeBufferGeometry(shapes, this.curveSegments);
+				this.geometry = new ShapeGeometry(shapes, this.curveSegments);
 			}
 		}
 	}
@@ -240,6 +240,6 @@ class TextMesh extends Mesh
 	}
 }
 
-TextMesh.EMPTY_GEOMETRY = new Geometry();
+TextMesh.EMPTY_GEOMETRY = new BufferGeometry();
 
 export {TextMesh};

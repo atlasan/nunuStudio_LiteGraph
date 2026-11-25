@@ -1,4 +1,5 @@
-import {ParametricBufferGeometry as TParametricBufferGeometry, Vector3} from "three";
+import {Vector3} from "three";
+import {ParametricGeometry} from "three/examples/jsm/geometries/ParametricGeometry.js";
 
 /**
  * Parametric bufffer geometry are constructed from javascript code describing a parametric surface.
@@ -13,22 +14,21 @@ import {ParametricBufferGeometry as TParametricBufferGeometry, Vector3} from "th
  * @param {number} slices The count of slices to use for the parametric function.
  * @param {number} stacks The count of stacks to use for the parametric function.
  */
-function ParametricBufferGeometry(code, slices, stacks)
+class ParametricBufferGeometry extends ParametricGeometry
 {
-	var generator = this.compile(code);
+	constructor(code, slices, stacks)
+	{
+		super(ParametricBufferGeometry.prototype.compile(code), slices, stacks);
 
-	TParametricBufferGeometry.call(this, generator, slices, stacks);
+		this.type = "ParametricBufferGeometry";
 
-	this.type = "ParametricBufferGeometry";
-
-	this.parameters = {
-		code: code,
-		slices: slices,
-		stacks: stacks
-	};
+		this.parameters = {
+			code: code,
+			slices: slices,
+			stacks: stacks
+		};
+	}
 }
-
-ParametricBufferGeometry.prototype = Object.create(TParametricBufferGeometry.prototype);
 
 /**
  * Compile the generator code and generate a function to be passed to the geometry generator.

@@ -91,20 +91,7 @@ class PassNode extends TableForm {
 	}
 
 
-PassNode.createPass = function(element, type)
-{
-	if (PassNode.passes[type] !== undefined)
-	{
-		return new PassNode.passes[type](element);
-	}
 
-	return new PassNode(element, type);
-};
-
-PassNode.registerPass = function(type, Constructor)
-{
-	PassNode.passes[type] = Constructor;
-};
 
 	setPass(pass) {
 	this.pass = pass;
@@ -127,6 +114,21 @@ PassNode.registerPass = function(type, Constructor)
 	}
 
 }
+
+PassNode.createPass = function(element, type)
+{
+	if (PassNode.passes[type] !== undefined)
+	{
+		return new PassNode.passes[type](element);
+	}
+
+	return new PassNode(element, type);
+};
+
+PassNode.registerPass = function(type, Constructor)
+{
+	PassNode.passes[type] = Constructor;
+};
 
 PassNode.passes = {};
 

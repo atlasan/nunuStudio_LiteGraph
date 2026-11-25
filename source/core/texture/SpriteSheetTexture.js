@@ -279,7 +279,7 @@ class SpriteSheetTexture extends Texture
 	toJSON(meta)
 	{
 		var data = super.toJSON(meta);
-		var image = this.source.toJSON(meta);
+		var image = this.sourceImage.toJSON(meta);
 
 		data.image = image.uuid;
 		data.loop = this.loop;

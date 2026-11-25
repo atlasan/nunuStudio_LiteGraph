@@ -15,9 +15,9 @@ import {Editor} from "../../../Editor.js";
  * @param {ResourceManager} manager Manager to insert the resource into.
  * @param {string} category Category of the resource.
  */
-class SwapResourceAction {
+class SwapResourceAction extends Action {
 	constructor(oldResource, newResource, manager, category) {
-	Action.call(this);
+	super();
 	
 	this.oldResource = oldResource;
 	this.newResource = newResource;

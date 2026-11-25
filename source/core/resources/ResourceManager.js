@@ -506,4 +506,13 @@ class ResourceManager extends Object3D
 		}
 	}
 }
+// Mix in the ResourceContainer methods, without overriding the ones ResourceManager defines itself
+for (var key of Object.getOwnPropertyNames(ResourceContainer.prototype))
+{
+	if (key !== "constructor" && !Object.prototype.hasOwnProperty.call(ResourceManager.prototype, key))
+	{
+		ResourceManager.prototype[key] = ResourceContainer.prototype[key];
+	}
+}
+
 export {ResourceManager};

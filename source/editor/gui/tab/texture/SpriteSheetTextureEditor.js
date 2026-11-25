@@ -19,7 +19,7 @@ class SpriteSheetTextureEditor extends TextureEditor {
 	this.source.size.set(0, 100);
 	this.source.setOnChange(function()
 	{
-		Editor.addAction(new CallbackAction(new ChangeAction(self.texture, "source", self.source.getValue()), function()
+		Editor.addAction(new CallbackAction(new ChangeAction(self.texture, "sourceImage", self.source.getValue()), function()
 		{
 			self.texture.updateSource();
 		}));
@@ -105,7 +105,7 @@ class SpriteSheetTextureEditor extends TextureEditor {
 	attach(texture) {
 	super.attach(texture);
 
-	this.source.setValue(this.texture.source);
+	this.source.setValue(this.texture.sourceImage);
 	this.frames.setValue(this.texture.framesHorizontal, this.texture.framesVertical);
 	this.totalFrames.setValue(this.texture.totalFrames);
 	this.beginFrame.setValue(this.texture.beginFrame);

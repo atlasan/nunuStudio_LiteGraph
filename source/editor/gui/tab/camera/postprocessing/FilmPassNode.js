@@ -52,7 +52,6 @@ class FilmPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("Film", FilmPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -64,4 +63,6 @@ PassNode.registerPass("Film", FilmPassNode);
 	}
 
 }
+
+PassNode.registerPass("Film", FilmPassNode);
 export {FilmPassNode};

@@ -15,9 +15,11 @@ import {Pass} from "../Pass.js";
  * @param {number} radius Bloom effect radius.
  * @param {number} threshold White point threshold.
  */
-function UnrealBloomPass(strength, radius, threshold)
+class UnrealBloomPass extends Pass
 {
-	Pass.call(this);
+	constructor(strength, radius, threshold)
+	{
+	super();
 
 	this.type = "UnrealBloom";
 
@@ -173,9 +175,9 @@ function UnrealBloomPass(strength, radius, threshold)
 			set: function(value) {this.compositeMaterial.uniforms["bloomTintColors"].value = value;}
 		}
 		});
+	}
 }
 
-UnrealBloomPass.prototype = Object.create(Pass.prototype);
 
 UnrealBloomPass.BlurDirectionX = new Vector2(1.0, 0.0);
 UnrealBloomPass.BlurDirectionY = new Vector2(0.0, 1.0);

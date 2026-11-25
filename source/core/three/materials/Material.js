@@ -1,4 +1,4 @@
-import {NormalBlending, FrontSide, NoColors} from "three";
+import {NormalBlending, FrontSide} from "three";
 
 /**
  * Materials describe the appearance of objects. They are defined in a (mostly) renderer-independent way, so you don"t have to rewrite materials if you decide to use a different renderer.
@@ -280,7 +280,7 @@ THREE.Material.prototype.toJSON = function(meta)
 	{
 		data.side = this.side;
 	}
-	if (this.vertexColors !== NoColors)
+	if (this.vertexColors === true)
 	{
 		data.vertexColors = this.vertexColors;
 	}

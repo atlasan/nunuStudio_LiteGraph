@@ -83,7 +83,6 @@ class Component {
 	 */
 	this._mode = Component.TOP_LEFT;
 	}
-}
 
 /**
  * Top-left positioning.
@@ -109,18 +108,6 @@ class Component {
  * @type {number}
  */
 
-/**
- * Bottom-right positioning.
- *
- * @static
- * @attribute BOTTOM_RIGHT
- * @type {number}
- */
-
-Component.preventDefault = function(event)
-{
-	event.preventDefault();
-};
 
 /**
  * Add a event to the component base element. The event is registered in the component event manager.
@@ -488,6 +475,18 @@ Component.preventDefault = function(event)
 	}
 
 }
+
+/**
+ * Bottom-right positioning.
+ *
+ * @static
+ * @attribute BOTTOM_RIGHT
+ * @type {number}
+ */
+Component.preventDefault = function(event)
+{
+	event.preventDefault();
+};
 
 Component.TOP_LEFT = 0;
 Component.TOP_RIGHT = 1;

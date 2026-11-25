@@ -1,9 +1,7 @@
-import {BufferGeometry, Color, Float32BufferAttribute, LineSegments, LineBasicMaterial, VertexColors, Matrix4, Vector3} from "three";
+import {BufferGeometry, Color, Float32BufferAttribute, LineSegments, LineBasicMaterial, Matrix4, Vector3} from "three";
 
 class SkeletonHelper extends LineSegments {
 	constructor(object) {
-	this.object = object;
-
 	var bones = SkeletonHelper.getBoneList(object);
 	var geometry = new BufferGeometry();
 
@@ -31,12 +29,13 @@ class SkeletonHelper extends LineSegments {
 
 	super(geometry, new LineBasicMaterial(
 		{
-			vertexColors: VertexColors,
+			vertexColors: true,
 			depthTest: false,
 			depthWrite: false,
 			transparent: false
 		}));
 
+	this.object = object;
 	this.root = object;
 	this.bones = bones;
 	this.matrixAutoUpdate = false;
@@ -44,22 +43,6 @@ class SkeletonHelper extends LineSegments {
 	this.update();
 	}
 
-SkeletonHelper.getBoneList = function(object)
-{
-	var boneList = [];
-
-	if (object && object.isBone)
-	{
-		boneList.push(object);
-	}
-
-	for (var i = 0; i < object.children.length; i++)
-	{
-		boneList.push.apply(boneList, SkeletonHelper.getBoneList(object.children[i]));
-	}
-
-	return boneList;
-};
 
 	update() {
 	var bones = this.bones;
@@ -67,7 +50,7 @@ SkeletonHelper.getBoneList = function(object)
 	var position = geometry.getAttribute("position");
 
 	var matrixWorldInv = new Matrix4();
-	matrixWorldInv.getInverse(this.root.matrixWorld);
+	matrixWorldInv.copy(this.root.matrixWorld).invert();
 
 	var boneMatrix = new Matrix4();
 	var vector = new Vector3();
@@ -93,4 +76,21 @@ SkeletonHelper.getBoneList = function(object)
 	}
 
 }
+
+SkeletonHelper.getBoneList = function(object)
+{
+	var boneList = [];
+
+	if (object && object.isBone)
+	{
+		boneList.push(object);
+	}
+
+	for (var i = 0; i < object.children.length; i++)
+	{
+		boneList.push.apply(boneList, SkeletonHelper.getBoneList(object.children[i]));
+	}
+
+	return boneList;
+};
 export {SkeletonHelper};

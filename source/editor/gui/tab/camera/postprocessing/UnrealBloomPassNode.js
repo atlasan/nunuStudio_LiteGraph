@@ -51,7 +51,6 @@ class UnrealBloomPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("UnrealBloom", UnrealBloomPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -63,4 +62,6 @@ PassNode.registerPass("UnrealBloom", UnrealBloomPassNode);
 	}
 
 }
+
+PassNode.registerPass("UnrealBloom", UnrealBloomPassNode);
 export {UnrealBloomPassNode};

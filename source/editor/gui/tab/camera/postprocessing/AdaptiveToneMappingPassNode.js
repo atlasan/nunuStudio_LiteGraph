@@ -41,7 +41,6 @@ class AdaptiveToneMappingPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("AdaptiveToneMapping", AdaptiveToneMappingPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -51,4 +50,6 @@ PassNode.registerPass("AdaptiveToneMapping", AdaptiveToneMappingPassNode);
 	}
 
 }
+
+PassNode.registerPass("AdaptiveToneMapping", AdaptiveToneMappingPassNode);
 export {AdaptiveToneMappingPassNode};

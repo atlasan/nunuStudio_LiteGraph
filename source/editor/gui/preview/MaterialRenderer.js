@@ -45,32 +45,7 @@ class MaterialRenderer extends PreviewRenderer {
 	this.scene.add(point);
 	}
 
-/**
- * Create a DOM element with the material preview render.
- *
- * @static
- * @method generateElement
- * @param {Material} material Material to preview.
- */
-MaterialRenderer.generateElement = function(material)
-{
-	var preview = document.createElement("img");
-	MaterialRenderer.render(material, function(url)
-	{
-		preview.src = url;
-	});
 
-	return preview;
-};
-
-MaterialRenderer.render = function(material, onRender)
-{
-	if (MaterialRenderer.instance === undefined)
-	{
-	}
-
-	MaterialRenderer.instance.render(material, onRender);
-};
 
 	render(material, onRender) {
 	if (material instanceof SpriteMaterial)
@@ -122,6 +97,33 @@ MaterialRenderer.render = function(material, onRender)
 	}
 
 }
+
+/**
+ * Create a DOM element with the material preview render.
+ *
+ * @static
+ * @method generateElement
+ * @param {Material} material Material to preview.
+ */
+MaterialRenderer.generateElement = function(material)
+{
+	var preview = document.createElement("img");
+	MaterialRenderer.render(material, function(url)
+	{
+		preview.src = url;
+	});
+
+	return preview;
+};
+
+MaterialRenderer.render = function(material, onRender)
+{
+	if (MaterialRenderer.instance === undefined)
+	{
+	}
+
+	MaterialRenderer.instance.render(material, onRender);
+};
 
 MaterialRenderer.instance = new MaterialRenderer();
 export {MaterialRenderer};

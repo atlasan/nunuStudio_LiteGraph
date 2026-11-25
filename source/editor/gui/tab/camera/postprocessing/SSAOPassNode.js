@@ -52,7 +52,6 @@ class SSAOPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("SSAO", SSAOPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -64,4 +63,6 @@ PassNode.registerPass("SSAO", SSAOPassNode);
 	}
 
 }
+
+PassNode.registerPass("SSAO", SSAOPassNode);
 export {SSAOPassNode};

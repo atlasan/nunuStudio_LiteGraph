@@ -256,7 +256,7 @@ class SceneEditor extends TabComponent {
 						}
 					}
 					// Geometry
-					else if (draggedObject instanceof Geometry || draggedObject instanceof BufferGeometry)
+					else if (draggedObject instanceof BufferGeometry)
 					{
 						if (object instanceof Mesh || object instanceof Points || object instanceof Line)
 						{

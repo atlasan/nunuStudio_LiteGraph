@@ -14,9 +14,9 @@ import {RemoveAction} from "./RemoveAction.js";
  * @param {Object3D} parent Parent to add the object.
  * @param {number} index Index to add the object to.
  */
-class AddAction {
+class AddAction extends Action {
 	constructor(object, parent, index) {
-	Action.call(this);
+	super();
 	
 	this.object = object;
 	this.index = index !== undefined ? index : -1;

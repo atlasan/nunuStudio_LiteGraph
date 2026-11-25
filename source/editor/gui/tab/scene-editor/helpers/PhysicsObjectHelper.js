@@ -1,5 +1,5 @@
 import {Vec3, Sphere, Box, Plane, ConvexPolyhedron, Trimesh, Heightfield, Shape} from "cannon-es";
-import {Object3D, MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, CylinderGeometry, Mesh, Vector3} from "three";
+import {Object3D, MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, CylinderGeometry, Mesh, BufferGeometry, Float32BufferAttribute} from "three";
 
 /**
  * Helper to preview physics objects on the editor.
@@ -155,14 +155,14 @@ class PhysicsObjectHelper extends Object3D {
 
 	case Shape.types.CONVEXPOLYHEDRON:
 		// Create mesh
-		var geo = new Geometry();
-
-		// Add vertices
+		var vertices = [];
 		for (var i = 0; i < shape.vertices.length; i++)
 		{
 			var v = shape.vertices[i];
-			geo.vertices.push(new Vector3(v.x, v.y, v.z));
+			vertices.push(v.x, v.y, v.z);
 		}
+
+		var indices = [];
 
 		// Add faces
 		for (var i = 0; i < shape.faces.length; i++)
@@ -175,35 +175,40 @@ class PhysicsObjectHelper extends Object3D {
 			{
 				var b = face[j];
 				var c = face[j + 1];
-				geo.faces.push(new Face3(a, b, c));
+				indices.push(a, b, c);
 			}
 		}
+
+		var geo = new BufferGeometry();
+		geo.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+		geo.setIndex(indices);
 		geo.computeBoundingSphere();
-		geo.computeFaceNormals();
+		geo.computeVertexNormals();
 		mesh = new Mesh(geo, material);
 		shape.geometryId = geo.id;
 		break;
 
 	case Shape.types.TRIMESH:
-		var geometry = new Geometry();
+		var positions = [];
 		var v0 = new Vec3();
 		var v1 = new Vec3();
 		var v2 = new Vec3();
 		for (var i = 0; i < shape.indices.length / 3; i++)
 		{
 			shape.getTriangleVertices(i, v0, v1, v2);
-			geometry.vertices.push(new Vector3(v0.x, v0.y, v0.z), new Vector3(v1.x, v1.y, v1.z), new Vector3(v2.x, v2.y, v2.z));
-			var j = geometry.vertices.length - 3;
-			geometry.faces.push(new Face3(j, j+1, j+2));
+			positions.push(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
 		}
+
+		var geometry = new BufferGeometry();
+		geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
 		geometry.computeBoundingSphere();
-		geometry.computeFaceNormals();
+		geometry.computeVertexNormals();
 		mesh = new Mesh(geometry, material);
 		shape.geometryId = geometry.id;
 		break;
 
 	case Shape.types.HEIGHTFIELD:
-		var geometry = new Geometry();
+		var positions = [];
 		var v0 = new Vec3();
 		var v1 = new Vec3();
 		var v2 = new Vec3();
@@ -221,15 +226,15 @@ class PhysicsObjectHelper extends Object3D {
 					v0.vadd(shape.pillarOffset, v0);
 					v1.vadd(shape.pillarOffset, v1);
 					v2.vadd(shape.pillarOffset, v2);
-					geometry.vertices.push(new Vector3(v0.x, v0.y, v0.z), new Vector3(v1.x, v1.y, v1.z), new Vector3(v2.x, v2.y, v2.z));
-					var i = geometry.vertices.length - 3;
-					geometry.faces.push(new Face3(i, i + 1, i + 2));
+					positions.push(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
 				}
 			}
 		}
 
+		var geometry = new BufferGeometry();
+		geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
 		geometry.computeBoundingSphere();
-		geometry.computeFaceNormals();
+		geometry.computeVertexNormals();
 		mesh = new Mesh(geometry, material);
 		shape.geometryId = geometry.id;
 		break;

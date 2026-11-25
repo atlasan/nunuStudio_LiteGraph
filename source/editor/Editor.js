@@ -671,7 +671,7 @@ Editor.deleteObject = function(object)
 			Editor.addAction(new RemoveResourceAction(selected[i], Editor.program, "videos"));
 		}
 		// Geometries
-		else if (selected[i] instanceof Geometry || selected[i] instanceof BufferGeometry)
+		else if (selected[i] instanceof BufferGeometry)
 		{
 			Editor.addAction(new RemoveResourceAction(selected[i], Editor.program, "geometries"));
 		}

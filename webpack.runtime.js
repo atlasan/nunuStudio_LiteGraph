@@ -9,6 +9,8 @@ const config = {
 	entry: source + "/core/Main.js",
 	target: "web",
 	devtool: false,
+	// Force a single three.js instance, some dependencies (spine-threejs) ship their own copy
+	resolve: {alias: {three$: Path.resolve(__dirname, "node_modules/three/build/three.module.js")}},
 	mode: "production",
 	optimization: {minimize: true},
 	performance: {

@@ -302,13 +302,6 @@ class MaterialEditor extends TabComponent {
 	this.main.attachB(this.form);
 	}
 
-MaterialEditor.geometries = [
-	[Locale.sphere, new SphereGeometry(1, 40, 40)],
-	[Locale.torus, new TorusGeometry(0.8, 0.4, 32, 64)],
-	[Locale.cube, new BoxGeometry(1, 1, 1, 1, 1, 1)],
-	[Locale.torusKnot, new TorusKnotGeometry(0.7, 0.3, 128, 64)],
-	[Locale.cone, new ConeGeometry(1, 2, 32)]
-];
 
 // Attach material to material editor
 	attach(material, asset) {
@@ -437,5 +430,13 @@ MaterialEditor.geometries = [
 	}
 
 }
+
+MaterialEditor.geometries = [
+	[Locale.sphere, new SphereGeometry(1, 40, 40)],
+	[Locale.torus, new TorusGeometry(0.8, 0.4, 32, 64)],
+	[Locale.cube, new BoxGeometry(1, 1, 1, 1, 1, 1)],
+	[Locale.torusKnot, new TorusKnotGeometry(0.7, 0.3, 128, 64)],
+	[Locale.cone, new ConeGeometry(1, 2, 32)]
+];
 
 export {MaterialEditor};

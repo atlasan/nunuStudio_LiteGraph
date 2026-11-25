@@ -85,30 +85,6 @@ class Graph extends Component {
 	this.createScale(3);
 	}
 
-/**
- * Graph lines represents a subgraph in the graph GUI object.
- *
- * @constructor
- * @class SubGraph
- * @param {Element} canvas Drawing canvas.
- * @param {string} name Name of the graph used to acces its data.
- * @param {string} color Color of this subgraph.
- */
-function SubGraph(canvas, name, color)
-{
-	if (canvas === undefined)
-	{
-		canvas = document.createElement("canvas");
-		canvas.style.position = "absolute";
-	}
-
-	this.canvas = canvas;
-	this.name = name !== undefined ? name : "default";
-	this.color = color !== undefined ? color : DOMUtils.getCSSVariable("--color-light");
-	this.values = [];
-	this.buttons = [];
-	this.onchange = null;
-};
 
 /**
  * Create numeric scale for this graph.
@@ -490,5 +466,30 @@ function SubGraph(canvas, name, color)
 	}
 
 }
+
+/**
+ * Graph lines represents a subgraph in the graph GUI object.
+ *
+ * @constructor
+ * @class SubGraph
+ * @param {Element} canvas Drawing canvas.
+ * @param {string} name Name of the graph used to acces its data.
+ * @param {string} color Color of this subgraph.
+ */
+function SubGraph(canvas, name, color)
+{
+	if (canvas === undefined)
+	{
+		canvas = document.createElement("canvas");
+		canvas.style.position = "absolute";
+	}
+
+	this.canvas = canvas;
+	this.name = name !== undefined ? name : "default";
+	this.color = color !== undefined ? color : DOMUtils.getCSSVariable("--color-light");
+	this.values = [];
+	this.buttons = [];
+	this.onchange = null;
+};
 
 export {Graph};

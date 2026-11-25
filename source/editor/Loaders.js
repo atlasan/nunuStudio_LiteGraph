@@ -1,5 +1,5 @@
 import {LinearFilter, CubeReflectionMapping, WebGLRenderer, Object3D, Mesh, SkinnedMesh, AnimationClip, MeshBasicMaterial, MeshPhongMaterial, ShapeGeometry, Matrix4, SRGBColorSpace} from "three";
-import {BasisTextureLoader} from "three/examples/jsm/loaders/BasisTextureLoader";
+import {BasisTextureLoader} from "../lib/three/BasisTextureLoader.js";
 import {AMFLoader} from "three/examples/jsm/loaders/AMFLoader";
 import {DDSLoader} from "three/examples/jsm/loaders/DDSLoader";
 import {PVRLoader} from "three/examples/jsm/loaders/PVRLoader";
@@ -9,17 +9,15 @@ import {GCodeLoader} from "three/examples/jsm/loaders/GCodeLoader";
 import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import {ThreeMFLoader} from "three/examples/jsm/loaders/3MFLoader";
-import {AssimpLoader} from "three/examples/jsm/loaders/AssimpLoader";
 import {TDSLoader} from "three/examples/jsm/loaders/TDSLoader";
 import {ColladaLoader} from "three/examples/jsm/loaders/ColladaLoader";
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {PLYLoader} from "three/examples/jsm/loaders/PLYLoader";
 import {VTKLoader} from "three/examples/jsm/loaders/VTKLoader";
-import {PRWMLoader} from "three/examples/jsm/loaders/PRWMLoader";
+import {PRWMLoader} from "../lib/three/PRWMLoader.js";
 import {VRMLLoader} from "three/examples/jsm/loaders/VRMLLoader";
 import {FBXLoader} from "three/examples/jsm/loaders/FBXLoader";
-import {XLoader} from "three/examples/jsm/loaders/XLoader";
 import {STLLoader} from "three/examples/jsm/loaders/STLLoader";
 import {PCDLoader} from "three/examples/jsm/loaders/PCDLoader";
 import {SVGLoader} from "three/examples/jsm/loaders/SVGLoader";
@@ -551,27 +549,6 @@ Loaders.loadModel = function(file, parent)
 			};
 			reader.readAsArrayBuffer(file);
 		}
-		// Assimp
-		else if (extension === "assimp")
-		{
-			var reader = new FileReader();
-			reader.onload = function()
-			{
-				try
-				{
-					var loader = new AssimpLoader();
-					var assimp = loader.parse(reader.result, path);
-					Editor.addObject(assimp.object, parent);
-					modal.destroy();
-				}
-				catch (e)
-				{
-					Editor.alert(Locale.errorLoadingFile + "\n(" + e + ")");
-					console.error("nunuStudio: Error loading file", e);
-				}
-			};
-			reader.readAsArrayBuffer(file);
-		}
 		// Babylon
 		else if (extension === "babylon")
 		{
@@ -899,92 +876,6 @@ Loaders.loadModel = function(file, parent)
 
 					Editor.addObject(object, parent);
 					modal.destroy();
-				}
-				catch (e)
-				{
-					Editor.alert(Locale.errorLoadingFile + "\n(" + e + ")");
-					console.error("nunuStudio: Error loading file", e);
-				}
-			};
-			reader.readAsArrayBuffer(file);
-		}
-		// X
-		else if (extension === "x")
-		{
-			function convertAnimation(baseAnime, name)
-			{
-				var animation = {};
-				animation.fps = baseAnime.fps;
-				animation.name = name;
-				animation.hierarchy = [];
-
-				for (var i = 0; i < baseAnime.hierarchy.length; i++)
-				{
-					var firstKey = -1;
-
-					var frame = {};
-					frame.name = baseAnime.hierarchy[i].name;
-					frame.parent = baseAnime.hierarchy[i].parent;
-					frame.keys = [];
-
-					for (var m = 1; m < baseAnime.hierarchy[i].keys.length; m++)
-					{
-						if (baseAnime.hierarchy[i].keys[m].time > 0)
-						{
-							if (firstKey === -1)
-							{
-								firstKey = m - 1;
-								frame.keys.push(baseAnime.hierarchy[i].keys[m - 1]);
-							}
-
-							frame.keys.push(baseAnime.hierarchy[i].keys[m]);
-						}
-
-						animation.length = baseAnime.hierarchy[i].keys[m].time;
-
-						if (m >= baseAnime.hierarchy[i].keys.length - 1)
-						{
-							break;
-						}
-
-					}
-
-					animation.hierarchy.push(frame);
-				}
-
-				return animation;
-			}
-
-			var reader = new FileReader();
-			reader.onload = function()
-			{
-				try
-				{
-					var loader = new XLoader();
-					loader.baseDir = path;
-					loader.parse(reader.result, function(object)
-					{
-						for (var i = 0; i < object.FrameInfo.length; i ++)
-						{
-							var model = object.FrameInfo[i];
-
-							if (model instanceof SkinnedMesh)
-							{
-								if (object.XAnimationObj !== undefined && object.XAnimationObj.length > 0)
-								{
-									var animations = object.XAnimationObj;
-									for (var j = 0; j < animations.length; j++)
-									{
-										model.animationSpeed = 1000;
-										model.animations.push(AnimationClip.parseAnimation(convertAnimation(animations[j], animations[j].name), model.skeleton.bones));
-									}
-								}
-							}
-
-							Editor.addObject(model, parent);
-						}
-						modal.destroy();
-					});
 				}
 				catch (e)
 				{

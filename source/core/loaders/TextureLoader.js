@@ -1,4 +1,4 @@
-import {DefaultLoadingManager, FileLoader} from "three";
+import {DefaultLoadingManager, FileLoader, RGBAFormat, SRGBColorSpace} from "three";
 import {WebcamTexture} from "../texture/WebcamTexture.js";
 import {VideoTexture} from "../texture/VideoTexture.js";
 import {Texture} from "../texture/Texture.js";
@@ -297,9 +297,12 @@ TextureLoader.prototype.parse = function(json, onLoad)
 	texture.wrapS = json.wrap[0];
 	texture.wrapT = json.wrap[1];
 
-	if (json.format !== undefined) {texture.format = json.format;}
+	// RGBFormat (1022) was removed from three.js, RGBA is used instead
+	if (json.format !== undefined) {texture.format = json.format === 1022 ? RGBAFormat : json.format;}
 	if (json.type !== undefined) {texture.type = json.type;}
-	if (json.encoding !== undefined) {texture.encoding = json.encoding;}
+	// Texture encoding was replaced by color space, sRGBEncoding (3001) maps to SRGBColorSpace
+	if (json.encoding === 3001) {texture.colorSpace = SRGBColorSpace;}
+	if (json.colorSpace !== undefined) {texture.colorSpace = json.colorSpace;}
 
 	texture.minFilter = json.minFilter;
 	texture.magFilter = json.magFilter;

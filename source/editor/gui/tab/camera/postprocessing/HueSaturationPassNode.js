@@ -34,7 +34,6 @@ class HueSaturationPassNode extends PassNode {
 	this.nextRow();
 	}
 
-PassNode.registerPass("HueSaturation", HueSaturationPassNode);
 
 	setPass(pass) {
 	super.setPass(pass);
@@ -44,4 +43,6 @@ PassNode.registerPass("HueSaturation", HueSaturationPassNode);
 	}
 
 }
+
+PassNode.registerPass("HueSaturation", HueSaturationPassNode);
 export {HueSaturationPassNode};

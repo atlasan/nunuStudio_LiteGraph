@@ -1,4 +1,4 @@
-import {Object3D, PerspectiveCamera, Vector3, WebGLCubeRenderTarget, RGBFormat, LinearFilter} from "three";
+import {Object3D, PerspectiveCamera, Vector3, WebGLCubeRenderTarget, LinearFilter, RGBAFormat} from "three";
 import {CubeTexture} from "../../texture/CubeTexture.js";
 import {Scene} from "../Scene.js";
 import {Program} from "../Program.js";
@@ -88,7 +88,7 @@ class CubeCamera extends Object3D
 		 */
 		this.renderTarget = new WebGLCubeRenderTarget(this.resolution,
 			{
-				format: RGBFormat,
+				format: RGBAFormat,
 				magFilter: LinearFilter,
 				minFilter: LinearFilter,
 				generateMipmaps: false

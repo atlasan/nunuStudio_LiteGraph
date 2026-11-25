@@ -1,5 +1,6 @@
 import {Shape, Box, Vec3, ConvexPolyhedron, Cylinder, Quaternion as CQuaternion, Sphere, Trimesh} from "cannon-es";
-import {Vector3, BufferGeometry, Geometry, Quaternion as TQuaternion, Matrix4, Mesh} from "three";
+import {Vector3, BufferGeometry, Quaternion as TQuaternion, Matrix4, Mesh} from "three";
+import {mergeGeometries} from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {ConvexHull} from "three/examples/jsm/math/ConvexHull";
 
 /**
@@ -283,9 +284,7 @@ PhysicsGenerator.createBoundingSphereShape = function(object)
  */
 PhysicsGenerator.createTubeShape = function(geometry)
 {
-	var tmp = new BufferGeometry();
-	tmp.fromGeometry(geometry);
-	return createTrimeshShape(tmp);
+	return PhysicsGenerator.createTrimeshShape(geometry);
 };
 
 /**
@@ -327,8 +326,6 @@ PhysicsGenerator.getGeometry = function(object)
 		return null;
 	}
 
-	var tmp = new Geometry();
-
 	// Apply scale (it can't easily be applied to a Shape later)
 	if (meshes.length === 1)
 	{
@@ -336,7 +333,7 @@ PhysicsGenerator.getGeometry = function(object)
 		var quaternion = new TQuaternion();
 		var scale = new Vector3(1, 1, 1);
 
-		tmp = meshes[0].geometry.clone();
+		var tmp = meshes[0].geometry.clone();
 		meshes[0].updateMatrixWorld();
 		meshes[0].matrixWorld.decompose(position, quaternion, scale);
 
@@ -345,26 +342,25 @@ PhysicsGenerator.getGeometry = function(object)
 	// If more than one mesh found merge into single geometry
 	else
 	{
-		var combined = new Geometry();
-		var mesh = meshes.pop();
+		var geometries = [];
 
-		// Recursively merge geometry, preserving local transforms
-		while (mesh !== undefined)
+		// Bake each mesh world transform, keeping only positions so attributes are compatible for merging
+		for (var i = 0; i < meshes.length; i++)
 		{
+			var mesh = meshes[i];
 			mesh.updateMatrixWorld();
 
-			if (mesh.geometry instanceof BufferGeometry)
+			var tmp = new BufferGeometry();
+			tmp.setAttribute("position", mesh.geometry.getAttribute("position").clone());
+			if (mesh.geometry.index !== null)
 			{
-				tmp.fromBufferGeometry(mesh.geometry);
-				combined.merge(tmp, mesh.matrixWorld);
+				tmp.setIndex(mesh.geometry.index.clone());
 			}
-			else
-			{
-				combined.merge(mesh.geometry, mesh.matrixWorld);
-			}
-
-			mesh = meshes.pop();
+			tmp.applyMatrix4(mesh.matrixWorld);
+			geometries.push(tmp.index !== null ? tmp.toNonIndexed() : tmp);
 		}
+
+		var combined = mergeGeometries(geometries, false);
 
 		var matrix = new Matrix4();
 		matrix.scale(object.scale);
@@ -382,11 +378,6 @@ PhysicsGenerator.getGeometry = function(object)
  */
 PhysicsGenerator.getVertices = function(geometry)
 {
-	if (geometry instanceof Geometry)
-	{
-		geometry = new BufferGeometry().fromGeometry(geometry);
-	}
-
 	return geometry.attributes.position.array;
 };
 
