@@ -5,6 +5,8 @@ import {LiteGraphRuntime} from "./LiteGraphRuntime.js";
 import "./litegraph_nodes/LiteGraphNunuNodes.js";
 import "./litegraph_nodes/LiteGraphEngineNodes.js";
 import "./litegraph_nodes/LiteGraphObjectNodes.js";
+import "./litegraph_nodes/LiteGraphLifecycleNodes.js";
+import {authoredChildren} from "./LiteGraphSpawnContext.js";
 
 /**
  * Visual script stored with the scene and executed by its frame lifecycle.
@@ -178,7 +180,9 @@ LiteGraphScript.prototype.getDiagnostics = function()
 
 LiteGraphScript.prototype.toJSON = function(meta)
 {
-	var data = Object3D.prototype.toJSON.call(this, meta);
+	var view = Object.create(this);
+	view.children = authoredChildren(this);
+	var data = Object3D.prototype.toJSON.call(view, meta);
 	data.object.graph = this.graph.serialize();
 	data.object.graphVersion = this.graphVersion;
 	return data;

@@ -2,6 +2,7 @@ import {LiteGraph} from "../../../lib/litegraph.js";
 import "./litegraph_nodes/LiteGraphNunuNodes.js";
 import "./litegraph_nodes/LiteGraphEngineNodes.js";
 import "./litegraph_nodes/LiteGraphObjectNodes.js";
+import "./litegraph_nodes/LiteGraphLifecycleNodes.js";
 
 /** Stable example IDs; the same builders feed the editor and portable projects. */
 const examples = [
@@ -10,6 +11,8 @@ const examples = [
 	{id: "visibility", title: "Space toggles visibility", accepts: "Object3D", description: "Press Space to hide/show the selected object.", nodes: ["nunu/object", "nunu/keyboard", "nunu/objects/visibility"]},
 	{id: "tint", title: "Tint selected mesh", accepts: "Mesh", description: "Set the mesh green on start without recoloring shared objects.", nodes: ["nunu/object", "nunu/events", "nunu/materials/color"]},
 	{id: "camera", title: "Set camera projection", accepts: "PerspectiveCamera", description: "Set perspective FOV to 35 degrees and clipping to 0.1–100 on start.", nodes: ["nunu/object", "nunu/events", "nunu/camera/projection"]},
+	{id: "spawn", title: "Spawn box on start", accepts: "Object3D", description: "Spawn a box two world units right of the selected anchor on start. Stop cleans it up.", nodes: ["nunu/object", "nunu/events", "nunu/objects/spawn"]},
+	{id: "spawn-delete", title: "Space spawns, D deletes", accepts: "Object3D", description: "Press Space to spawn one sphere beside the anchor; D deletes it. Delete before spawning again; Stop cleans up.", nodes: ["nunu/object", "nunu/keyboard", "nunu/objects/spawn", "nunu/keyboard", "nunu/objects/delete"]},
 	{id: "light", title: "Set light intensity", accepts: "Light", description: "Set light intensity to 2 and white color on start.", nodes: ["nunu/object", "nunu/events", "nunu/lights/settings"]}
 ];
 
@@ -36,12 +39,22 @@ function addVisualScriptExample(graph, id, uuid)
 		var nodes = example.nodes.map(function(type, index)
 		{
 			var node = LiteGraph.createNode(type);
-			node.pos = [offset + Math.floor(index / 2) * 320, 60 + index % 2 * 230];
+			node.pos = [offset + Math.floor(index / 2) * 320, 60 + index % 2 * 380];
 			graph.add(node);
 			return node;
 		});
 		nodes[0].setProperty("nunu_uuid", uuid);
-		if (id === "move")
+		if (id === "spawn-delete")
+		{
+			nodes[2].setProperty("shape", "sphere");
+			nodes[2].setProperty("limit", 1);
+			nodes[3].setProperty("key", 68);
+			nodes[0].connect(0, nodes[2], 1);
+			nodes[1].connect(1, nodes[2], 0);
+			nodes[2].connect(4, nodes[4], 1);
+			nodes[3].connect(1, nodes[4], 0);
+		}
+		else if (id === "move")
 		{
 			nodes[1].setProperty("key", 87);
 			nodes[4].setProperty("velocity", [0, 0, -2]);

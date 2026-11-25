@@ -1,6 +1,8 @@
 /* eslint-disable camelcase -- LiteGraph public API and persisted UUID property names. */
 import {LiteGraph, LGraph} from "../../../lib/litegraph.js";
 
+import {releaseSpawns} from "./LiteGraphSpawnContext.js";
+
 function visitGraphs(graph, callback)
 {
 	callback(graph);
@@ -110,7 +112,8 @@ class LiteGraphRuntime extends LGraph
 		if (this.engineTime === undefined) { return super.stop(options); }
 		return this.withEngineClock(() =>
 		{
-			return super.stop(options);
+			try { return super.stop(options); }
+			finally { releaseSpawns(this.nunu_lgscript); }
 		});
 	}
 

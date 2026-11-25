@@ -11,6 +11,8 @@ const root = path.resolve(__dirname, "..");
 const actual = new Set([
 	"source/lib/litegraph.js",
 	"source/core/objects/script/LiteGraphRuntime.js",
+	"source/core/objects/script/LiteGraphSpawnContext.js",
+	"source/core/objects/script/litegraph_nodes/LiteGraphLifecycleNodes.js",
 	"source/core/objects/script/LiteGraphContext.js",
 	"source/core/objects/script/LiteGraphNodeCatalog.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphObjectNodes.js",
@@ -575,15 +577,15 @@ test("catalog is complete, detached and matches the published node schema", asyn
 {
  const {getNunuNodeCatalog,LiteGraph}=await ready;
  const catalog=getNunuNodeCatalog();
- assert.equal(catalog.length,20);
- assert.equal(new Set(catalog.map(n=>n.type)).size,20);
+ assert.equal(catalog.length,22);
+ assert.equal(new Set(catalog.map(n=>n.type)).size,22);
  for(const item of catalog){assert.ok(item.description && item.accepts && item.category);assert.ok(LiteGraph.createNode(item.type));assert.ok(Array.isArray(item.inputs));}
  const published=JSON.parse(fs.readFileSync(path.join(root,"source/files/examples/visual-script-catalog.json")));
  assert.deepEqual(JSON.parse(JSON.stringify(catalog)),published.nodes);
  catalog[0].title="changed";assert.notEqual(getNunuNodeCatalog()[0].title,"changed");
 });
 
-test("all six shared examples execute, round-trip and package identically", async () =>
+test("all eight shared examples execute, round-trip and package identically", async () =>
 {
  const {LiteGraphScript,getNunuExampleCatalog,addVisualScriptExample}=await ready;
  const {StaticPair}=require("@as-com/pson");
@@ -594,7 +596,7 @@ test("all six shared examples execute, round-trip and package identically", asyn
   const actor=example.id==="camera"?new THREE.PerspectiveCamera():example.id==="light"?new THREE.DirectionalLight():new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());
   const script=new LiteGraphScript();scene.add(actor,script);
   let held=false,pressed=false;
-  program.keyboard={keyPressed:()=>held,keyJustPressed:()=>pressed,keyJustReleased:()=>false};
+  program.keyboard={keyPressed:()=>held,keyJustPressed:key=>pressed===true?key===32:key===pressed,keyJustReleased:()=>false};
   addVisualScriptExample(script.graph,example.id,actor.uuid);
   const saved=savedGraph(script.graph);script.graph.configure(saved);
   await script.initialize();script.update(0.25);
@@ -604,6 +606,14 @@ test("all six shared examples execute, round-trip and package identically", asyn
   if(example.id==="camera") assert.equal(actor.fov,35);
   if(example.id==="light") assert.equal(actor.intensity,2);
   if(example.id==="tint") assert.equal(actor.material.color.getHexString(),"55dd88");
+  if(example.id==="spawn"){const spawned=script.graph._nodes.find(n=>n.type==="nunu/objects/spawn").getOutputData(4);assert.ok(spawned.isMesh);assert.equal(spawned.position.x,2);assert.equal(actor.parent,scene);}
+  if(example.id==="spawn-delete")
+  {
+   const spawn=script.graph._nodes.find(n=>n.type==="nunu/objects/spawn");assert.equal(spawn.getOutputData(4),undefined);
+   pressed=32;script.update(0.25);const first=spawn.getOutputData(4);assert.ok(first.geometry.type.includes("Sphere"));
+   pressed=68;script.update(0.25);assert.equal(first.parent,null);assert.equal(spawn.getOutputData(4),null);
+   pressed=32;script.update(0.25);assert.notEqual(spawn.getOutputData(4).uuid,first.uuid);
+  }
   script.dispose();
   const json=JSON.parse(fs.readFileSync(path.join(root,`source/files/examples/visual-script-${example.id}.isp`)));
   assert.deepEqual(new StaticPair().decode(fs.readFileSync(path.join(root,`source/files/examples/visual-script-${example.id}.nsp`))),json);
@@ -681,4 +691,84 @@ test("examples filter compatible actors and each insertion is one undoable trans
  assert.throws(()=>addVisualScriptExample(script.graph,"unknown",mesh.uuid),/Unknown/);
  assert.throws(()=>addVisualScriptExample(script.graph,"spin",null),/Select/);
  script.dispose();
+});
+
+async function spawnFixture()
+{
+ const fixture=await operationsFixture();
+ const spawn=node(fixture.script.graph,"nunu/objects/spawn");
+ const remove=node(fixture.script.graph,"nunu/objects/delete");
+ spawn.connect(4,remove,1);
+ await fixture.script.initialize();
+ return {...fixture,spawn,remove};
+}
+
+test("spawn validates running state, inputs and limits without mutating authored objects",async()=>
+{
+ const {script,scene}=await operationsFixture();const spawn=node(script.graph,"nunu/objects/spawn");
+ spawn.onAction();assert.equal(spawn.getOutputData(2),false);assert.equal(script.children.length,0);
+ await script.initialize();
+ for(const [key,value] of [["shape","camera"],["size",0],["size",NaN],["color","red"],["limit",129],["position",[Infinity,0,0]]])
+ {
+  const before=JSON.parse(JSON.stringify(spawn.properties));spawn.setProperty(key,value);spawn.onAction();assert.equal(spawn.getOutputData(2),false,key);assert.equal(script.children.length,0);Object.assign(spawn.properties,before);
+ }
+ spawn.setProperty("limit",1);spawn.onAction();const first=spawn.getOutputData(4);assert.equal(first.isMesh,true);assert.equal(scene.getObjectByProperty("uuid",first.uuid),first);
+ spawn.onAction();assert.equal(spawn.getOutputData(2),false);assert.equal(spawn.getOutputData(4),first);assert.equal(first.parent.children.length,1);
+ script.dispose();assert.equal(script.children.length,0);
+});
+
+test("spawn events chain operations and deletion invalidates references and frees owned resources once",async()=>
+{
+ const {script,spawn,remove,actor}=await spawnFixture();
+ const reference=node(script.graph,"nunu/object");reference.setProperty("nunu_uuid",actor.uuid);
+ const tint=node(script.graph,"nunu/materials/color");spawn.connect(4,tint,1);spawn.connect(0,tint,0);
+ spawn.onAction();const object=spawn.getOutputData(4);assert.equal(object.material.color.getHexString(),"55dd88");
+ const geometry=object.geometry,material=object.material;let geometries=0,materials=0;
+ geometry.addEventListener("dispose",()=>geometries++);material.addEventListener("dispose",()=>materials++);
+ const spawnedRef=node(script.graph,"nunu/object");spawnedRef.setProperty("nunu_uuid",object.uuid);spawnedRef.onExecute();assert.equal(spawnedRef.getOutputData(1),true);
+ remove.onAction();assert.equal(remove.getOutputData(2),true);assert.equal(object.parent,null);assert.equal(spawn.getOutputData(4),null);assert.equal(geometries,1);assert.equal(materials,1);
+ spawnedRef.onExecute();assert.equal(spawnedRef.getOutputData(0),null);assert.equal(spawnedRef.getOutputData(1),false);
+ remove.onAction();assert.equal(remove.getOutputData(2),false);script.dispose();assert.equal(geometries,1);assert.equal(materials,1);assert.ok(actor.parent);
+});
+
+test("delete rejects authored, foreign and other-script objects and protects attached children",async()=>
+{
+ const {script,scene,spawn,remove,actor}=await spawnFixture();
+ remove.getInputData=()=>actor;remove.onAction();assert.equal(remove.getOutputData(2),false);assert.ok(actor.parent);
+ const other=new entry.namespace.LiteGraphScript();scene.add(other);const otherSpawn=node(other.graph,"nunu/objects/spawn");await other.initialize();otherSpawn.onAction();
+ remove.getInputData=()=>otherSpawn.getOutputData(4);remove.onAction();assert.equal(remove.getOutputData(2),false);
+ spawn.onAction();const object=spawn.getOutputData(4);const child=new THREE.Group();object.add(child);
+ remove.getInputData=()=>object;remove.onAction();assert.equal(remove.getOutputData(2),false);assert.equal(child.parent,object);
+ script.graph.stop();assert.equal(child.parent,script);assert.equal(object.parent,null);assert.equal(otherSpawn.getOutputData(4).parent.children.length,1);other.dispose();script.dispose();
+});
+
+test("spawn anchor uses world offset under transformed parents and rejects foreign anchors",async()=>
+{
+ const {script,scene,spawn,actor,parent}=await spawnFixture();
+ parent.rotation.y=Math.PI/2;parent.updateMatrix();script.position.set(0,3,0);script.updateMatrix();
+ const ref=node(script.graph,"nunu/object");ref.setProperty("nunu_uuid",actor.uuid);ref.connect(0,spawn,1);
+ spawn.actionDo("apply");const object=spawn.getOutputData(4);object.updateWorldMatrix(true,false);
+ assert.deepEqual(object.getWorldPosition(new THREE.Vector3()).toArray().map(v=>Math.round(v)),[4,0,0]);
+ const foreign=new THREE.Group();new THREE.Scene().add(foreign);spawn.getInputData=slot=>slot===1?foreign:undefined;spawn.onAction();assert.equal(spawn.getOutputData(2),false);assert.equal(object.parent.children.length,1);
+ script.dispose();assert.equal(scene.getObjectByProperty("uuid",object.uuid),undefined);
+});
+
+test("stop, restart, node removal and nested graphs clean spawns without touching authored resources",async()=>
+{
+ const {script,scene,spawn,actor}=await spawnFixture();let authoredDisposed=0;actor.geometry.addEventListener("dispose",()=>authoredDisposed++);
+ spawn.onAction();const first=spawn.getOutputData(4);let freed=0;first.geometry.addEventListener("dispose",()=>freed++);
+ script.graph.stop();assert.equal(freed,1);assert.equal(script.children.length,0);assert.equal(spawn.getOutputData(4),null);
+ await script.initialize();spawn.onAction();assert.notEqual(spawn.getOutputData(4).uuid,first.uuid);
+ script.graph.remove(spawn);assert.equal(script.children.length,0);
+ const sub=node(script.graph,"graph/subgraph");const nested=node(sub.subgraph,"nunu/objects/spawn");nested.onAction();assert.equal(nested.getOutputData(2),true);const object=nested.getOutputData(4);
+ script.dispose();assert.equal(object.parent,null);assert.equal(scene.getObjectByProperty("uuid",object.uuid),undefined);assert.equal(authoredDisposed,0);
+});
+
+test("saving a running graph excludes transient objects and their resources but retains authored children",async()=>
+{
+ const {script,spawn}=await spawnFixture();const child=new THREE.Group();child.name="Authored child";script.add(child);
+ spawn.onAction();const runtime=spawn.getOutputData(4);const data=JSON.parse(JSON.stringify(script.toJSON()));
+ assert.equal(data.object.children.length,1);assert.equal(data.object.children[0].uuid,child.uuid);
+ assert.equal(data.geometries,undefined);assert.equal(JSON.stringify(data).includes(runtime.uuid),false);
+ assert.equal(script.children.length,2);assert.ok(runtime.parent);script.dispose();assert.equal(child.parent,script);
 });

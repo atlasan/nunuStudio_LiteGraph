@@ -196,6 +196,44 @@
       }
     },
     {
+      "type": "nunu/objects/delete",
+      "title": "Delete Spawned Object",
+      "description": "Delete a live primitive owned by this visual script and free its allocated geometry/materials. Authored objects, other scripts' objects and objects with children are rejected. Repeat deletion fails safely.",
+      "since": 1,
+      "category": "Lifecycle",
+      "accepts": "Spawned Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "properties": {}
+    },
+    {
       "type": "nunu/events",
       "title": "Scene Events",
       "description": "Engine lifecycle. Update fires once per frame; delta and time are seconds.",
@@ -243,6 +281,63 @@
         }
       ],
       "properties": {}
+    },
+    {
+      "type": "nunu/objects/spawn",
+      "title": "Spawn Primitive",
+      "description": "Spawn a box, sphere or group owned by this running script. Position is script-local, or a world offset from a connected anchor. Cleans up on stop; runtime objects are not saved. Per-node limit 1–128, per-script cap 128.",
+      "since": 1,
+      "category": "Lifecycle",
+      "accepts": "Object3D",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "anchor",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "position",
+          "type": "vec3"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "object",
+          "type": "nunu_object"
+        }
+      ],
+      "properties": {
+        "shape": "box",
+        "name": "Spawned object",
+        "position": [
+          2,
+          0,
+          0
+        ],
+        "size": 1,
+        "color": "#ffbb55",
+        "limit": 32
+      }
     },
     {
       "type": "nunu/lights/settings",

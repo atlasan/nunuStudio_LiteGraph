@@ -69,6 +69,34 @@
       "binary": "visual-script-camera.nsp"
     },
     {
+      "id": "spawn",
+      "title": "Spawn box on start",
+      "accepts": "Object3D",
+      "description": "Spawn a box two world units right of the selected anchor on start. Stop cleans it up.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/objects/spawn"
+      ],
+      "json": "visual-script-spawn.isp",
+      "binary": "visual-script-spawn.nsp"
+    },
+    {
+      "id": "spawn-delete",
+      "title": "Space spawns, D deletes",
+      "accepts": "Object3D",
+      "description": "Press Space to spawn one sphere beside the anchor; D deletes it. Delete before spawning again; Stop cleans up.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/objects/spawn",
+        "nunu/keyboard",
+        "nunu/objects/delete"
+      ],
+      "json": "visual-script-spawn-delete.isp",
+      "binary": "visual-script-spawn-delete.nsp"
+    },
+    {
       "id": "light",
       "title": "Set light intensity",
       "accepts": "Light",

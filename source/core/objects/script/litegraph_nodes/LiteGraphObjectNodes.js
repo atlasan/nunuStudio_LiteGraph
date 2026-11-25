@@ -4,6 +4,8 @@ import {LiteGraph} from "../../../../lib/litegraph.js";
 import {registerNunuNode} from "../LiteGraphNodeCatalog.js";
 import {scriptContext, vectorComponents, updateObjectMatrix} from "../LiteGraphContext.js";
 
+import {trackSpawnMaterials} from "../LiteGraphSpawnContext.js";
+
 function validObject(node, value)
 {
 	var scene = scriptContext(node).scene;
@@ -273,6 +275,7 @@ MaterialColor.prototype.onAction = function(action, param, options)
 		var copies = materials.map(function(material) { return material.clone(); });
 		object.material = Array.isArray(object.material) ? copies : copies[0];
 		ownedMaterials.set(object, object.material);
+		trackSpawnMaterials(object, copies);
 		materials = copies;
 	}
 	for (var material of materials) { material.color.copy(color); }

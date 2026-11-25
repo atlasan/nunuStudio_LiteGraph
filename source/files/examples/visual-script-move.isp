@@ -267,7 +267,7 @@
                   "type": "nunu/keyboard",
                   "pos": [
                     40,
-                    290
+                    440
                   ],
                   "size": [
                     140,
@@ -373,7 +373,7 @@
                   "type": "events/branch",
                   "pos": [
                     360,
-                    290
+                    440
                   ],
                   "size": [
                     120,
