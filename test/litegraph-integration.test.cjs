@@ -13,12 +13,14 @@ const actual = new Set([
 	"source/core/objects/script/LiteGraphRuntime.js",
 	"source/core/objects/script/LiteGraphSpawnContext.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphLifecycleNodes.js",
+	"source/core/objects/script/litegraph_nodes/LiteGraphInteractionNodes.js",
 	"source/core/objects/script/LiteGraphContext.js",
 	"source/core/objects/script/LiteGraphNodeCatalog.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphObjectNodes.js",
 	"source/core/objects/script/LiteGraphStarter.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphEngineNodes.js",
 	"source/editor/gui/tab/litegraph/GraphHistory.js",
+	"source/editor/gui/tab/litegraph/GraphObjectDrop.js",
 	"source/core/objects/script/LiteGraphScript.js",
 	"source/core/objects/script/litegraph_nodes/LiteGraphNunuNodes.js",
 	"source/core/utils/ObjectUtils.js",
@@ -71,6 +73,7 @@ export {LiteGraphScript} from './source/core/objects/script/LiteGraphScript.js';
 export {addRotationStarter,getNunuExampleCatalog,acceptsExample,addVisualScriptExample} from './source/core/objects/script/LiteGraphStarter.js';
 export {getNunuNodeCatalog} from './source/core/objects/script/LiteGraphNodeCatalog.js';
 export {seedGraphHistory} from './source/editor/gui/tab/litegraph/GraphHistory.js';
+export {dropSceneObject} from './source/editor/gui/tab/litegraph/GraphObjectDrop.js';
 export {ObjectUtils} from './source/core/utils/ObjectUtils.js';
 export {ObjectLoader} from './source/core/loaders/ObjectLoader.js';
 `, {context, identifier: "entry.js"});
@@ -267,6 +270,8 @@ test("graph tab rebind and close dispose actual canvases and detach graphs", asy
 		if (specifier.endsWith("/LiteGraphContext.js")) return load("source/core/objects/script/LiteGraphContext.js");
 		if (specifier.endsWith("/LiteGraphStarter.js")) return load("source/core/objects/script/LiteGraphStarter.js");
 		if (specifier.endsWith("/GraphHistory.js")) return load("source/editor/gui/tab/litegraph/GraphHistory.js");
+		if (specifier.endsWith("/GraphObjectDrop.js")) return load("source/editor/gui/tab/litegraph/GraphObjectDrop.js");
+		if (specifier.endsWith("/DragBuffer.js")) return synthetic("test/drag", {DragBuffer: {buffer: [], get: () => null}});
 		if (specifier.endsWith("/Component.js")) return synthetic("test/component", {Component: function() {}});
 		if (specifier.endsWith("/Canvas.js")) return synthetic("test/canvas", {Canvas: function() {}});
 		if (specifier.endsWith("/Global.js")) return synthetic("test/global", {Global: {FILE_PATH: ""}});
@@ -577,15 +582,15 @@ test("catalog is complete, detached and matches the published node schema", asyn
 {
  const {getNunuNodeCatalog,LiteGraph}=await ready;
  const catalog=getNunuNodeCatalog();
- assert.equal(catalog.length,22);
- assert.equal(new Set(catalog.map(n=>n.type)).size,22);
+ assert.equal(catalog.length,27);
+ assert.equal(new Set(catalog.map(n=>n.type)).size,27);
  for(const item of catalog){assert.ok(item.description && item.accepts && item.category);assert.ok(LiteGraph.createNode(item.type));assert.ok(Array.isArray(item.inputs));}
  const published=JSON.parse(fs.readFileSync(path.join(root,"source/files/examples/visual-script-catalog.json")));
  assert.deepEqual(JSON.parse(JSON.stringify(catalog)),published.nodes);
  catalog[0].title="changed";assert.notEqual(getNunuNodeCatalog()[0].title,"changed");
 });
 
-test("all eight shared examples execute, round-trip and package identically", async () =>
+test("all shared examples execute, round-trip and package identically", async () =>
 {
  const {LiteGraphScript,getNunuExampleCatalog,addVisualScriptExample}=await ready;
  const {StaticPair}=require("@as-com/pson");
@@ -595,7 +600,11 @@ test("all eight shared examples execute, round-trip and package identically", as
   const scene=new THREE.Scene();program.add(scene);
   const actor=example.id==="camera"?new THREE.PerspectiveCamera():example.id==="light"?new THREE.DirectionalLight():new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());
   const script=new LiteGraphScript();scene.add(actor,script);
-  let held=false,pressed=false;
+  let held=false,pressed=false,click=false;
+  // Ray from +Z: aimed at the actor at the origin, or away (up) from it.
+  scene.raycaster=new THREE.Raycaster(new THREE.Vector3(0,0,5),new THREE.Vector3(0,1,0));
+  const aim=(on)=>scene.raycaster.set(new THREE.Vector3(0,0,5),new THREE.Vector3(0,on?0:1,on?-1:0));
+  program.mouse={buttonJustPressed:button=>click&&button===0,insideCanvas:()=>true};
   program.keyboard={keyPressed:()=>held,keyJustPressed:key=>pressed===true?key===32:key===pressed,keyJustReleased:()=>false};
   addVisualScriptExample(script.graph,example.id,actor.uuid);
   const saved=savedGraph(script.graph);script.graph.configure(saved);
@@ -613,6 +622,22 @@ test("all eight shared examples execute, round-trip and package identically", as
    pressed=32;script.update(0.25);const first=spawn.getOutputData(4);assert.ok(first.geometry.type.includes("Sphere"));
    pressed=68;script.update(0.25);assert.equal(first.parent,null);assert.equal(spawn.getOutputData(4),null);
    pressed=32;script.update(0.25);assert.notEqual(spawn.getOutputData(4).uuid,first.uuid);
+  }
+  if(example.id==="hover-highlight")
+  {
+   assert.equal(actor.material.color.getHexString(),"ffffff");
+   aim(true);script.update(0.25);assert.equal(actor.material.color.getHexString(),"ffcc44");
+   aim(false);script.update(0.25);assert.equal(actor.material.color.getHexString(),"66bbff");
+  }
+  if(example.id==="click-copy")
+  {
+   const copy=script.graph._nodes.find(n=>n.type==="nunu/objects/spawn_copy");
+   click=true;script.update(0.25);assert.equal(copy.getOutputData(4),undefined);
+   aim(true);script.update(0.25);const first=copy.getOutputData(4);
+   assert.equal(first.geometry,actor.geometry);assert.equal(first.position.x,1.5);
+   script.update(0.25);assert.equal(copy.getOutputData(4).position.x,3);
+   let disposed=0;actor.geometry.addEventListener("dispose",()=>disposed++);
+   script.dispose();assert.equal(first.parent,null);assert.equal(disposed,0);
   }
   script.dispose();
   const json=JSON.parse(fs.readFileSync(path.join(root,`source/files/examples/visual-script-${example.id}.isp`)));
@@ -771,4 +796,189 @@ test("saving a running graph excludes transient objects and their resources but 
  assert.equal(data.object.children.length,1);assert.equal(data.object.children[0].uuid,child.uuid);
  assert.equal(data.geometries,undefined);assert.equal(JSON.stringify(data).includes(runtime.uuid),false);
  assert.equal(script.children.length,2);assert.ok(runtime.parent);script.dispose();assert.equal(child.parent,script);
+});
+
+async function pointerFixture()
+{
+ const {LiteGraphScript}=await ready;
+ const program=new THREE.Group();program.type="Program";
+ const scene=new THREE.Scene();program.add(scene);
+ const target=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshBasicMaterial());target.name="Target";
+ const script=new LiteGraphScript();scene.add(target,script);
+ let click=false;
+ program.mouse={buttonJustPressed:button=>click&&button===0,insideCanvas:()=>true};
+ scene.raycaster=new THREE.Raycaster(new THREE.Vector3(0,0,5),new THREE.Vector3(0,1,0));
+ const aim=(on)=>scene.raycaster.set(new THREE.Vector3(0,0,5),new THREE.Vector3(0,on?0:1,on?-1:0));
+ const pointer=node(script.graph,"nunu/input/pointer");pointer.getInputData=()=>target;
+ const events={entered:0,exited:0,clicked:0};
+ pointer.triggerSlot=slot=>{events[["","","","entered","exited","clicked"][slot]]++;};
+ await script.initialize();
+ return {scene,script,target,pointer,events,aim,setClick:value=>{click=value;}};
+}
+
+test("pointer hovers and clicks objects once per transition, through children, blocked by occluders",async()=>
+{
+ const {scene,target,pointer,events,aim,setClick}=await pointerFixture();
+ pointer.onExecute();assert.equal(pointer.getOutputData(0),false);assert.equal(events.entered,0);
+ aim(true);pointer.onExecute();pointer.onExecute();
+ assert.equal(pointer.getOutputData(0),true);assert.deepEqual(Array.from(pointer.getOutputData(1),Math.round),[0,0,1]);assert.equal(pointer.getOutputData(2),4.5);
+ assert.equal(events.entered,1);assert.equal(events.clicked,0);
+ setClick(true);pointer.onExecute();assert.equal(events.clicked,1);setClick(false);
+ // A child of the bound object counts as the object.
+ const child=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshBasicMaterial());child.position.set(0,0,2);target.add(child);child.updateMatrixWorld(true);
+ pointer.onExecute();assert.equal(pointer.getOutputData(0),true);assert.equal(pointer.getOutputData(2),2.5);
+ target.remove(child);
+ // A visible object in front blocks the pointer; hidden ones are ignored.
+ const wall=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshBasicMaterial());wall.position.set(0,0,3);scene.add(wall);wall.updateMatrixWorld(true);
+ setClick(true);pointer.onExecute();assert.equal(pointer.getOutputData(0),false);assert.equal(events.exited,1);assert.equal(events.clicked,1);setClick(false);
+ wall.visible=false;pointer.onExecute();assert.equal(pointer.getOutputData(0),true);assert.equal(events.entered,2);
+ // A missing object reads as not hovering and exits once.
+ pointer.getInputData=()=>null;pointer.onExecute();pointer.onExecute();assert.equal(pointer.getOutputData(0),false);assert.equal(events.exited,2);
+});
+
+test("proximity reports world distance and fires enter/exit once when the radius is crossed",async()=>
+{
+ const {script,parent,actor}=await operationsFixture();
+ const other=new THREE.Group();script.parent.add(other);other.position.set(5,0,0);other.updateMatrix();
+ const near=node(script.graph,"nunu/objects/proximity");near.getInputData=slot=>slot===0?actor:slot===1?other:undefined;
+ const fired=[];near.triggerSlot=slot=>fired.push(slot===2?"entered":"exited");
+ near.onExecute();assert.equal(near.getOutputData(0),3);assert.equal(near.getOutputData(1),false);assert.deepEqual(fired,[]);
+ other.position.set(3.5,0,0);other.updateMatrix();near.onExecute();near.onExecute();
+ assert.equal(near.getOutputData(0),1.5);assert.equal(near.getOutputData(1),true);assert.deepEqual(fired,["entered"]);
+ parent.position.set(0,0,0);parent.updateMatrix();near.onExecute();assert.deepEqual(fired,["entered","exited"]);
+ near.setProperty("radius",10);near.onExecute();assert.deepEqual(fired,["entered","exited","entered"]);
+ near.getInputData=slot=>slot===0?actor:slot===1?new THREE.Group():undefined;near.onExecute();
+ assert.equal(near.getOutputData(0),null);assert.equal(near.getOutputData(1),false);assert.deepEqual(fired,["entered","exited","entered","exited"]);
+ script.dispose();
+});
+
+test("physics body drives only running dynamic bodies and validates before writing",async()=>
+{
+ const {script,scene,parent}=await operationsFixture();
+ const velocity={x:1,y:0,z:0,set(x,y,z){this.x=x;this.y=y;this.z=z;}};
+ let woken=0;
+ const physics=new THREE.Group();physics.type="Physics";physics.world={};physics.body={mass:2,type:1,velocity,wakeUp(){woken++;}};parent.add(physics);
+ const body=node(script.graph,"nunu/physics/body");let target=physics;body.getInputData=slot=>slot===1?target:undefined;
+ body.onAction();assert.equal(body.getOutputData(2),true);assert.deepEqual([velocity.x,velocity.y,velocity.z],[1,2.5,0]);assert.equal(woken,1);
+ body.setProperty("operation","add velocity");body.setProperty("vector",[1,1,1]);body.onAction();assert.deepEqual([velocity.x,velocity.y,velocity.z],[2,3.5,1]);
+ body.setProperty("operation","set velocity");body.onAction();assert.deepEqual([velocity.x,velocity.y,velocity.z],[1,1,1]);
+ const before=JSON.stringify(velocity);
+ for(const [setup,message] of [
+  [()=>{body.setProperty("vector",[NaN,0,0]);},"finite"],
+  [()=>{body.setProperty("vector",[0,1,0]);body.setProperty("operation","teleport");},"operation"],
+  [()=>{body.setProperty("operation","set velocity");physics.body.mass=0;},"dynamic"],
+  [()=>{physics.body.mass=2;physics.body.type=4;},"dynamic"],
+  [()=>{physics.body.type=1;physics.world=null;},"not running"],
+  [()=>{target=actorlessGroup();},"physics object"]
+ ])
+ {
+  setup();body.onAction();assert.equal(body.getOutputData(2),false,message);assert.ok(body.getOutputData(3).includes(message),body.getOutputData(3));assert.equal(JSON.stringify(velocity),before);
+ }
+ function actorlessGroup(){const group=new THREE.Group();scene.add(group);return group;}
+ script.dispose();
+});
+
+test("audio playback plays, resumes, restarts, pauses, stops and toggles loaded emitters only",async()=>
+{
+ const {script,parent}=await operationsFixture();
+ const calls=[];
+ const audio=new THREE.Group();audio.type="Audio";audio.buffer=null;audio.isPlaying=false;audio.source=null;
+ audio.play=function(){calls.push("play");this.isPlaying=true;this.source={};};
+ audio.pause=function(){calls.push("pause");this.isPlaying=false;};
+ audio.stop=function(){calls.push("stop");this.isPlaying=false;};
+ parent.add(audio);
+ const playback=node(script.graph,"nunu/audio/playback");playback.getInputData=slot=>slot===1?audio:undefined;
+ const run=(operation)=>{playback.setProperty("operation",operation);playback.onAction();return playback.getOutputData(2);};
+ assert.equal(run("stop"),true);assert.deepEqual(calls,[]);
+ assert.equal(run("play"),false);assert.ok(playback.getOutputData(3).includes("loading"));
+ audio.buffer={};
+ assert.equal(run("play"),true);assert.equal(run("play"),true);assert.deepEqual(calls,["play"]);assert.equal(playback.getOutputData(4),true);
+ run("restart");assert.deepEqual(calls,["play","stop","play"]);
+ run("toggle");run("toggle");assert.deepEqual(calls.slice(3),["pause","play"]);
+ run("pause");run("pause");run("stop");assert.deepEqual(calls.slice(5),["pause","stop"]);assert.equal(playback.getOutputData(4),false);
+ assert.equal(run("rewind"),false);
+ playback.getInputData=slot=>slot===1?parent:undefined;assert.equal(run("play"),false);assert.ok(playback.getOutputData(3).includes("audio emitter"));
+ script.dispose();
+});
+
+test("spawn copy keeps world transform, stacks, shares resources and rejects unsafe sources",async()=>
+{
+ const {script,scene,parent,actor}=await spawnFixture();
+ parent.rotation.y=Math.PI/2;parent.updateMatrix();script.position.set(0,3,0);script.updateMatrix();
+ const copier=node(script.graph,"nunu/objects/spawn_copy");let source=actor;copier.getInputData=slot=>slot===1?source:undefined;
+ copier.onAction();const first=copier.getOutputData(4);assert.equal(copier.getOutputData(2),true,copier.getOutputData(3));
+ first.updateWorldMatrix(true,false);
+ assert.deepEqual(first.getWorldPosition(new THREE.Vector3()).toArray().map(v=>Math.round(v*100)/100),[3.5,0,0]);
+ assert.ok(first.getWorldQuaternion(new THREE.Quaternion()).angleTo(actor.getWorldQuaternion(new THREE.Quaternion()))<1e-6);
+ assert.equal(first.geometry,actor.geometry);assert.equal(first.material,actor.material);assert.equal(first.name,"Actor copy");
+ copier.onAction();copier.getOutputData(4).updateWorldMatrix(true,false);assert.equal(Math.round(copier.getOutputData(4).getWorldPosition(new THREE.Vector3()).x*100)/100,5);
+ copier.setProperty("stack",false);copier.setProperty("limit",3);copier.onAction();copier.getOutputData(4).updateWorldMatrix(true,false);assert.equal(Math.round(copier.getOutputData(4).getWorldPosition(new THREE.Vector3()).x*100)/100,3.5);
+ copier.onAction();assert.equal(copier.getOutputData(2),false);assert.ok(copier.getOutputData(3).includes("limit"));
+ copier.setProperty("limit",8);
+ // Unsafe sources: spawned objects, scripts, physics, audio, cameras, foreign, the scene itself.
+ const scripted=new THREE.Group();scripted.add(Object.assign(new THREE.Object3D(),{type:"NodeScript"}));parent.add(scripted);
+ const physics=Object.assign(new THREE.Group(),{type:"Physics"});parent.add(physics);
+ const audio=Object.assign(new THREE.Group(),{type:"PositionalAudio"});parent.add(audio);
+ const camera=new THREE.PerspectiveCamera();parent.add(camera);
+ const foreign=new THREE.Group();new THREE.Scene().add(foreign);
+ const count=script.children.find(c=>c.name==="Runtime spawns").children.length;
+ for(const [candidate,message] of [[first,"spawned"],[scripted,"scripts"],[physics,"Physics"],[audio,"Audio"],[camera,"Cameras"],[foreign,"live object"],[scene,"scene"],[script,"script"]])
+ {
+  source=candidate;copier.onAction();assert.equal(copier.getOutputData(2),false,message);assert.ok(copier.getOutputData(3).includes(message),copier.getOutputData(3));
+ }
+ assert.equal(script.children.find(c=>c.name==="Runtime spawns").children.length,count);
+ // Group copies delete with their own children; tint clones on parts are freed with the copy.
+ const group=new THREE.Group();const part=new THREE.Mesh(actor.geometry,actor.material);group.add(part);parent.add(group);
+ source=group;copier.onAction();const copy=copier.getOutputData(4);const copiedPart=copy.children[0];
+ const tint=node(script.graph,"nunu/materials/color");tint.getInputData=slot=>slot===1?copiedPart:undefined;tint.onAction();
+ const tinted=copiedPart.material;assert.notEqual(tinted,actor.material);let freed=0;tinted.addEventListener("dispose",()=>freed++);
+ const attached=new THREE.Group();copiedPart.add(attached);
+ const remove=node(script.graph,"nunu/objects/delete");remove.getInputData=()=>copy;remove.onAction();assert.equal(remove.getOutputData(2),false);
+ copiedPart.remove(attached);remove.onAction();assert.equal(remove.getOutputData(2),true,remove.getOutputData(3));assert.equal(freed,1);
+ let originals=0;actor.geometry.addEventListener("dispose",()=>originals++);actor.material.addEventListener("dispose",()=>originals++);
+ source=actor;copier.onAction();copier.getOutputData(4).add(attached);
+ script.graph.stop();assert.equal(attached.parent,script);assert.equal(originals,0);assert.equal(actor.parent,parent);
+ script.dispose();
+});
+
+test("dropping scene objects binds, adds or connects references in one undoable step",async()=>
+{
+ const {LiteGraphScript,dropSceneObject}=await ready;
+ const scene=new THREE.Scene();const script=new LiteGraphScript();const actor=new THREE.Group();actor.name="Actor";scene.add(script,actor);
+ seedHistory(script.graph);
+ const added=dropSceneObject(script.graph,script,actor,[120,80],null,-1);
+ assert.equal(added.ok,true);assert.equal(added.node.type,"nunu/object");assert.equal(added.node.properties.nunu_uuid,actor.uuid);assert.deepEqual(Array.from(added.node.pos),[120,80]);
+ const other=new THREE.Group();scene.add(other);
+ assert.equal(dropSceneObject(script.graph,script,other,[0,0],added.node,-1).ok,true);assert.equal(added.node.properties.nunu_uuid,other.uuid);assert.equal(script.graph._nodes.length,1);
+ const rotate=node(script.graph,"nunu/rotate");rotate.pos=[600,100];
+ const objectSlot=rotate.inputs.findIndex(input=>String(input.type).split(",").includes("nunu_object"));
+ const connected=dropSceneObject(script.graph,script,actor,[0,0],rotate,objectSlot);
+ assert.equal(connected.ok,true);assert.equal(rotate.getInputNode(objectSlot),connected.node);assert.ok(connected.node.pos[0]<rotate.pos[0]);
+ const otherSlot=rotate.inputs.findIndex(input=>!String(input.type).includes("nunu_object"));
+ const count=script.graph._nodes.length;
+ assert.equal(dropSceneObject(script.graph,script,actor,[0,0],rotate,otherSlot).ok,false);
+ for(const candidate of [scene,script,new THREE.Group(),null]) assert.equal(dropSceneObject(script.graph,script,candidate,[0,0],null,-1).ok,false);
+ assert.equal(script.graph._nodes.length,count);
+ // Each drop is one history step.
+ script.graph.actionHistoryBack();assert.equal(rotate.getInputNode(objectSlot),null);assert.equal(script.graph._nodes.length,count-1);
+ script.dispose();
+ function seedHistory(graph){const {LiteGraph}=entry.namespace;LiteGraph.actionHistory_enabled=true;entry.namespace.seedGraphHistory(graph);}
+});
+
+test("object references offer select and bind quick actions through editor hooks only",async()=>
+{
+ const {LiteGraphScript}=await ready;
+ const scene=new THREE.Scene();const script=new LiteGraphScript();const actor=new THREE.Group();scene.add(script,actor);
+ const reference=node(script.graph,"nunu/object");
+ let options=reference.getExtraMenuOptions();assert.deepEqual(Array.from(options,o=>o.content),["Select in scene","Bind to selected object"]);assert.ok(options.every(o=>o.disabled));
+ assert.equal(reference.onDblClick(),undefined);
+ const revealed=[],messages=[];
+ script.graph.nunuSelection=()=>actor;script.graph.nunuReveal=o=>revealed.push(o);script.graph.nunuFeedback=m=>messages.push(m);
+ options=reference.getExtraMenuOptions();assert.equal(options[0].disabled,true);assert.equal(options[1].disabled,false);
+ assert.equal(reference.onDblClick(),undefined);assert.equal(messages.length,1);
+ options[1].callback();assert.equal(reference.properties.nunu_uuid,actor.uuid);
+ options=reference.getExtraMenuOptions();assert.equal(options[0].disabled,false);options[0].callback();assert.deepEqual(revealed,[actor]);
+ assert.equal(reference.onDblClick(),true);assert.equal(revealed.length,2);
+ script.graph.nunuSelection=()=>new THREE.Group();assert.equal(reference.bindSelected(),false);assert.equal(reference.properties.nunu_uuid,actor.uuid);
+ script.dispose();
 });

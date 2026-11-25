@@ -108,6 +108,33 @@
       ],
       "json": "visual-script-light.isp",
       "binary": "visual-script-light.nsp"
+    },
+    {
+      "id": "hover-highlight",
+      "title": "Highlight on hover",
+      "accepts": "Mesh",
+      "description": "Turn the mesh yellow while the mouse is over it and blue again when it leaves.",
+      "nodes": [
+        "nunu/object",
+        "nunu/input/pointer",
+        "nunu/materials/color",
+        "nunu/materials/color"
+      ],
+      "json": "visual-script-hover-highlight.isp",
+      "binary": "visual-script-hover-highlight.nsp"
+    },
+    {
+      "id": "click-copy",
+      "title": "Click to copy",
+      "accepts": "Mesh",
+      "description": "Each click on the mesh adds a copy beside it (up to 8). Stop removes the copies.",
+      "nodes": [
+        "nunu/object",
+        "nunu/input/pointer",
+        "nunu/objects/spawn_copy"
+      ],
+      "json": "visual-script-click-copy.isp",
+      "binary": "visual-script-click-copy.nsp"
     }
   ]
 }

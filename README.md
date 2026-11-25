@@ -76,14 +76,17 @@ Project execution notes, memories and plans are local files under the ignored
 4. **Undo/Redo** and Ctrl+Z / Ctrl+Y apply to the graph while its canvas has focus. The first edit is undoable; graph and scene histories remain separate. **Frame all** fits the graph; **Check** reports missing bindings, types or dependencies in the status bar.
 5. Save the project normally. Binary `.nsp` and JSON `.isp` files both include the graph and its schema version. Reopen and export through the normal project workflow; the standalone runtime registers the same nunu nodes.
 
-Use the second toolbar row to choose a **Node category** and **Nunu node**, then
-**Add node**. Descriptions explain each node's contract. Choose a **Starter
+Use the second toolbar row to **Search nodes** (title, category, type or
+description; Enter adds the first match) or choose a category and **Nunu node**,
+then **Add node**. Descriptions explain each node's contract. Choose a **Starter
 example** and **Add example** with a compatible scene object selected; one example
-is one undoable edit. Camera and light examples require their respective object
-types. Existing graphs are appended to, never replaced.
+is one undoable edit. Examples that need a different object type are marked
+"(needs Mesh)", "(needs Light)" and so on. Existing graphs are appended to, never
+replaced.
 
-Six self-contained projects cover spin, W-held movement, Space visibility toggle,
-mesh tint, perspective camera projection and light intensity. Every project has
+Ten self-contained projects cover spin, W-held movement, Space visibility toggle,
+mesh tint, perspective camera projection, light intensity, spawning on start,
+Space spawn / D delete, highlight on hover and click to copy. Every project has
 JSON `.isp` and binary `.nsp` versions in [the example manifest](source/files/examples/visual-script-examples.json).
 Load one through **File → Load**, then Run. Each includes a camera, box and lights
 and requires no external assets. Regenerate projects and the published node
@@ -108,6 +111,12 @@ catalog with `node --experimental-vm-modules scripts/create-visual-script-exampl
 | Camera Projection | Atomically validate and update perspective FOV and clipping; orthographic cameras support clipping. |
 | Light Settings | Atomically set non-negative intensity and color. |
 | Mesh Color | Tint color-capable materials; default isolates shared materials with one clone per object, with explicit shared-edit opt-in. |
+| Pointer | Hover and click on an object or its children through the scene's active camera; nearer visible objects block it. Hovering, world hit point and distance, plus entered/exited/clicked events that fire once per transition. |
+| Proximity | World distance between two objects with a radius; inside flag and entered/exited events. A missing object counts as outside. |
+| Spawn Primitive / Spawn Copy | Event-driven: add a box, sphere or group, or a copy of an authored object, owned by the running script. Copies keep the source's world rotation and scale, share its geometry and materials, and can stack at an offset. Per-node limit 1–128, per-script cap 128. Everything spawned is removed on stop and never saved. Objects with scripts, physics, audio or cameras cannot be copied. |
+| Delete Spawned Object | Delete a primitive or copy this script spawned and free what it allocated. Authored objects, other scripts' objects and spawns with attached children are rejected. |
+| Physics Body | Apply an impulse at the center, or set/add linear velocity, on a dynamic physics object while scene physics runs. Static and kinematic bodies are rejected. |
+| Audio Playback | Play (resumes, never restarts), restart, pause, stop or toggle an audio emitter once its audio has loaded. |
 
 New mutation nodes expose **done**, **failed**, **success** and **message**. Invalid
 inputs leave their target unchanged. Their object inputs accept only objects in
@@ -121,8 +130,13 @@ output to Translate **apply**. Engine nodes resolve context correctly inside
 subgraphs. Rotations are local Euler angles, not world-axis rotations; animated
 transforms do not teleport physics bodies in this first pass.
 
-Bindings are UUID-based. **Bind selected** binds selected Nunu Object graph nodes
-to the current scene selection. Resources and objects in other scenes are not
+Bindings are UUID-based. Drag an object from the scene tree onto the graph to
+add a bound reference; drop it on a Nunu Object node to rebind that node, or on
+an object input to add a reference and connect it. **Reference selected** adds a
+reference to the selected object. **Bind selected** binds selected Nunu Object
+graph nodes to the current scene selection. Right-click a Nunu Object node for
+**Select in scene** and **Bind to selected object**; double-click selects its
+object in the scene. Each of these is one undoable step. Resources and objects in other scenes are not
 accepted. Run follows the editor's existing immediate-mode setting; the status
 bar explicitly identifies that mode because it can mutate the authored scene.
 App data/initial resize received during startup wait for node readiness. Graph
@@ -148,7 +162,7 @@ Add starter builders in `LiteGraphStarter.js` so the editor and fixture generato
 use the same wiring. Regenerate all examples, test their connected behavior,
 invalid inputs and save/reopen, then run `npm test` and
 `npm run check-integration-builds`. This is the baseline for incremental growth;
-physics control, spawning/destruction, animation and audio nodes are future work.
+collision events, animation playback and audio loading are future work.
 
 ## Screenshots
 

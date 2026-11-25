@@ -9,7 +9,9 @@ import {Component} from "../../../components/Component.js";
 import {canBindObject} from "../../../../core/objects/script/LiteGraphContext.js";
 import {addRotationStarter, getNunuExampleCatalog, acceptsExample, addVisualScriptExample} from "../../../../core/objects/script/LiteGraphStarter.js";
 import {getNunuNodeCatalog} from "../../../../core/objects/script/LiteGraphNodeCatalog.js";
+import {DragBuffer} from "../../DragBuffer.js";
 import {seedGraphHistory} from "./GraphHistory.js";
+import {dropSceneObject, canReference} from "./GraphObjectDrop.js";
 
 function LitegraphEditor(parent, closeable, container, index)
 {
@@ -47,6 +49,30 @@ function LitegraphEditor(parent, closeable, container, index)
 		}
 	};
 	this.canvas.element.addEventListener("keydown", this.onGraphKey, true);
+	this.revealObject = function(object)
+	{
+		Editor.selectObject(object);
+		self.setStatus("Selected " + (object.name || object.type) + " in the scene.");
+	};
+	// Scene tree drags carry the object UUID; handle them before LiteGraph's own drop logic.
+	this.onDragOver = function(event)
+	{
+		if (self.draggedObject(event))
+		{
+			event.preventDefault();
+			event.dataTransfer.dropEffect = "link";
+		}
+	};
+	this.onDrop = function(event)
+	{
+		var object = self.draggedObject(event);
+		if (!object || !self.graphcanvas) { return; }
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		self.dropObject(object, event);
+	};
+	this.canvas.element.addEventListener("dragover", this.onDragOver, true);
+	this.canvas.element.addEventListener("drop", this.onDrop, true);
 }
 
 LitegraphEditor.prototype = Object.create(TabComponent.prototype);
@@ -69,6 +95,7 @@ LitegraphEditor.prototype.releaseGraph = function()
 	{
 		delete this.node.graph.nunuSelection;
 		delete this.node.graph.nunuFeedback;
+		delete this.node.graph.nunuReveal;
 	}
 };
 
@@ -80,6 +107,7 @@ LitegraphEditor.prototype.attach = function(node)
 	{
 		node.graph.nunuSelection = this.selectionProvider;
 		node.graph.nunuFeedback = this.feedback;
+		node.graph.nunuReveal = this.revealObject;
 		seedGraphHistory(node.graph);
 		var self = this;
 		this.unsubscribers = [node.graph.events.on("graph-changed", function()
@@ -109,6 +137,11 @@ LitegraphEditor.prototype.destroy = function()
 	this.releaseGraph();
 	this.node = null;
 	if (this.onGraphKey) { this.canvas.element.removeEventListener("keydown", this.onGraphKey, true); }
+	if (this.onDrop)
+	{
+		this.canvas.element.removeEventListener("dragover", this.onDragOver, true);
+		this.canvas.element.removeEventListener("drop", this.onDrop, true);
+	}
 	TabComponent.prototype.destroy.call(this);
 };
 
@@ -178,8 +211,10 @@ LitegraphEditor.prototype.createToolbar = function()
 		self.toolbar.element.appendChild(element);
 		return element;
 	}
+	this.referenceButton = button("Reference selected", function() { self.referenceSelected(); });
+	this.referenceButton.title = "Add a Nunu Object node bound to the selected scene object. You can also drag objects from the scene tree onto the graph.";
 	this.starterButton = button("Spin selected", function() { self.addStarter(); });
-	button("Bind selected", function() { self.bindSelected(); });
+	button("Bind selected", function() { self.bindSelected(); }).title = "Bind the selected Nunu Object nodes to the selected scene object.";
 	button("Frame all", function() { self.frameAll(); });
 	button("Undo", function() { self.changeHistory(false); });
 	button("Redo", function() { self.changeHistory(true); });
@@ -223,31 +258,67 @@ LitegraphEditor.prototype.createPalette = function()
 		self.palette.element.appendChild(element);
 		return element;
 	}
+	this.searchInput = document.createElement("input");
+	this.searchInput.type = "search";
+	this.searchInput.placeholder = "Search nodes";
+	this.searchInput.setAttribute("aria-label", "Search nodes");
+	this.palette.element.appendChild(this.searchInput);
 	this.categorySelect = select("Node category");
 	this.nodeSelect = select("Nunu node");
 	var catalog = getNunuNodeCatalog();
+	option(this.categorySelect, "", "All categories");
 	for (var category of Array.from(new Set(catalog.map(function(item) { return item.category; })))) { option(this.categorySelect, category, category); }
 	this.categorySelect.value = "Scene";
 	function fillNodes()
 	{
-		self.nodeSelect.textContent = "";
-		for (var definition of catalog.filter(function(item) { return item.category === self.categorySelect.value; }))
+		var words = self.searchInput.value.toLowerCase().split(/\s+/).filter(Boolean);
+		var matches = catalog.filter(function(item)
 		{
-			option(self.nodeSelect, definition.type, definition.title);
+			var text = (item.title + " " + item.category + " " + item.type + " " + item.accepts + " " + item.description).toLowerCase();
+			// A search looks through every category; the category only narrows browsing.
+			return words.length ? words.every(function(word) { return text.includes(word); }) : !self.categorySelect.value || item.category === self.categorySelect.value;
+		});
+		self.nodeSelect.textContent = "";
+		for (var definition of matches)
+		{
+			option(self.nodeSelect, definition.type, words.length || !self.categorySelect.value ? definition.category + ": " + definition.title : definition.title);
 		}
-		self.nodeSelect.title = catalog.find(function(item) { return item.type === self.nodeSelect.value; }).description;
+		self.nodeSelect.disabled = matches.length === 0;
+		if (self.addNodeButton) { self.addNodeButton.disabled = matches.length === 0; }
+		self.nodeSelect.title = matches.length ? matches[0].description : "No node matches the search.";
+		return matches;
 	}
 	this.categorySelect.addEventListener("change", fillNodes);
+	this.searchInput.addEventListener("input", function()
+	{
+		var matches = fillNodes();
+		self.setStatus(matches.length ? matches.length + " node(s) match. Enter adds " + matches[0].title + "." : "No node matches \"" + self.searchInput.value + "\".");
+	});
+	this.searchInput.addEventListener("keydown", function(event)
+	{
+		if (event.key === "Enter" && self.nodeSelect.value)
+		{
+			event.preventDefault();
+			self.addCatalogNode(self.nodeSelect.value);
+		}
+		else if (event.key === "Escape")
+		{
+			self.searchInput.value = "";
+			fillNodes();
+		}
+		event.stopPropagation();
+	});
 	this.nodeSelect.addEventListener("change", function()
 	{
 		var definition = catalog.find(function(item) { return item.type === self.nodeSelect.value; });
 		self.nodeSelect.title = definition.description;
 		self.setStatus(definition.title + ": " + definition.description);
 	});
+	this.addNodeButton = button("Add node", function() { self.addCatalogNode(self.nodeSelect.value); });
 	fillNodes();
-	button("Add node", function() { self.addCatalogNode(self.nodeSelect.value); });
 	this.exampleSelect = select("Starter example");
 	for (var example of getNunuExampleCatalog()) { option(this.exampleSelect, example.id, example.title); }
+	this.exampleSelect.title = "Examples marked with a requirement need a different selected object.";
 	this.exampleSelect.addEventListener("change", function()
 	{
 		self.updateStatus();
@@ -306,7 +377,13 @@ LitegraphEditor.prototype.updateStatus = function()
 	{
 		var example = getNunuExampleCatalog().find((item) => { return item.id === this.exampleSelect.value; });
 		this.exampleButton.disabled = !eligible || !acceptsExample(example, selected);
+		for (var item of getNunuExampleCatalog())
+		{
+			var element = this.exampleSelect.querySelector("option[value=\"" + item.id + "\"]");
+			if (element) { element.textContent = item.title + (eligible && acceptsExample(item, selected) ? "" : " (needs " + item.accepts + ")"); }
+		}
 	}
+	if (this.referenceButton) { this.referenceButton.disabled = !canReference(this.node, selected); }
 	var issues = this.node.getDiagnostics();
 	if (issues.length)
 	{
@@ -317,7 +394,7 @@ LitegraphEditor.prototype.updateStatus = function()
 	}
 	else if (this.node.graph._nodes.length === 0)
 	{
-		this.setStatus("Choose a category and Add node, or select a scene object and Add example.");
+		this.setStatus("Drag objects from the scene tree onto the graph, search and Add node, or select an object and Add example.");
 	}
 	else
 	{
@@ -328,6 +405,44 @@ LitegraphEditor.prototype.updateStatus = function()
 LitegraphEditor.prototype.updateSelection = function()
 {
 	this.updateStatus();
+};
+
+/** The scene object carried by a tree drag, or null for any other drag. */
+LitegraphEditor.prototype.draggedObject = function(event)
+{
+	var object = DragBuffer.buffer.find(function(item) { return item && item.isObject3D; }) || null;
+	if (event.type === "drop")
+	{
+		var uuid = event.dataTransfer.getData("uuid");
+		object = uuid ? DragBuffer.get(uuid) : null;
+	}
+	return object && object.isObject3D ? object : null;
+};
+
+LitegraphEditor.prototype.dropObject = function(object, event)
+{
+	var canvas = this.graphcanvas;
+	var position = canvas.convertEventToCanvasOffset(event);
+	var target = canvas.graph.getNodeOnPos(position[0], position[1], canvas.visible_nodes);
+	var slot = target ? canvas.isOverNodeInput(target, position[0], position[1]) : -1;
+	var outcome = dropSceneObject(canvas.graph, this.node, object, position, target, slot);
+	if (outcome.node) { canvas.selectNode(outcome.node); }
+	canvas.setDirty(true, true);
+	this.canvas.element.focus();
+	this.updateStatus();
+	this.setStatus(outcome.message);
+};
+
+LitegraphEditor.prototype.referenceSelected = function()
+{
+	if (!this.graphcanvas) { return; }
+	var canvas = this.graphcanvas;
+	var object = this.selectionProvider();
+	var center = canvas.convertCanvasToOffset([canvas.cssWidth / 2, canvas.cssHeight / 2]);
+	var outcome = dropSceneObject(canvas.graph, this.node, object, center, null, -1);
+	if (outcome.node) { canvas.selectNode(outcome.node); }
+	this.updateStatus();
+	this.setStatus(outcome.ok ? outcome.message : "Select an object in this script's scene first.");
 };
 
 LitegraphEditor.prototype.addStarter = function()

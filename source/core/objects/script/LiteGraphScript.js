@@ -6,6 +6,7 @@ import "./litegraph_nodes/LiteGraphNunuNodes.js";
 import "./litegraph_nodes/LiteGraphEngineNodes.js";
 import "./litegraph_nodes/LiteGraphObjectNodes.js";
 import "./litegraph_nodes/LiteGraphLifecycleNodes.js";
+import "./litegraph_nodes/LiteGraphInteractionNodes.js";
 import {authoredChildren} from "./LiteGraphSpawnContext.js";
 
 /**

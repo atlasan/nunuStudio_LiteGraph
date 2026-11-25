@@ -77,7 +77,9 @@ input[type=number]::-webkit-outer-spin-button
 /* Embedded visual scripting controls. */
 .visual-script-toolbar
 {
-	display: flex;
+	/* Component.updateInterface() sets display inline; keep one scrollable row. */
+	display: flex !important;
+	flex-wrap: nowrap;
 	align-items: center;
 	gap: 6px;
 	padding: 4px 8px;
@@ -114,6 +116,20 @@ input[type=number]::-webkit-outer-spin-button
 	background: var(--bar-color);
 }
 
+.visual-script-palette input[type="search"]
+{
+	flex: 0 1 180px;
+	min-width: 110px;
+	color: #ddd;
+	background: var(--panel-color);
+	border: 1px solid #666;
+	border-radius: 3px;
+	padding: 4px 6px;
+}
+.visual-script-palette select:disabled
+{
+	opacity: 0.45;
+}
 .visual-script-palette select
 {
 	flex: 0 0 auto;

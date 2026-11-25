@@ -1,7 +1,7 @@
 import {LiteGraph} from "../../../../lib/litegraph.js";
 import {registerNunuNode} from "../LiteGraphNodeCatalog.js";
 import {scriptContext} from "../LiteGraphContext.js";
-import {spawnPrimitive, deleteSpawned, releaseSpawns} from "../LiteGraphSpawnContext.js";
+import {spawnPrimitive, spawnCopy, deleteSpawned, releaseSpawns} from "../LiteGraphSpawnContext.js";
 
 function actionPorts(node)
 {
@@ -31,6 +31,32 @@ function report(node, operation, options)
 	node.triggerSlot(0, value, null, options);
 }
 
+/** X/Y/Z number widgets editing one vector property; widgets follow later property changes. */
+function vectorWidgets(node, property, label)
+{
+	var widgets = [];
+	for (var index = 0; index < 3; index++)
+	{
+		(function(axis)
+		{
+			widgets.push(node.addWidget("number", label + " " + ["X", "Y", "Z"][axis], node.properties[property][axis], function(value)
+			{
+				var vector = node.properties[property].slice(); vector[axis] = value;
+				node.setProperty(property, vector);
+			}, {precision: 2, step: 0.1}));
+		})(index);
+	}
+	return widgets;
+}
+
+function syncVectorWidgets(widgets, value)
+{
+	if (widgets && value && value.length === 3)
+	{
+		for (var index = 0; index < 3; index++) { widgets[index].value = value[index]; }
+	}
+}
+
 function SpawnPrimitive()
 {
 	actionPorts(this);
@@ -43,28 +69,14 @@ function SpawnPrimitive()
 	this.addWidget("number", "size / diameter", 1, null, {property: "size", precision: 2, step: 0.1});
 	this.addWidget("text", "hex color", this.properties.color, null, {property: "color"});
 	this.addWidget("number", "live limit", 32, null, {property: "limit", precision: 0, step: 1});
-	var self = this;
-	for (var index = 0; index < 3; index++)
-	{
-		(function(axis)
-		{
-			self.addWidget("number", "position " + ["X", "Y", "Z"][axis], self.properties.position[axis], function(value)
-			{
-				var position = self.properties.position.slice(); position[axis] = value;
-				self.setProperty("position", position);
-			}, {precision: 2, step: 0.1});
-		})(index);
-	}
+	this.positionWidgets = vectorWidgets(this, "position", "position");
 }
 SpawnPrimitive.title = "Spawn Primitive";
 SpawnPrimitive.desc = "Spawn a box, sphere or group owned by this running script. Position is script-local, or a world offset from a connected anchor. Cleans up on stop; runtime objects are not saved. Per-node limit 1–128, per-script cap 128.";
 SpawnPrimitive.size = [300, 330];
 SpawnPrimitive.prototype.onPropertyChanged = function(name, value)
 {
-	if (name === "position" && value && value.length === 3)
-	{
-		for (var index = 0; index < 3; index++) { this.widgets[5 + index].value = value[index]; }
-	}
+	if (name === "position") { syncVectorWidgets(this.positionWidgets, value); }
 };
 SpawnPrimitive.prototype.onAction = function(action, param, options)
 {
@@ -73,13 +85,38 @@ SpawnPrimitive.prototype.onAction = function(action, param, options)
 };
 SpawnPrimitive.prototype.onRemoved = function() { releaseSpawns(scriptContext(this).self, this); this.setOutputData(4, null); };
 
+function SpawnCopy()
+{
+	actionPorts(this);
+	this.addInput("source", "nunu_object,object");
+	this.addInput("offset", "vec3");
+	this.addOutput("object", "nunu_object");
+	this.properties = {offset: [1.5, 0, 0], stack: true, limit: 8};
+	this.addWidget("toggle", "stack copies", true, null, {property: "stack"});
+	this.addWidget("number", "live limit", 8, null, {property: "limit", precision: 0, step: 1});
+	this.offsetWidgets = vectorWidgets(this, "offset", "offset");
+}
+SpawnCopy.title = "Spawn Copy";
+SpawnCopy.desc = "Copy an authored object (meshes, groups, lights) into this running script. The copy keeps the source's world rotation and scale, is placed at a world offset from it (stacked per live copy), shares its geometry and materials, and is removed on stop. Objects with scripts, physics, audio or cameras are rejected.";
+SpawnCopy.size = [300, 250];
+SpawnCopy.prototype.onPropertyChanged = function(name, value)
+{
+	if (name === "offset") { syncVectorWidgets(this.offsetWidgets, value); }
+};
+SpawnCopy.prototype.onAction = function(action, param, options)
+{
+	var self = this;
+	report(this, function() { return spawnCopy(self, self.getInputData(1)); }, options);
+};
+SpawnCopy.prototype.onRemoved = SpawnPrimitive.prototype.onRemoved;
+
 function DeleteSpawned()
 {
 	actionPorts(this);
 	this.addInput("object", "nunu_object,object");
 }
 DeleteSpawned.title = "Delete Spawned Object";
-DeleteSpawned.desc = "Delete a live primitive owned by this visual script and free its allocated geometry/materials. Authored objects, other scripts' objects and objects with children are rejected. Repeat deletion fails safely.";
+DeleteSpawned.desc = "Delete a live primitive or copy owned by this visual script and free its allocated geometry/materials. Authored objects, other scripts' objects and objects with children are rejected. Repeat deletion fails safely.";
 DeleteSpawned.size = [280, 170];
 DeleteSpawned.prototype.onAction = function(action, param, options)
 {
@@ -88,4 +125,5 @@ DeleteSpawned.prototype.onAction = function(action, param, options)
 };
 
 registerNunuNode("nunu/objects/spawn", SpawnPrimitive, {category: "Lifecycle", accepts: "Object3D", effect: "write"});
+registerNunuNode("nunu/objects/spawn_copy", SpawnCopy, {category: "Lifecycle", accepts: "Object3D", effect: "write"});
 registerNunuNode("nunu/objects/delete", DeleteSpawned, {category: "Lifecycle", accepts: "Spawned Object3D", effect: "write"});

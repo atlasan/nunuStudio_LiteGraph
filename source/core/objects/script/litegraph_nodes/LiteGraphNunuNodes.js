@@ -10,26 +10,59 @@ function NunuObject()
 	this.properties = {nunu_uuid: null};
 	this._value = null;
 	var self = this;
-	this.addWidget("button", "use selected", "", function()
-	{
-		var graph = ownerGraph(self);
-		var selected = graph && graph.nunuSelection ? graph.nunuSelection() : null;
-		if (graph && canBindObject(graph.nunu_lgscript, selected))
-		{
-			self.graph.transact("Bind scene object", function()
-			{
-				self.setProperty("nunu_uuid", selected.uuid);
-			});
-		}
-		else if (graph && graph.nunuFeedback)
-		{
-			graph.nunuFeedback("Select an object in this script's scene, then bind it.");
-		}
-	});
+	this.addWidget("button", "use selected", "", function() { self.bindSelected(); });
 }
 
 NunuObject.title = "Nunu Object";
-NunuObject.desc = "Reference a scene object by UUID; use selected in the editor to bind it.";
+NunuObject.desc = "Reference a scene object by UUID. Drag an object from the scene tree onto the graph, or use selected. Right-click for quick actions; double-click selects it in the scene.";
+
+/** Bind to the editor selection (when the graph is open in an editor) as one undoable step. */
+NunuObject.prototype.bindSelected = function()
+{
+	var graph = ownerGraph(this);
+	var selected = graph && graph.nunuSelection ? graph.nunuSelection() : null;
+	var self = this;
+	if (graph && canBindObject(graph.nunu_lgscript, selected))
+	{
+		this.graph.transact("Bind scene object", function()
+		{
+			self.setProperty("nunu_uuid", selected.uuid);
+		});
+		return true;
+	}
+	if (graph && graph.nunuFeedback) { graph.nunuFeedback("Select an object in this script's scene, then bind it."); }
+	return false;
+};
+
+/** Ask the editor to select the bound object; false outside the editor or when unbound. */
+NunuObject.prototype.revealObject = function()
+{
+	var graph = ownerGraph(this);
+	var object = this.refreshObjectByUUID();
+	if (graph && graph.nunuReveal && object)
+	{
+		graph.nunuReveal(object);
+		return true;
+	}
+	if (graph && graph.nunuFeedback) { graph.nunuFeedback(object ? "Open this graph in the editor to select its objects." : "Bind this reference to a scene object first."); }
+	return false;
+};
+
+NunuObject.prototype.getExtraMenuOptions = function()
+{
+	var self = this;
+	var graph = ownerGraph(this);
+	var bound = this.refreshObjectByUUID() !== null;
+	return [
+		{content: "Select in scene", disabled: !bound || !graph || !graph.nunuReveal, callback: function() { self.revealObject(); }},
+		{content: "Bind to selected object", disabled: !graph || !graph.nunuSelection, callback: function() { self.bindSelected(); }}
+	];
+};
+
+NunuObject.prototype.onDblClick = function()
+{
+	return this.revealObject() || undefined;
+};
 
 NunuObject.prototype.onConfigure = function()
 {

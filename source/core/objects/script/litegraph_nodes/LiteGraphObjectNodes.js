@@ -299,3 +299,5 @@ for (var definition of definitions)
 	definition[1].size = definition[4] === "write" ? [280, 240] : [220, 160];
 	registerNunuNode(definition[0], definition[1], {category: definition[2], accepts: definition[3], effect: definition[4]});
 }
+
+export {validObject, actionPorts, result};

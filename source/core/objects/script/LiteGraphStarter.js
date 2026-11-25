@@ -3,6 +3,7 @@ import "./litegraph_nodes/LiteGraphNunuNodes.js";
 import "./litegraph_nodes/LiteGraphEngineNodes.js";
 import "./litegraph_nodes/LiteGraphObjectNodes.js";
 import "./litegraph_nodes/LiteGraphLifecycleNodes.js";
+import "./litegraph_nodes/LiteGraphInteractionNodes.js";
 
 /** Stable example IDs; the same builders feed the editor and portable projects. */
 const examples = [
@@ -13,7 +14,9 @@ const examples = [
 	{id: "camera", title: "Set camera projection", accepts: "PerspectiveCamera", description: "Set perspective FOV to 35 degrees and clipping to 0.1–100 on start.", nodes: ["nunu/object", "nunu/events", "nunu/camera/projection"]},
 	{id: "spawn", title: "Spawn box on start", accepts: "Object3D", description: "Spawn a box two world units right of the selected anchor on start. Stop cleans it up.", nodes: ["nunu/object", "nunu/events", "nunu/objects/spawn"]},
 	{id: "spawn-delete", title: "Space spawns, D deletes", accepts: "Object3D", description: "Press Space to spawn one sphere beside the anchor; D deletes it. Delete before spawning again; Stop cleans up.", nodes: ["nunu/object", "nunu/keyboard", "nunu/objects/spawn", "nunu/keyboard", "nunu/objects/delete"]},
-	{id: "light", title: "Set light intensity", accepts: "Light", description: "Set light intensity to 2 and white color on start.", nodes: ["nunu/object", "nunu/events", "nunu/lights/settings"]}
+	{id: "light", title: "Set light intensity", accepts: "Light", description: "Set light intensity to 2 and white color on start.", nodes: ["nunu/object", "nunu/events", "nunu/lights/settings"]},
+	{id: "hover-highlight", title: "Highlight on hover", accepts: "Mesh", description: "Turn the mesh yellow while the mouse is over it and blue again when it leaves.", nodes: ["nunu/object", "nunu/input/pointer", "nunu/materials/color", "nunu/materials/color"]},
+	{id: "click-copy", title: "Click to copy", accepts: "Mesh", description: "Each click on the mesh adds a copy beside it (up to 8). Stop removes the copies.", nodes: ["nunu/object", "nunu/input/pointer", "nunu/objects/spawn_copy"]}
 ];
 
 function getNunuExampleCatalog()
@@ -44,7 +47,23 @@ function addVisualScriptExample(graph, id, uuid)
 			return node;
 		});
 		nodes[0].setProperty("nunu_uuid", uuid);
-		if (id === "spawn-delete")
+		if (id === "hover-highlight")
+		{
+			nodes[2].setProperty("color", "#ffcc44");
+			nodes[3].setProperty("color", "#66bbff");
+			nodes[0].connect(0, nodes[1], 0);
+			nodes[0].connect(0, nodes[2], 1);
+			nodes[0].connect(0, nodes[3], 1);
+			nodes[1].connect(3, nodes[2], 0);
+			nodes[1].connect(4, nodes[3], 0);
+		}
+		else if (id === "click-copy")
+		{
+			nodes[0].connect(0, nodes[1], 0);
+			nodes[0].connect(0, nodes[2], 1);
+			nodes[1].connect(5, nodes[2], 0);
+		}
+		else if (id === "spawn-delete")
 		{
 			nodes[2].setProperty("shape", "sphere");
 			nodes[2].setProperty("limit", 1);
