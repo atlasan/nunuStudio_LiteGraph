@@ -19,7 +19,7 @@
   - The building system generates minified builds for the runtime and for the editor
   - Documentation generation uses [YuiDocs](https://yui.github.io/yuidoc/)
   - Install dependencies from npm by running `npm install --legacy-peer-deps`
-  - Build  editor, runtime and documentation, run `npm run build`
+  - Build the runtime and editor with `npm run build`; `npm run build-all` also builds the webpage and documentation, and `npm run release` bumps the version first
 - Webpage of the project is built using [Angular](https://angular.io/) and is hosted on [GitHub Pages](https://pages.github.com/)
 
 
@@ -62,7 +62,8 @@ Regression checks cover lifecycle, references, loading, paste and canvas disposa
 `check-integration-builds` produces both production runtime bundles and the editor
 under a temporary directory, verifies runtime/editor separation and CSS packaging,
 and leaves the package version and tracked generated `docs/` files untouched.
-The historical `npm run build` script still increments the package version.
+`npm run build` no longer increments the package version and works on a dirty
+working tree; the version bump moved to `npm run release` (which needs a clean tree).
 Project execution notes, memories and plans are local files under the ignored
 `.idea/` directory, named `YYYYMMDD_XXX.md`.
 
@@ -182,8 +183,9 @@ Steps needed to build the project:
     1. If running on Node >=16 run `npm install --legacy-peer-deps` instead
 3. Install the dependencies for the project webpage running `cd source/page && npm install`
 4. Building/running
-    1. Building: to build editor, runtime and documentation, run `npm run build`
+    1. Building: `npm run build` builds the runtime (`dist/`) and editor (`docs/editor/`); `npm run build-all` also builds the webpage and documentation; `npm run release` bumps the patch version (clean git tree required) and runs `build-all`
     2. Running: To start the editor locally for development and testing run `npm run start`
+        1. On Linux, if webpack reports `ENOSPC` file-watcher errors, other applications have used up the inotify limit. The dev server keeps running and polls instead; to restore native watching raise the limit, e.g. `echo fs.inotify.max_user_watches=524288 | sudo tee /etc/sysctl.d/60-inotify.conf && sudo sysctl --system`
 
 ## Embedding Application
 

@@ -14,12 +14,22 @@ module.exports = [
 		performance: {
 			hints: false,
 		},
+		// Keep inotify usage small. When the system watch limit is reached anyway,
+		// watchpack falls back to polling instead of failing (or set WATCHPACK_POLLING=true).
+		watchOptions: {
+			ignored: ["**/node_modules/**", "**/.git/**", "**/docs/**"]
+		},
 		devServer: {
-			static: common[0].output.path,
+			// docs/editor is this build's own output, served from memory while developing.
+			// Watching it on disk adds nothing and crashes the server with ENOSPC when
+			// the inotify limit is exhausted by other applications.
+			static: {
+				directory: common[0].output.path,
+				watch: false
+			},
 			compress: false,
 			historyApiFallback: true,
-			hot: true,
-			https: false
+			hot: true
 		},
 		plugins: [
 			new Webpack.DefinePlugin({
@@ -28,8 +38,7 @@ module.exports = [
 				"REPOSITORY_BRANCH": JSON.stringify(git.branch()),
 				"REPOSITORY_COMMIT": JSON.stringify(git.commithash()),
 				"DEVELOPMENT": JSON.stringify(true)
-			}),
-			new Webpack.HotModuleReplacementPlugin()
+			})
 		]
 	}),
 	common[1]

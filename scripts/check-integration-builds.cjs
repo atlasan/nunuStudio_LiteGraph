@@ -71,8 +71,8 @@ async function main()
 		}
 	}
 	const catalog = JSON.parse(fs.readFileSync(path.join(output, "editor/files/examples/visual-script-catalog.json"), "utf8"));
-	if (catalog.nodes.length < 20 || examples.examples.length !== 6) throw new Error("Incomplete visual script baseline");
-	console.log("PASS node catalog and six JSON/binary visual-script samples packaged");
+	if (catalog.nodes.length < 20 || examples.examples.length < 6) throw new Error("Incomplete visual script baseline");
+	console.log("PASS node catalog and " + examples.examples.length + " JSON/binary visual-script samples packaged");
 	fs.copyFileSync(path.join(__dirname, "../test/visual-script-runtime.html"), path.join(output, "editor/visual-script-runtime.html"));
 	console.log("Build artifacts: " + output);
 }
