@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "examples": [
+    {
+      "id": "spin",
+      "title": "Spin selected",
+      "accepts": "Object3D",
+      "description": "Rotate at one radian per second using engine delta.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/rotate"
+      ],
+      "json": "visual-script-spin.isp",
+      "binary": "visual-script-spin.nsp"
+    },
+    {
+      "id": "move",
+      "title": "Move while W held",
+      "accepts": "Object3D",
+      "description": "Hold W to move along parent -Z at two units per second.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/events",
+        "events/branch",
+        "nunu/translate"
+      ],
+      "json": "visual-script-move.isp",
+      "binary": "visual-script-move.nsp"
+    },
+    {
+      "id": "visibility",
+      "title": "Space toggles visibility",
+      "accepts": "Object3D",
+      "description": "Press Space to hide/show the selected object.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/objects/visibility"
+      ],
+      "json": "visual-script-visibility.isp",
+      "binary": "visual-script-visibility.nsp"
+    },
+    {
+      "id": "tint",
+      "title": "Tint selected mesh",
+      "accepts": "Mesh",
+      "description": "Set the mesh green on start without recoloring shared objects.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/materials/color"
+      ],
+      "json": "visual-script-tint.isp",
+      "binary": "visual-script-tint.nsp"
+    },
+    {
+      "id": "camera",
+      "title": "Set camera projection",
+      "accepts": "PerspectiveCamera",
+      "description": "Set perspective FOV to 35 degrees and clipping to 0.1–100 on start.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/camera/projection"
+      ],
+      "json": "visual-script-camera.isp",
+      "binary": "visual-script-camera.nsp"
+    },
+    {
+      "id": "spawn",
+      "title": "Spawn box on start",
+      "accepts": "Object3D",
+      "description": "Spawn a box two world units right of the selected anchor on start. Stop cleans it up.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/objects/spawn"
+      ],
+      "json": "visual-script-spawn.isp",
+      "binary": "visual-script-spawn.nsp"
+    },
+    {
+      "id": "spawn-delete",
+      "title": "Space spawns, D deletes",
+      "accepts": "Object3D",
+      "description": "Press Space to spawn one sphere beside the anchor; D deletes it. Delete before spawning again; Stop cleans up.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/objects/spawn",
+        "nunu/keyboard",
+        "nunu/objects/delete"
+      ],
+      "json": "visual-script-spawn-delete.isp",
+      "binary": "visual-script-spawn-delete.nsp"
+    },
+    {
+      "id": "light",
+      "title": "Set light intensity",
+      "accepts": "Light",
+      "description": "Set light intensity to 2 and white color on start.",
+      "nodes": [
+        "nunu/object",
+        "nunu/events",
+        "nunu/lights/settings"
+      ],
+      "json": "visual-script-light.isp",
+      "binary": "visual-script-light.nsp"
+    },
+    {
+      "id": "hover-highlight",
+      "title": "Highlight on hover",
+      "accepts": "Mesh",
+      "description": "Turn the mesh yellow while the mouse is over it and blue again when it leaves.",
+      "nodes": [
+        "nunu/object",
+        "nunu/input/pointer",
+        "nunu/materials/color",
+        "nunu/materials/color"
+      ],
+      "json": "visual-script-hover-highlight.isp",
+      "binary": "visual-script-hover-highlight.nsp"
+    },
+    {
+      "id": "click-copy",
+      "title": "Click to copy",
+      "accepts": "Mesh",
+      "description": "Each click on the mesh adds a copy beside it (up to 8). Stop removes the copies.",
+      "nodes": [
+        "nunu/object",
+        "nunu/input/pointer",
+        "nunu/objects/spawn_copy"
+      ],
+      "json": "visual-script-click-copy.isp",
+      "binary": "visual-script-click-copy.nsp"
+    },
+    {
+      "id": "jump",
+      "title": "Space jumps when grounded",
+      "accepts": "Physics",
+      "description": "Press Space to push the physics object up, only while it touches something, so it cannot jump in mid-air.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/physics/collision",
+        "events/branch",
+        "nunu/physics/body"
+      ],
+      "json": "visual-script-jump.isp",
+      "binary": "visual-script-jump.nsp"
+    },
+    {
+      "id": "sound",
+      "title": "Space plays a sound",
+      "accepts": "Audio",
+      "description": "Press Space to play the audio emitter from the start.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/audio/playback"
+      ],
+      "json": "visual-script-sound.isp",
+      "binary": "visual-script-sound.nsp"
+    },
+    {
+      "id": "animation",
+      "title": "Space pauses animation",
+      "accepts": "Animated",
+      "description": "Press Space to pause or resume the object's animation clips.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/animation/playback"
+      ],
+      "json": "visual-script-animation.isp",
+      "binary": "visual-script-animation.nsp"
+    }
+  ]
+}

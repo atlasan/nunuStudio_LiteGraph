@@ -12,7 +12,7 @@
 	"scripts": {
 		"start-page": "cd ./source/page && npm run start",
 		"start": "webpack-dev-server --open --hot --config webpack.dev.js",
-		"start-https": "webpack-dev-server --open --hot --inline --host 0.0.0.0 --https --config webpack.dev.js",
+		"start-https": "webpack-dev-server --open --hot --host 0.0.0.0 --server-type https --config webpack.dev.js",
 		"start-docker": "http-server ./docs/editor -p 8081 --cors -o",
 		"start-nwjs": "webpack --config webpack.dev.js && run --with-ffmpeg --mirror https://dl.nwjs.io/ ./docs/editor",
 		"serve": "http-server . -p 8081 --cors -o",
@@ -21,12 +21,17 @@
 		"pub": "npm publish --access public .",
 		"lint": "eslint --ext .js source/editor source/core",
 		"lint-fix": "eslint --ext .js --fix source/core source/editor",
-		"build": "npm version --no-commit-hooks patch && npm run build-runtime && npm run build-page",
+		"build": "npm run build-runtime && npm run build-editor",
+		"build-all": "npm run build-runtime && npm run build-page",
+		"release": "npm version --no-commit-hooks patch && npm run build-all",
 		"build-page": "cd ./source/page && npm run build && cd ../.. && npm run docs && npm run build-editor",
 		"build-runtime": "webpack --config webpack.runtime.js",
 		"build-editor": "webpack --config webpack.prod.js",
 		"build-nwjs-win": "build --mirror https://dl.nwjs.io/ --concurrent --with-ffmpeg --tasks win-x64 ./build/editor/",
-		"build-nwjs": "build --mirror https://dl.nwjs.io/ --concurrent --with-ffmpeg --tasks win-x64,mac-x64,linux-x64 ./build/editor/"
+		"build-nwjs": "build --mirror https://dl.nwjs.io/ --concurrent --with-ffmpeg --tasks win-x64,mac-x64,linux-x64 ./build/editor/",
+		"sync-litegraph": "node scripts/sync-litegraph.cjs",
+		"test": "node --experimental-vm-modules --experimental-test-isolation=none --test test/*.test.cjs",
+		"check-integration-builds": "node scripts/check-integration-builds.cjs"
 	},
 	"repository": {
 		"type": "git",
