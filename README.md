@@ -84,12 +84,14 @@ is one undoable edit. Examples that need a different object type are marked
 "(needs Mesh)", "(needs Light)" and so on. Existing graphs are appended to, never
 replaced.
 
-Ten self-contained projects cover spin, W-held movement, Space visibility toggle,
-mesh tint, perspective camera projection, light intensity, spawning on start,
-Space spawn / D delete, highlight on hover and click to copy. Every project has
+Thirteen self-contained projects cover spin, W-held movement, Space visibility
+toggle, mesh tint, perspective camera projection, light intensity, spawning on
+start, Space spawn / D delete, highlight on hover, click to copy, jumping only
+while grounded (physics), playing a generated beep (audio) and pausing a bobbing
+animation. Every project has
 JSON `.isp` and binary `.nsp` versions in [the example manifest](source/files/examples/visual-script-examples.json).
 Load one through **File → Load**, then Run. Each includes a camera, box and lights
-and requires no external assets. Regenerate projects and the published node
+and requires no external assets; the sound example embeds its own short WAV. Regenerate projects and the published node
 catalog with `node --experimental-vm-modules scripts/create-visual-script-example.cjs`.
 
 | Node | First-release contract |
@@ -116,6 +118,8 @@ catalog with `node --experimental-vm-modules scripts/create-visual-script-exampl
 | Spawn Primitive / Spawn Copy | Event-driven: add a box, sphere or group, or a copy of an authored object, owned by the running script. Copies keep the source's world rotation and scale, share its geometry and materials, and can stack at an offset. Per-node limit 1–128, per-script cap 128. Everything spawned is removed on stop and never saved. Objects with scripts, physics, audio or cameras cannot be copied. |
 | Delete Spawned Object | Delete a primitive or copy this script spawned and free what it allocated. Authored objects, other scripts' objects and spawns with attached children are rejected. |
 | Physics Body | Apply an impulse at the center, or set/add linear velocity, on a dynamic physics object while scene physics runs. Static and kinematic bodies are rejected. |
+| Collision | Contacts of a physics object from the last physics step: touching flag, began/ended events once per touching body, the other object and its impact speed. An optional other input watches one object only. |
+| Animation Playback | Play, pause, toggle, stop (rewind), restart or set the speed of an object's animation clips. A clip name plays that clip alone; playing all clips restores each clip's authored enabled state. |
 | Audio Playback | Play (resumes, never restarts), restart, pause, stop or toggle an audio emitter once its audio has loaded. |
 
 New mutation nodes expose **done**, **failed**, **success** and **message**. Invalid
@@ -162,7 +166,8 @@ Add starter builders in `LiteGraphStarter.js` so the editor and fixture generato
 use the same wiring. Regenerate all examples, test their connected behavior,
 invalid inputs and save/reopen, then run `npm test` and
 `npm run check-integration-builds`. This is the baseline for incremental growth;
-collision events, animation playback and audio loading are future work.
+loading audio or models at runtime, animation events (clip finished) and
+per-node failure badges in the editor are future work.
 
 ## Screenshots
 

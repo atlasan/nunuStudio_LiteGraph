@@ -164,6 +164,131 @@ PhysicsBody.prototype.onAction = function(action, param, options)
 	result(this, true, "", object, options);
 };
 
+// Physics bodies map back to their scene objects; verified on every use.
+var bodyOwners = new WeakMap();
+
+function bodyObject(scene, body)
+{
+	var object = bodyOwners.get(body);
+	if (object && object.body === body && scene.getObjectByProperty("uuid", object.uuid) === object) { return object; }
+	object = null;
+	scene.traverse(function(child)
+	{
+		if (child.body) { bodyOwners.set(child.body, child); }
+		if (child.body === body) { object = child; }
+	});
+	return object;
+}
+
+function Collision()
+{
+	this.addInput("object", "nunu_object,object");
+	this.addInput("other", "nunu_object,object");
+	this.addOutput("touching", "boolean");
+	this.addOutput("other", "nunu_object");
+	this.addOutput("impact", "number");
+	this.addOutput("began", LiteGraph.EVENT);
+	this.addOutput("ended", LiteGraph.EVENT);
+	this._contacts = new Map();
+}
+Collision.title = "Collision";
+Collision.desc = "Contacts of a physics object from the last physics step. Began/ended fire once per touching body; other is the last body that began touching; impact is its approach speed (m/s). Connect other to only watch one object.";
+Collision.size = [240, 150];
+Collision.prototype.onConfigure = function() { this._contacts = new Map(); };
+Collision.prototype.onExecute = function()
+{
+	var context = scriptContext(this);
+	var object = this.getInputData(0);
+	var filtered = this.isInputConnected(1);
+	var filter = filtered ? this.getInputData(1) : null;
+	var current = new Map();
+	// A connected but missing filter object watches nothing.
+	if (validObject(this, object) && object.body && object.world && object.world.contacts && (!filtered || validObject(this, filter) && filter.body))
+	{
+		var body = object.body;
+		for (var contact of object.world.contacts)
+		{
+			var other = contact.bi === body ? contact.bj : contact.bj === body ? contact.bi : null;
+			if (!other || filtered && filter.body !== other) { continue; }
+			var impact = typeof contact.getImpactVelocityAlongNormal === "function" ? Math.abs(contact.getImpactVelocityAlongNormal()) : 0;
+			current.set(other, Math.max(current.get(other) || 0, impact));
+		}
+	}
+	var began = [];
+	for (var entry of current) { if (!this._contacts.has(entry[0])) { began.push(entry); } }
+	var ended = Array.from(this._contacts.keys()).filter(function(other) { return !current.has(other); });
+	this._contacts = current;
+	this.setOutputData(0, current.size > 0);
+	for (var start of began)
+	{
+		var startObject = context.scene ? bodyObject(context.scene, start[0]) : null;
+		this.setOutputData(1, startObject);
+		this.setOutputData(2, start[1]);
+		this.triggerSlot(3, startObject);
+	}
+	for (var end of ended) { this.triggerSlot(4, context.scene ? bodyObject(context.scene, end) : null); }
+};
+
+var authoredEnabled = new WeakMap();
+var animationOperations = ["play", "pause", "toggle", "stop", "restart", "set speed"];
+
+function AnimationPlayback()
+{
+	actionPorts(this);
+	this.properties = {operation: "toggle", clip: "", speed: 1};
+	this.addInput("speed", "number");
+	this.addOutput("playing", "boolean");
+	this.addOutput("time", "number");
+	this.addWidget("combo", "operation", "toggle", null, {property: "operation", values: animationOperations});
+	this.addWidget("text", "clip (empty = all)", "", null, {property: "clip"});
+	this.addWidget("number", "speed", 1, null, {property: "speed", precision: 2, step: 0.1});
+}
+AnimationPlayback.title = "Animation Playback";
+AnimationPlayback.desc = "Control an object's animation clips while running: play, pause, toggle, stop (rewinds), restart, or set speed (negative plays backwards). With a clip name, play and restart run only that clip and speed applies only to it.";
+AnimationPlayback.size = [280, 230];
+AnimationPlayback.prototype.onAction = function(action, param, options)
+{
+	var object = this.getInputData(1);
+	var operation = this.properties.operation;
+	var clip = this.properties.clip;
+	var mixer = object ? object.mixer : null;
+	var actions = mixer && Array.isArray(mixer._actions) ? mixer._actions : [];
+	if (!validObject(this, object) || !actions.length) { result(this, false, "Choose an object with animation clips in a running scene.", null, options); return; }
+	if (!animationOperations.includes(operation) || typeof clip !== "string") { result(this, false, "Choose a playback operation.", null, options); return; }
+	var targets = clip ? actions.filter(function(item) { return item.getClip().name === clip; }) : actions;
+	if (!targets.length) { result(this, false, "No animation clip named \"" + clip + "\" on this object.", null, options); return; }
+	if (operation === "set speed")
+	{
+		var speed = Number(this.getInputOrProperty("speed"));
+		if (!Number.isFinite(speed)) { result(this, false, "Speed must be a finite number.", null, options); return; }
+		for (var target of targets) { target.timeScale = speed; }
+	}
+	else
+	{
+		if (operation === "toggle") { operation = mixer.playing ? "pause" : "play"; }
+		if (operation === "play" || operation === "restart")
+		{
+			// A named clip plays alone; all clips restores each clip's authored enabled state.
+			for (var item of actions)
+			{
+				if (!authoredEnabled.has(item)) { authoredEnabled.set(item, item.enabled); }
+				item.enabled = clip ? targets.includes(item) : authoredEnabled.get(item);
+			}
+		}
+		if (operation === "play") { mixer.play(); }
+		else if (operation === "pause") { mixer.pause(); }
+		else if (operation === "stop") { mixer.stop(); }
+		else
+		{
+			mixer.setTime(0);
+			mixer.play();
+		}
+	}
+	this.setOutputData(4, Boolean(mixer.playing));
+	this.setOutputData(5, mixer.time);
+	result(this, true, "", object, options);
+};
+
 var audioOperations = ["play", "restart", "pause", "stop", "toggle"];
 
 function AudioPlayback()
@@ -199,4 +324,6 @@ AudioPlayback.prototype.onAction = function(action, param, options)
 registerNunuNode("nunu/input/pointer", Pointer, {category: "Input", accepts: "Object3D", effect: "read"});
 registerNunuNode("nunu/objects/proximity", Proximity, {category: "Scene", accepts: "Object3D", effect: "read"});
 registerNunuNode("nunu/physics/body", PhysicsBody, {category: "Physics", accepts: "Physics", effect: "write"});
+registerNunuNode("nunu/physics/collision", Collision, {category: "Physics", accepts: "Physics", effect: "read"});
+registerNunuNode("nunu/animation/playback", AnimationPlayback, {category: "Animation", accepts: "Animated", effect: "write"});
 registerNunuNode("nunu/audio/playback", AudioPlayback, {category: "Audio", accepts: "Audio", effect: "write"});

@@ -582,8 +582,8 @@ test("catalog is complete, detached and matches the published node schema", asyn
 {
  const {getNunuNodeCatalog,LiteGraph}=await ready;
  const catalog=getNunuNodeCatalog();
- assert.equal(catalog.length,27);
- assert.equal(new Set(catalog.map(n=>n.type)).size,27);
+ assert.equal(catalog.length,29);
+ assert.equal(new Set(catalog.map(n=>n.type)).size,29);
  for(const item of catalog){assert.ok(item.description && item.accepts && item.category);assert.ok(LiteGraph.createNode(item.type));assert.ok(Array.isArray(item.inputs));}
  const published=JSON.parse(fs.readFileSync(path.join(root,"source/files/examples/visual-script-catalog.json")));
  assert.deepEqual(JSON.parse(JSON.stringify(catalog)),published.nodes);
@@ -592,13 +592,15 @@ test("catalog is complete, detached and matches the published node schema", asyn
 
 test("all shared examples execute, round-trip and package identically", async () =>
 {
- const {LiteGraphScript,getNunuExampleCatalog,addVisualScriptExample}=await ready;
+ const {LiteGraphScript,getNunuExampleCatalog,addVisualScriptExample,acceptsExample}=await ready;
  const {StaticPair}=require("@as-com/pson");
  for(const example of getNunuExampleCatalog())
  {
   const program=new THREE.Group();program.type="Program";
   const scene=new THREE.Scene();program.add(scene);
-  const actor=example.id==="camera"?new THREE.PerspectiveCamera():example.id==="light"?new THREE.DirectionalLight():new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());
+  const actor=example.id==="camera"?new THREE.PerspectiveCamera():example.id==="light"?new THREE.DirectionalLight():example.id==="jump"?physicsStandIn():example.id==="sound"?audioStandIn():new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());
+  if(example.id==="animation"){actor.animations=[new THREE.AnimationClip("Bob",1,[])];actor.mixer=mixerStandIn("Bob");}
+  assert.equal(acceptsExample(example,actor),true,example.id);
   const script=new LiteGraphScript();scene.add(actor,script);
   let held=false,pressed=false,click=false;
   // Ray from +Z: aimed at the actor at the origin, or away (up) from it.
@@ -623,6 +625,14 @@ test("all shared examples execute, round-trip and package identically", async ()
    pressed=68;script.update(0.25);assert.equal(first.parent,null);assert.equal(spawn.getOutputData(4),null);
    pressed=32;script.update(0.25);assert.notEqual(spawn.getOutputData(4).uuid,first.uuid);
   }
+  if(example.id==="jump")
+  {
+   pressed=32;script.update(0.25);assert.equal(actor.body.velocity.y,0);
+   pressed=false;actor.world.contacts=[{bi:actor.body,bj:{},getImpactVelocityAlongNormal:()=>-1}];script.update(0.25);
+   pressed=32;script.update(0.25);assert.equal(actor.body.velocity.y,5);
+  }
+  if(example.id==="sound"){assert.equal(actor.isPlaying,false);pressed=32;script.update(0.25);assert.equal(actor.isPlaying,true);}
+  if(example.id==="animation"){assert.equal(actor.mixer.playing,true);pressed=32;script.update(0.25);assert.equal(actor.mixer.playing,false);pressed=false;script.update(0.25);pressed=32;script.update(0.25);assert.equal(actor.mixer.playing,true);}
   if(example.id==="hover-highlight")
   {
    assert.equal(actor.material.color.getHexString(),"ffffff");
@@ -700,10 +710,11 @@ test("examples filter compatible actors and each insertion is one undoable trans
 {
  const {LiteGraphScript,getNunuExampleCatalog,acceptsExample,addVisualScriptExample,seedGraphHistory}=await ready;
  const scene=new THREE.Scene(),script=new LiteGraphScript(),mesh=new THREE.Mesh(),camera=new THREE.PerspectiveCamera(),light=new THREE.PointLight();scene.add(script,mesh,camera,light);
+ const physics=physicsStandIn(),audio=audioStandIn(),animated=new THREE.Mesh();animated.animations=[new THREE.AnimationClip("Bob",1,[])];scene.add(physics,audio,animated);
  for(const example of getNunuExampleCatalog())
  {
-  const actor=example.id==="camera"?camera:example.id==="light"?light:mesh;
-  assert.equal(acceptsExample(example,actor),true);
+  const actor=example.id==="camera"?camera:example.id==="light"?light:example.id==="jump"?physics:example.id==="sound"?audio:example.id==="animation"?animated:mesh;
+  assert.equal(acceptsExample(example,actor),true,example.id);
   assert.equal(acceptsExample(example,scene),false);
   assert.equal(acceptsExample(example,script),false);
   if(example.accepts!=="Object3D")assert.equal(acceptsExample(example,new THREE.Group()),false);
@@ -980,5 +991,72 @@ test("object references offer select and bind quick actions through editor hooks
  options=reference.getExtraMenuOptions();assert.equal(options[0].disabled,false);options[0].callback();assert.deepEqual(revealed,[actor]);
  assert.equal(reference.onDblClick(),true);assert.equal(revealed.length,2);
  script.graph.nunuSelection=()=>new THREE.Group();assert.equal(reference.bindSelected(),false);assert.equal(reference.properties.nunu_uuid,actor.uuid);
+ script.dispose();
+});
+
+function physicsStandIn()
+{
+ const object=new THREE.Group();object.type="Physics";
+ object.body={mass:1,type:1,velocity:{x:0,y:0,z:0,set(x,y,z){this.x=x;this.y=y;this.z=z;}},wakeUp(){}};
+ object.world={contacts:[]};
+ return object;
+}
+function audioStandIn()
+{
+ const object=new THREE.Group();object.type="Audio";object.buffer={};object.isPlaying=false;object.source=null;
+ object.play=function(){this.isPlaying=true;this.source={};};object.stop=function(){this.isPlaying=false;};object.pause=function(){this.isPlaying=false;};
+ return object;
+}
+function mixerStandIn(...names)
+{
+ const actions=names.map(name=>({enabled:true,timeScale:1,getClip:()=>({name})}));
+ return {_actions:actions,playing:true,time:0.5,play(){this.playing=true;},pause(){this.playing=false;},stop(){this.playing=false;this.time=0;},setTime(time){this.time=time;}};
+}
+
+test("collision reports touching bodies from the last physics step with began/ended once per body",async()=>
+{
+ const {script,scene,parent}=await operationsFixture();
+ const player=physicsStandIn();parent.add(player);
+ const ground=physicsStandIn();ground.name="Ground";scene.add(ground);
+ const wall=physicsStandIn();wall.name="Wall";scene.add(wall);
+ const collision=node(script.graph,"nunu/physics/collision");let filter=null;
+ collision.getInputData=slot=>slot===0?player:filter;
+ const events=[];collision.triggerSlot=(slot,value)=>events.push([slot===3?"began":"ended",value&&value.name]);
+ const contact=(a,b,speed)=>({bi:a.body,bj:b.body,getImpactVelocityAlongNormal:()=>-speed});
+ collision.onExecute();assert.equal(collision.getOutputData(0),false);
+ player.world.contacts=[contact(ground,player,3),contact(player,ground,1)];
+ collision.onExecute();collision.onExecute();
+ assert.equal(collision.getOutputData(0),true);assert.equal(collision.getOutputData(1),ground);assert.equal(collision.getOutputData(2),3);
+ assert.deepEqual(events,[["began","Ground"]]);
+ player.world.contacts.push(contact(wall,player,2));collision.onExecute();
+ assert.equal(collision.getOutputData(1),wall);assert.deepEqual(events.slice(1),[["began","Wall"]]);
+ player.world.contacts=[contact(wall,player,2)];collision.onExecute();assert.deepEqual(events.slice(2),[["ended","Ground"]]);
+ // Contacts between other bodies are ignored; a connected filter watches only its object.
+ player.world.contacts=[contact(ground,wall,5),contact(player,wall,1),contact(player,ground,1)];
+ collision.inputs[1].link=1;collision.isInputConnected=slot=>slot===1;filter=ground;collision.onExecute();
+ assert.deepEqual(events.slice(3),[["began","Ground"],["ended","Wall"]]);
+ filter=null;collision.onExecute();assert.equal(collision.getOutputData(0),false);assert.deepEqual(events.slice(5),[["ended","Ground"]]);
+ // Without a running world nothing touches.
+ collision.isInputConnected=()=>false;player.world=null;collision.onExecute();assert.equal(collision.getOutputData(0),false);
+ script.dispose();
+});
+
+test("animation playback controls mixers, single clips and speed, and rejects objects without clips",async()=>
+{
+ const {script,actor}=await operationsFixture();
+ actor.mixer=mixerStandIn("Walk","Run");
+ const [walk,run]=actor.mixer._actions;
+ const playback=node(script.graph,"nunu/animation/playback");playback.getInputData=slot=>slot===1?actor:undefined;
+ const apply=(operation,props={})=>{playback.setProperty("operation",operation);for(const [k,v] of Object.entries(props))playback.setProperty(k,v);playback.onAction();return playback.getOutputData(2);};
+ assert.equal(apply("toggle"),true);assert.equal(actor.mixer.playing,false);assert.equal(playback.getOutputData(4),false);
+ assert.equal(apply("toggle"),true);assert.equal(actor.mixer.playing,true);
+ apply("stop");assert.equal(actor.mixer.time,0);assert.equal(actor.mixer.playing,false);
+ actor.mixer.time=1.5;apply("restart",{clip:"Run"});assert.equal(actor.mixer.time,0);assert.equal(actor.mixer.playing,true);assert.equal(walk.enabled,false);assert.equal(run.enabled,true);
+ apply("set speed",{speed:-2});assert.equal(run.timeScale,-2);assert.equal(walk.timeScale,1);
+ apply("play",{clip:""});assert.equal(walk.enabled,true);assert.equal(run.enabled,true);
+ assert.equal(apply("play",{clip:"Fly"}),false);assert.ok(playback.getOutputData(3).includes("Fly"));
+ assert.equal(apply("set speed",{clip:"",speed:NaN}),false);assert.equal(walk.timeScale,1);
+ assert.equal(apply("dance",{speed:1}),false);
+ delete actor.mixer;assert.equal(apply("play"),false);assert.ok(playback.getOutputData(3).includes("animation"));
  script.dispose();
 });

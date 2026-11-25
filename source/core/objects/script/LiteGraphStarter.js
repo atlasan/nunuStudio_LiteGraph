@@ -16,7 +16,10 @@ const examples = [
 	{id: "spawn-delete", title: "Space spawns, D deletes", accepts: "Object3D", description: "Press Space to spawn one sphere beside the anchor; D deletes it. Delete before spawning again; Stop cleans up.", nodes: ["nunu/object", "nunu/keyboard", "nunu/objects/spawn", "nunu/keyboard", "nunu/objects/delete"]},
 	{id: "light", title: "Set light intensity", accepts: "Light", description: "Set light intensity to 2 and white color on start.", nodes: ["nunu/object", "nunu/events", "nunu/lights/settings"]},
 	{id: "hover-highlight", title: "Highlight on hover", accepts: "Mesh", description: "Turn the mesh yellow while the mouse is over it and blue again when it leaves.", nodes: ["nunu/object", "nunu/input/pointer", "nunu/materials/color", "nunu/materials/color"]},
-	{id: "click-copy", title: "Click to copy", accepts: "Mesh", description: "Each click on the mesh adds a copy beside it (up to 8). Stop removes the copies.", nodes: ["nunu/object", "nunu/input/pointer", "nunu/objects/spawn_copy"]}
+	{id: "click-copy", title: "Click to copy", accepts: "Mesh", description: "Each click on the mesh adds a copy beside it (up to 8). Stop removes the copies.", nodes: ["nunu/object", "nunu/input/pointer", "nunu/objects/spawn_copy"]},
+	{id: "jump", title: "Space jumps when grounded", accepts: "Physics", description: "Press Space to push the physics object up, only while it touches something, so it cannot jump in mid-air.", nodes: ["nunu/object", "nunu/keyboard", "nunu/physics/collision", "events/branch", "nunu/physics/body"]},
+	{id: "sound", title: "Space plays a sound", accepts: "Audio", description: "Press Space to play the audio emitter from the start.", nodes: ["nunu/object", "nunu/keyboard", "nunu/audio/playback"]},
+	{id: "animation", title: "Space pauses animation", accepts: "Animated", description: "Press Space to pause or resume the object's animation clips.", nodes: ["nunu/object", "nunu/keyboard", "nunu/animation/playback"]}
 ];
 
 function getNunuExampleCatalog()
@@ -27,7 +30,9 @@ function getNunuExampleCatalog()
 function acceptsExample(example, object)
 {
 	return Boolean(example && object && object.isObject3D && object.type !== "Scene" && object.type !== "Program" && object.type !== "LiteGraphScript" &&
-		(example.accepts === "Object3D" || example.accepts === "Mesh" && object.isMesh || example.accepts === "PerspectiveCamera" && object.isPerspectiveCamera || example.accepts === "Light" && object.isLight));
+		(example.accepts === "Object3D" || example.accepts === "Mesh" && object.isMesh || example.accepts === "PerspectiveCamera" && object.isPerspectiveCamera || example.accepts === "Light" && object.isLight ||
+		example.accepts === "Physics" && object.type === "Physics" || example.accepts === "Audio" && (object.type === "Audio" || object.type === "PositionalAudio") ||
+		example.accepts === "Animated" && Array.isArray(object.animations) && object.animations.length > 0));
 }
 
 /** Append, never replace; one example is one transaction and scene mutation waits for Run. */
@@ -47,7 +52,21 @@ function addVisualScriptExample(graph, id, uuid)
 			return node;
 		});
 		nodes[0].setProperty("nunu_uuid", uuid);
-		if (id === "hover-highlight")
+		if (id === "jump")
+		{
+			nodes[0].connect(0, nodes[2], 0);
+			nodes[0].connect(0, nodes[4], 1);
+			nodes[1].connect(1, nodes[3], 0);
+			nodes[2].connect(0, nodes[3], 1);
+			nodes[3].connect(0, nodes[4], 0);
+		}
+		else if (id === "sound" || id === "animation")
+		{
+			nodes[2].setProperty("operation", id === "sound" ? "restart" : "toggle");
+			nodes[0].connect(0, nodes[2], 1);
+			nodes[1].connect(1, nodes[2], 0);
+		}
+		else if (id === "hover-highlight")
 		{
 			nodes[2].setProperty("color", "#ffcc44");
 			nodes[3].setProperty("color", "#66bbff");

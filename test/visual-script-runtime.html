@@ -17,7 +17,7 @@
  {
   const manifest=await fetch('files/examples/visual-script-examples.json').then(r=>r.json());
   const catalog=await fetch('files/examples/visual-script-catalog.json').then(r=>r.json());
-  check(catalog.nodes.length===20 && Nunu.getNunuNodeCatalog().length===20,'All 20 categorized nodes are present in the standalone runtime');
+  check(catalog.nodes.length===Nunu.getNunuNodeCatalog().length && catalog.nodes.every(n=>Nunu.getNunuNodeCatalog().some(r=>r.type===n.type)),'All '+catalog.nodes.length+' categorized nodes are present in the standalone runtime');
   for(const example of manifest.examples)
   {
    const data=await fetch('files/examples/'+example.json).then(r=>r.json());
@@ -28,9 +28,15 @@
    const target=clone.getObjectByProperty('uuid',bound);
    check(script instanceof Nunu.LiteGraphScript && script.graphVersion===1,example.id+': saved scene restores visual script');
    clone.canvas=document.getElementById('preview');clone.initialize();await script.ready;
-   let held=false,pressed=false;
-   clone.keyboard.keyPressed=()=>held;clone.keyboard.keyJustPressed=()=>pressed;clone.keyboard.keyJustReleased=()=>false;
+   let held=false,pressed=false,clicking=false;
+   clone.keyboard.keyPressed=()=>held;clone.keyboard.keyJustPressed=key=>pressed===true||pressed===key;clone.keyboard.keyJustReleased=()=>false;
+   // Pointer examples: the mouse rests on the canvas center, where the box is.
+   clone.mouse.insideCanvas=()=>true;clone.mouse.buttonJustPressed=()=>clicking;
+   clone.mouse.position.set(clone.canvas.width/2,clone.canvas.height/2);
+   // Rendering normally refreshes world matrices (the scene aims its raycaster from the camera's).
+   clone.scene.updateMatrixWorld(true);
    clone.scene.update(0.25);
+   const nodeOf=type=>script.graph._nodes.find(n=>n.type===type);
    let ok=false;
    if(example.id==='spin')ok=Math.abs(target.rotation.y-0.25)<0.00001 && Math.abs(target.matrix.elements[0]-Math.cos(0.25))<0.00001;
    if(example.id==='move'){held=true;clone.scene.update(0.25);ok=Math.abs(target.position.z+0.5)<0.00001;}
@@ -38,6 +44,21 @@
    if(example.id==='tint')ok=target.material.color.getHexString()==='55dd88';
    if(example.id==='camera')ok=target.fov===35;
    if(example.id==='light')ok=target.intensity===2;
+   if(example.id==='spawn')ok=Boolean(nodeOf('nunu/objects/spawn').getOutputData(4)&&nodeOf('nunu/objects/spawn').getOutputData(4).isMesh);
+   if(example.id==='spawn-delete'){pressed=32;clone.scene.update(0.25);const first=nodeOf('nunu/objects/spawn').getOutputData(4);pressed=68;clone.scene.update(0.25);ok=Boolean(first)&&first.parent===null;}
+   if(example.id==='hover-highlight')ok=target.material.color.getHexString()==='ffcc44';
+   if(example.id==='click-copy'){clicking=true;clone.scene.update(0.25);const copy=nodeOf('nunu/objects/spawn_copy').getOutputData(4);ok=Boolean(copy)&&copy.geometry===target.geometry;}
+   if(example.id==='jump')
+   {
+    // Real cannon-es physics: let the box land, then jump only while grounded.
+    for(let i=0;i<80;i++)clone.scene.update(0.025);
+    const grounded=nodeOf('nunu/physics/collision').getOutputData(0);
+    pressed=32;clone.scene.update(0.025);ok=grounded===true&&target.body.velocity.y>3;
+    pressed=false;for(let i=0;i<8;i++)clone.scene.update(0.025);
+    const airborne=target.body.velocity.y;pressed=32;clone.scene.update(0.025);ok=ok&&nodeOf('nunu/physics/collision').getOutputData(0)===false&&target.body.velocity.y<=airborne;
+   }
+   if(example.id==='sound'){for(let i=0;i<100&&!target.buffer;i++)await new Promise(r=>setTimeout(r,20));pressed=32;clone.scene.update(0.25);ok=target.isPlaying===true;target.stop();}
+   if(example.id==='animation'){const before=target.position.y;const playing=target.mixer.playing;pressed=32;clone.scene.update(0.25);pressed=false;const paused=target.position.y;clone.scene.update(0.25);ok=playing&&before>0&&!target.mixer.playing&&target.position.y===paused;}
    check(ok,example.id+': connected graph performs expected operation');
    const restored=new Nunu.ObjectLoader().parse(JSON.parse(JSON.stringify(clone.toJSON())));
    check(restored.getObjectByProperty('uuid',script.uuid).graph._nodes.length===example.nodes.length,example.id+': clone saves and reopens graph');
@@ -57,7 +78,7 @@
    {
     running.program.getObjectByProperty('uuid','44444444-4444-4444-8444-444444444444').ready.then(function()
     {
-     status.textContent='PASS — six saved-scene examples verified. Binary App running: '+example.title;
+     status.textContent='PASS — '+manifest.examples.length+' saved-scene examples verified. Binary App running: '+example.title;
      status.className='pass';
     }).catch(function(error){status.textContent='FAIL — '+error.message;status.className='fail';});
    },function(){});

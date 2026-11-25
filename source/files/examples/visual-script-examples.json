@@ -135,6 +135,47 @@
       ],
       "json": "visual-script-click-copy.isp",
       "binary": "visual-script-click-copy.nsp"
+    },
+    {
+      "id": "jump",
+      "title": "Space jumps when grounded",
+      "accepts": "Physics",
+      "description": "Press Space to push the physics object up, only while it touches something, so it cannot jump in mid-air.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/physics/collision",
+        "events/branch",
+        "nunu/physics/body"
+      ],
+      "json": "visual-script-jump.isp",
+      "binary": "visual-script-jump.nsp"
+    },
+    {
+      "id": "sound",
+      "title": "Space plays a sound",
+      "accepts": "Audio",
+      "description": "Press Space to play the audio emitter from the start.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/audio/playback"
+      ],
+      "json": "visual-script-sound.isp",
+      "binary": "visual-script-sound.nsp"
+    },
+    {
+      "id": "animation",
+      "title": "Space pauses animation",
+      "accepts": "Animated",
+      "description": "Press Space to pause or resume the object's animation clips.",
+      "nodes": [
+        "nunu/object",
+        "nunu/keyboard",
+        "nunu/animation/playback"
+      ],
+      "json": "visual-script-animation.isp",
+      "binary": "visual-script-animation.nsp"
     }
   ]
 }

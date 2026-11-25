@@ -2,6 +2,60 @@
   "version": 1,
   "nodes": [
     {
+      "type": "nunu/animation/playback",
+      "title": "Animation Playback",
+      "description": "Control an object's animation clips while running: play, pause, toggle, stop (rewinds), restart, or set speed (negative plays backwards). With a clip name, play and restart run only that clip and speed applies only to it.",
+      "since": 1,
+      "category": "Animation",
+      "accepts": "Animated",
+      "effect": "write",
+      "inputs": [
+        {
+          "name": "apply",
+          "type": -1
+        },
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "speed",
+          "type": "number"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "done",
+          "type": -1
+        },
+        {
+          "name": "failed",
+          "type": -1
+        },
+        {
+          "name": "success",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "playing",
+          "type": "boolean"
+        },
+        {
+          "name": "time",
+          "type": "number"
+        }
+      ],
+      "properties": {
+        "operation": "toggle",
+        "clip": "",
+        "speed": 1
+      }
+    },
+    {
       "type": "nunu/audio/playback",
       "title": "Audio Playback",
       "description": "Play, restart, pause, stop or toggle an audio emitter. Play resumes a paused sound and leaves a playing one running; audio must have finished loading.",
@@ -574,6 +628,48 @@
         "color": "#55dd88",
         "shared": false
       }
+    },
+    {
+      "type": "nunu/physics/collision",
+      "title": "Collision",
+      "description": "Contacts of a physics object from the last physics step. Began/ended fire once per touching body; other is the last body that began touching; impact is its approach speed (m/s). Connect other to only watch one object.",
+      "since": 1,
+      "category": "Physics",
+      "accepts": "Physics",
+      "effect": "read",
+      "inputs": [
+        {
+          "name": "object",
+          "type": "nunu_object,object"
+        },
+        {
+          "name": "other",
+          "type": "nunu_object,object"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "touching",
+          "type": "boolean"
+        },
+        {
+          "name": "other",
+          "type": "nunu_object"
+        },
+        {
+          "name": "impact",
+          "type": "number"
+        },
+        {
+          "name": "began",
+          "type": -1
+        },
+        {
+          "name": "ended",
+          "type": -1
+        }
+      ],
+      "properties": {}
     },
     {
       "type": "nunu/physics/body",

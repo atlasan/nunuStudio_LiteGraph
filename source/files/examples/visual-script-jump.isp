@@ -1,0 +1,744 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "Object3D.toJSON"
+  },
+  "geometries": [
+    {
+      "uuid": "66666666-6666-4666-8666-000000000002",
+      "type": "BoxBufferGeometry",
+      "width": 8,
+      "height": 0.2,
+      "depth": 8,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    },
+    {
+      "uuid": "11111111-1111-4111-8111-111111111111",
+      "type": "BoxBufferGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "66666666-6666-4666-8666-000000000003",
+      "type": "MeshStandardMaterial",
+      "color": 4478310,
+      "roughness": 0.9,
+      "metalness": 0,
+      "emissive": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "stencilWrite": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680
+    },
+    {
+      "uuid": "22222222-2222-4222-8222-222222222222",
+      "type": "MeshStandardMaterial",
+      "color": 6732799,
+      "roughness": 0.6,
+      "metalness": 0.1,
+      "emissive": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "stencilWrite": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680
+    }
+  ],
+  "object": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "type": "Program",
+    "name": "Visual scripting — Space jumps when grounded",
+    "layers": 1,
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "children": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000002",
+        "type": "Scene",
+        "name": "Visual script example",
+        "layers": 1,
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          {
+            "uuid": "00000000-0000-4000-8000-000000000003",
+            "type": "PerspectiveCamera",
+            "name": "Camera",
+            "layers": 1,
+            "matrix": [
+              0.8320502943378436,
+              -2.7755575615628914e-17,
+              -0.5547001962252291,
+              0,
+              -0.21306624726853055,
+              0.9232870714969654,
+              -0.3195993709027958,
+              0,
+              0.5121475197315839,
+              0.384110639798688,
+              0.7682212795973757,
+              0,
+              4,
+              3,
+              6,
+              1
+            ],
+            "fov": 50,
+            "zoom": 1,
+            "near": 0.1,
+            "far": 100,
+            "focus": 10,
+            "aspect": 1.5,
+            "filmGauge": 35,
+            "filmOffset": 0,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000004",
+            "type": "DirectionalLight",
+            "name": "Key light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              3,
+              5,
+              2,
+              1
+            ],
+            "color": 16777215,
+            "intensity": 0.7,
+            "shadow": {
+              "camera": {
+                "uuid": "00000000-0000-4000-8000-000000000006",
+                "type": "OrthographicCamera",
+                "layers": 1,
+                "zoom": 1,
+                "left": -5,
+                "right": 5,
+                "top": 5,
+                "bottom": -5,
+                "near": 0.5,
+                "far": 500
+              }
+            },
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000005",
+            "type": "AmbientLight",
+            "name": "Ambient light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "color": 16777215,
+            "intensity": 0.4,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "66666666-6666-4666-8666-000000000001",
+            "type": "Physics",
+            "name": "Ground body",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              -1,
+              0,
+              1
+            ],
+            "children": [
+              {
+                "uuid": "66666666-6666-4666-8666-000000000004",
+                "type": "Mesh",
+                "name": "Ground",
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "geometry": "66666666-6666-4666-8666-000000000002",
+                "material": "66666666-6666-4666-8666-000000000003",
+                "visible": true,
+                "matrixAutoUpdate": true
+              }
+            ],
+            "visible": true,
+            "matrixAutoUpdate": true,
+            "mode": 100,
+            "body": {
+              "type": 2,
+              "mass": 0,
+              "linearDamping": 0.01,
+              "angularDamping": 0.01,
+              "allowSleep": true,
+              "sleepSpeedLimit": 0.1,
+              "sleepTimeLimit": 1,
+              "collisionFilterGroup": 1,
+              "collisionFilterMask": -1,
+              "fixedRotation": false,
+              "shapes": [
+                {
+                  "type": 4,
+                  "halfExtents": {
+                    "x": 4,
+                    "y": 0.1,
+                    "z": 4
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "uuid": "66666666-6666-4666-8666-000000000005",
+            "type": "Physics",
+            "name": "Physics box",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+              0,
+              1
+            ],
+            "children": [
+              {
+                "uuid": "33333333-3333-4333-8333-333333333333",
+                "type": "Mesh",
+                "name": "Spinning box",
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "matrixAutoUpdate": false,
+                "geometry": "11111111-1111-4111-8111-111111111111",
+                "material": "22222222-2222-4222-8222-222222222222",
+                "visible": true
+              }
+            ],
+            "visible": true,
+            "matrixAutoUpdate": true,
+            "mode": 100,
+            "body": {
+              "type": 1,
+              "mass": 1,
+              "linearDamping": 0.01,
+              "angularDamping": 0.01,
+              "allowSleep": true,
+              "sleepSpeedLimit": 0.1,
+              "sleepTimeLimit": 1,
+              "collisionFilterGroup": 1,
+              "collisionFilterMask": -1,
+              "fixedRotation": true,
+              "shapes": [
+                {
+                  "type": 4,
+                  "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "LiteGraphScript",
+            "name": "Space jumps when grounded",
+            "uuid": "44444444-4444-4444-8444-444444444444",
+            "visible": true,
+            "graphVersion": 1,
+            "graph": {
+              "id": "55555555-5555-4555-8555-555555555555",
+              "revision": 1,
+              "last_node_id": 5,
+              "last_link_id": 5,
+              "nodes": [
+                {
+                  "id": 1,
+                  "type": "nunu/object",
+                  "pos": [
+                    40,
+                    60
+                  ],
+                  "size": [
+                    164.36199951171875,
+                    82
+                  ],
+                  "flags": {},
+                  "order": 0,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        1,
+                        2
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "nunu_uuid": "66666666-6666-4666-8666-000000000005"
+                  }
+                },
+                {
+                  "id": 2,
+                  "type": "nunu/keyboard",
+                  "pos": [
+                    40,
+                    440
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 1,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "down",
+                      "type": "boolean",
+                      "links": null
+                    },
+                    {
+                      "name": "pressed",
+                      "type": -1,
+                      "links": [
+                        3
+                      ]
+                    },
+                    {
+                      "name": "released",
+                      "type": -1,
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "key": 32
+                  }
+                },
+                {
+                  "id": 3,
+                  "type": "nunu/physics/collision",
+                  "pos": [
+                    360,
+                    60
+                  ],
+                  "size": [
+                    240,
+                    150
+                  ],
+                  "flags": {},
+                  "order": 2,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object,object",
+                      "link": 1
+                    },
+                    {
+                      "name": "other",
+                      "type": "nunu_object,object",
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "touching",
+                      "type": "boolean",
+                      "links": [
+                        4
+                      ]
+                    },
+                    {
+                      "name": "other",
+                      "type": "nunu_object",
+                      "links": null
+                    },
+                    {
+                      "name": "impact",
+                      "type": "number",
+                      "links": null
+                    },
+                    {
+                      "name": "began",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "ended",
+                      "type": -1,
+                      "links": null
+                    }
+                  ],
+                  "properties": {}
+                },
+                {
+                  "id": 4,
+                  "type": "events/branch",
+                  "pos": [
+                    360,
+                    440
+                  ],
+                  "size": [
+                    120,
+                    60
+                  ],
+                  "flags": {},
+                  "order": 3,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "in",
+                      "type": -1,
+                      "link": 3
+                    },
+                    {
+                      "name": "cond",
+                      "type": "boolean",
+                      "link": 4
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "true",
+                      "type": -1,
+                      "links": [
+                        5
+                      ]
+                    },
+                    {
+                      "name": "false",
+                      "type": -1,
+                      "links": null
+                    }
+                  ],
+                  "properties": {}
+                },
+                {
+                  "id": 5,
+                  "type": "nunu/physics/body",
+                  "pos": [
+                    680,
+                    60
+                  ],
+                  "size": [
+                    280,
+                    250
+                  ],
+                  "flags": {},
+                  "order": 4,
+                  "mode": 1,
+                  "inputs": [
+                    {
+                      "name": "apply",
+                      "type": -1,
+                      "link": 5
+                    },
+                    {
+                      "name": "object",
+                      "type": "nunu_object,object",
+                      "link": 2
+                    },
+                    {
+                      "name": "vector",
+                      "type": "vec3",
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "done",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "failed",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "success",
+                      "type": "boolean",
+                      "links": null
+                    },
+                    {
+                      "name": "message",
+                      "type": "string",
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "operation": "apply impulse",
+                    "vector": [
+                      0,
+                      5,
+                      0
+                    ]
+                  }
+                }
+              ],
+              "links": [
+                [
+                  1,
+                  1,
+                  0,
+                  3,
+                  0,
+                  "nunu_object,object"
+                ],
+                [
+                  2,
+                  1,
+                  0,
+                  5,
+                  1,
+                  "nunu_object,object"
+                ],
+                [
+                  3,
+                  2,
+                  1,
+                  4,
+                  0,
+                  -1
+                ],
+                [
+                  4,
+                  3,
+                  0,
+                  4,
+                  1,
+                  "boolean"
+                ],
+                [
+                  5,
+                  4,
+                  0,
+                  5,
+                  0,
+                  -1
+                ]
+              ],
+              "groups": [],
+              "config": {
+                "align_to_grid": true,
+                "links_ontop": false,
+                "execution": "ancestors"
+              },
+              "extra": {},
+              "version": 0.4,
+              "litegraph_version": "0.18.0-dev.2",
+              "litegraph_modes": 2,
+              "state": {
+                "lastNodeId": 5,
+                "lastLinkId": 5,
+                "lastGroupId": 0,
+                "lastRerouteId": 0
+              }
+            }
+          }
+        ],
+        "background": 2241352,
+        "visible": true,
+        "matrixAutoUpdate": true,
+        "usePhysics": true,
+        "cameras": [
+          "00000000-0000-4000-8000-000000000003"
+        ],
+        "world": {
+          "gravity": {
+            "x": 0,
+            "y": -9.8,
+            "z": 0
+          },
+          "quatNormalizeSkip": 0,
+          "quatNormalizeFast": false,
+          "solver": {
+            "tolerance": 1e-7,
+            "iterations": 10
+          }
+        }
+      }
+    ],
+    "visible": true,
+    "matrixAutoUpdate": true,
+    "author": "nunuStudio LiteGraph integration",
+    "description": "Press Space to push the physics object up, only while it touches something, so it cannot jump in mid-air.",
+    "version": "1.0.0",
+    "ar": false,
+    "vr": false,
+    "vrScale": 1,
+    "rendererConfig": {
+      "backgroundColor": null,
+      "backend": 2,
+      "autoClear": false,
+      "autoClearColor": false,
+      "autoClearDepth": false,
+      "autoClearStencil": false,
+      "antialiasing": true,
+      "shadows": true,
+      "stencil": true,
+      "shadowsType": 2,
+      "shadowsAutoUpdate": true,
+      "toneMapping": 0,
+      "toneMappingExposure": 1,
+      "sortObjects": true,
+      "checkShaderErrors": true,
+      "gammaFactor": 2,
+      "precision": "highp",
+      "alpha": true,
+      "premultipliedAlpha": true,
+      "preserveDrawingBuffer": false,
+      "powerPreference": "high-performance",
+      "logarithmicDepthBuffer": false,
+      "physicallyCorrectLights": false,
+      "maxMorphTargets": 8,
+      "maxMorphNormals": 4
+    }
+  }
+}
