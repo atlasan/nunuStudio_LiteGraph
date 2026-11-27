@@ -559,17 +559,20 @@ class TransformControls extends Object3D
  *
  * @class TransformControlAtttributes
  */
-function TransformControlAtttributes()
+class TransformControlAtttributes
 {
-	this.parentRotationMatrix = new Matrix4();
-	this.parentScale = new Vector3();
-	this.worldRotationMatrix = new Matrix4();
-	this.worldPosition = new Vector3();
-	this.worldRotation = new Euler();
-	this.oldPosition = new Vector3();
-	this.oldScale = new Vector3();
-	this.oldQuaternion = new Quaternion();
-	this.oldRotationMatrix = new Matrix4();
+	constructor()
+	{
+		this.parentRotationMatrix = new Matrix4();
+		this.parentScale = new Vector3();
+		this.worldRotationMatrix = new Matrix4();
+		this.worldPosition = new Vector3();
+		this.worldRotation = new Euler();
+		this.oldPosition = new Vector3();
+		this.oldScale = new Vector3();
+		this.oldQuaternion = new Quaternion();
+		this.oldRotationMatrix = new Matrix4();
+	}
 }
 
 TransformControls.NONE = "none";

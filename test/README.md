@@ -43,3 +43,5 @@ Exceptions are data in the `quirks` table of `examples.spec.mjs`:
 | `skip: reason` | not run |
 | `fails: reason` | known issue, expected to fail, Playwright reports it when it starts passing (remove the entry then) |
 | `self: reason` | compared with a render of this branch (`<name>-self.png`) instead of the old runtime, e.g. frames that depend on the engine random stream |
+| `fixedStep: true` | steps the physics-heavy examples every 16 ms and clears the framebuffer before capturing, so stale depth and an extra simulation step cannot change the reference image |
+| `maxDiffPixelRatio: number` | sets an example-specific screenshot tolerance. The `nunu` example allows up to 4% for residual differences in physics and rain between runtimes. |

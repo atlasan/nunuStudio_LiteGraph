@@ -61,6 +61,20 @@ const steps = [
 
 	["undo and redo", (page) => editor(page, () => { window.Editor.undo(); window.Editor.redo(); })],
 
+	["create an animation timeline", async (page) =>
+	{
+		const tracks = await editor(page, () =>
+		{
+			const {gui, program} = window.Editor;
+			const animation = gui.animation;
+			animation.attach(program.getObjectByName("box"));
+			animation.add.element.click();
+			const clip = animation.animations.at(-1);
+			return {trackCount: clip.animation.tracks.length, timelineHeight: clip.timegrid.height};
+		});
+		expect(tracks).toEqual({trackCount: 4, timelineHeight: 121});
+	}],
+
 	["open material editor", (page) => clickText(page, "standard", 2)],
 
 	["run and stop the program", async (page) =>

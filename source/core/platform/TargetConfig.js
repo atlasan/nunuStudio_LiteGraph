@@ -3,20 +3,23 @@
  *
  * @class TargetConfig
  */
-function TargetConfig()
+class TargetConfig
 {
-	/**
-	 * Desktop related export properties.
-	 *
-	 * @attribute desktop
-	 * @type {Object}
-	 */
-	this.desktop =
+	constructor()
 	{
-		fullscreen: false,
-		frame: true,
-		resizable: true
-	};
+		/**
+		 * Desktop related export properties.
+		 *
+		 * @attribute desktop
+		 * @type {Object}
+		 */
+		this.desktop =
+		{
+			fullscreen: false,
+			frame: true,
+			resizable: true
+		};
+	}
 }
 
 export {TargetConfig};

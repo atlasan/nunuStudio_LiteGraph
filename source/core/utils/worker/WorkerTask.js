@@ -7,31 +7,34 @@ import {MathUtils} from "three";
  * @param {Object} data Data to be sent to the worker.
  * @param {Function} callback Function called when the task finishes.
  */
-function WorkerTask(data, callback)
+class WorkerTask
 {
-	/**
-	 * Worker task identifier.
-	 *
-	 * @attribute uuid
-	 * @type {String}
-	 */
-	this.uuid = MathUtils.generateUUID();
+	constructor(data, callback)
+	{
+		/**
+		 * Worker task identifier.
+		 *
+		 * @attribute uuid
+		 * @type {String}
+		 */
+		this.uuid = MathUtils.generateUUID();
 
-	/**
-	 * Data to be sent to the worker.
-	 *
-	 * @attribute data
-	 * @type {Object}
-	 */
-	this.data = data;
+		/**
+		 * Data to be sent to the worker.
+		 *
+		 * @attribute data
+		 * @type {Object}
+		 */
+		this.data = data;
 
-	/**
-	 * Function called when the task finishes.
-	 *
-	 * @attribute callback
-	 * @type {Function}
-	 */
-	this.callback = callback;
+		/**
+		 * Function called when the task finishes.
+		 *
+		 * @attribute callback
+		 * @type {Function}
+		 */
+		this.callback = callback;
+	}
 }
 
 export {WorkerTask};

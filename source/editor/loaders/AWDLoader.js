@@ -44,22 +44,25 @@ var AWDLoader = (function()
 {
 	var littleEndian = true;
 
-	function Block()
+	class Block
 	{
-		this.id = 0;
-		this.data = null;
-		this.namespace = 0;
-		this.flags = 0;
+		constructor()
+		{
+			this.id = 0;
+			this.data = null;
+			this.namespace = 0;
+			this.flags = 0;
+		}
 	}
 
-	function AWDProperties()
-	{}
-	AWDProperties.prototype = {
-		set: function(key, value)
+	class AWDProperties
+	{
+		set(key, value)
 		{
 			this[key] = value;
-		},
-		get: function(key, fallback)
+		}
+
+		get(key, fallback)
 		{
 			if (this.hasOwnProperty(key))
 			{
@@ -70,7 +73,7 @@ var AWDLoader = (function()
 				return fallback;
 			}
 		}
-	};
+	}
 	class AWDLoader extends Loader
 	{
 		constructor(manager)
@@ -562,7 +565,7 @@ var AWDLoader = (function()
 						// VERTICES
 							buffer = new Float32Array(strLen / 12 * 3);
 							attrib = new BufferAttribute(buffer, 3);
-							geom.addAttribute('position', attrib);
+							geom.setAttribute('position', attrib);
 							idx = 0;
 							while (this._ptr < strEnd)
 							{
@@ -592,7 +595,7 @@ var AWDLoader = (function()
 						// UVS
 							buffer = new Float32Array(strLen / 8 * 2);
 							attrib = new BufferAttribute(buffer, 2);
-							geom.addAttribute('uv', attrib);
+							geom.setAttribute('uv', attrib);
 							idx = 0;
 							while (this._ptr < strEnd)
 							{
@@ -606,7 +609,7 @@ var AWDLoader = (function()
 						// NORMALS
 							buffer = new Float32Array(strLen / 12 * 3);
 							attrib = new BufferAttribute(buffer, 3);
-							geom.addAttribute('normal', attrib);
+							geom.setAttribute('normal', attrib);
 							idx = 0;
 							while (this._ptr < strEnd)
 							{

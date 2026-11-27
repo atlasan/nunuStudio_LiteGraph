@@ -5,16 +5,14 @@ import {BufferGeometry, DefaultLoadingManager, DirectionalLight, FileLoader, Flo
  * 
  * @author Mugen87 / https://github.com/Mugen87
  */
-var BabylonLoader = function(manager)
+class BabylonLoader
 {
-	this.manager = manager !== undefined ? manager : DefaultLoadingManager;
-};
+	constructor(manager)
+	{
+		this.manager = manager !== undefined ? manager : DefaultLoadingManager;
+	}
 
-BabylonLoader.prototype =
-{
-	constructor: BabylonLoader,
-
-	load: function(url, onLoad, onProgress, onError)
+	load(url, onLoad, onProgress, onError)
 	{
 		var scope = this;
 
@@ -24,15 +22,15 @@ BabylonLoader.prototype =
 		{
 			onLoad(scope.parse(JSON.parse(text)));
 		}, onProgress, onError);
-	},
+	}
 
-	setPath: function(value)
+	setPath(value)
 	{
 		this.path = value;
 		return this;
-	},
+	}
 
-	parse: function(json)
+	parse(json)
 	{
 		function parseMaterials(json)
 		{
@@ -86,7 +84,7 @@ BabylonLoader.prototype =
 				positions[j] = - positions[j];
 			}
 
-			geometry.addAttribute("position", new Float32BufferAttribute(positions, 3));
+			geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
 
 			// normals
 			if (normals)
@@ -96,13 +94,13 @@ BabylonLoader.prototype =
 					normals[j] = - normals[j];
 				}
 
-				geometry.addAttribute("normal", new Float32BufferAttribute(normals, 3));
+				geometry.setAttribute("normal", new Float32BufferAttribute(normals, 3));
 			}
 
 			// uvs
 			if (uvs)
 			{
-				geometry.addAttribute("uv", new Float32BufferAttribute(uvs, 2));
+				geometry.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
 			}
 
 			// offsets
@@ -218,6 +216,6 @@ BabylonLoader.prototype =
 
 		return scene;
 	}
-};
+}
 
 export {BabylonLoader};

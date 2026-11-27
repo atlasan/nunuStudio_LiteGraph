@@ -18,7 +18,9 @@ const examples = fs.readdirSync("docs/examples").filter((f) => f.endsWith(".nsp"
 //  self: reason       compared with a render of this branch (name.self.png) instead of the old runtime, not rendered with the old runtime
 const randomEngine = "uses three.js random helpers or particles, which draw from the engine random stream, frames cannot match the old runtime";
 const quirks = {
-	camera: {self: randomEngine},
+	camera: {self: randomEngine, fixedStep: true},
+	// Repeated captures vary slightly as the physics objects and rain move.
+	nunu: {fixedStep: true, maxDiffPixelRatio: 0.04},
 	paint: {self: randomEngine},
 	spine: {self: "the old runtime cannot load it (Spine 3.8 data with the 4.0 runtime, upgraded by SpineJson now)"}
 };
@@ -42,7 +44,32 @@ for (const name of examples)
 		await page.clock.pauseAt(start + 1000);
 		await page.goto(`/harness/runtime.html?project=/examples/${name}.nsp&runtime=${runtime}`);
 		await expect.poll(() => page.evaluate(() => window.loaded === true), {timeout: 45000, intervals: [100]}).toBe(true);
+		const timer = quirk.fixedStep ? await page.evaluate(() =>
+		{
+			window.app.pause();
+			return window.setInterval(() => window.app.update(), 16);
+		}) : null;
 		await page.clock.runFor(2000);
+
+		// Render and read in one task, without preserveDrawingBuffer.
+		const capture = () => page.evaluate((timer) =>
+		{
+			const app = window.app;
+			if (timer === null)
+			{
+				app.pause();
+				app.update();
+			}
+			else
+			{
+				// These scenes disable automatic clearing. Clear old depth and draw without another physics step.
+				window.clearInterval(timer);
+				app.renderer.clear();
+				app.program.render(app.renderer);
+			}
+			return window.app.canvas.toDataURL("image/png").split(",")[1];
+		}, timer);
+		const liveFrame = timer !== null ? await capture() : null;
 
 		if (runtime === current)
 		{
@@ -55,13 +82,7 @@ for (const name of examples)
 			expect(counts.copy, "objects after save/load round trip").toBe(counts.original);
 		}
 
-		// Render one more frame and read it in the same task (no preserveDrawingBuffer needed, no timing involved)
-		const png = await page.evaluate(() =>
-		{
-			window.app.pause();
-			window.app.update();
-			return window.app.canvas.toDataURL("image/png").split(",")[1];
-		});
+		const png = liveFrame ?? await capture();
 		expect(Buffer.from(png, "base64")).toMatchSnapshot(quirk.self !== undefined ? `${name}.self.png` : `${name}.png`, quirk.maxDiffPixelRatio ? {maxDiffPixelRatio: quirk.maxDiffPixelRatio} : {});
 	});
 }
