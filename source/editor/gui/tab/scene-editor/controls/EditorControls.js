@@ -8,75 +8,78 @@ import {Keyboard} from "../../../../../core/input/Keyboard.js";
  * @class EditorControls
  * @extends {Group}
  */
-class EditorControls extends Group {
-	constructor() {
-	super();
+class EditorControls extends Group 
+{
+	constructor() 
+	{
+		super();
+
+		/**
+		 * Camera object attached to this controls.
+		 *
+		 * @property camera
+		 * @type {Object3D}
+		 */
+		this.camera = null;
+	}
 
 	/**
-	 * Camera object attached to this controls.
+	 * Attach a camera to this controls object.
 	 *
-	 * @property camera
-	 * @type {Object3D}
+	 * @method attach
+	 * @param {Camera} camera
 	 */
-	this.camera = null;
-	}
-
-/**
- * Attach a camera to this controls object.
- *
- * @method attach
- * @param {Camera} camera
- */
-	attach(camera) {
-	while (this.children.length > 0)
+	attach(camera) 
 	{
-		this.remove(this.children[0]);
-	}
-	this.add(camera);
+		while (this.children.length > 0)
+		{
+			this.remove(this.children[0]);
+		}
+		this.add(camera);
 
-	this.camera = camera;
-	this.updateControls();
+		this.camera = camera;
+		this.updateControls();
 	}
 
-/**
- * Reset the controls to its original position.
- * 
- * @method reset
- */
+	/**
+	 * Reset the controls to its original position.
+	 * 
+	 * @method reset
+	 */
 	reset() {}
 
-/** 
- * Focus camera on a object.
- * 
- * @method focusObject
- * @param {Object3D} object Object to point camera at.
- */
+	/** 
+	 * Focus camera on a object.
+	 * 
+	 * @method focusObject
+	 * @param {Object3D} object Object to point camera at.
+	 */
 	focusObject() {}
 
-/** 
- * Set controls orientation, using orientation code form OrientationCube 
- *
- * @method setOrientation
- */
+	/** 
+	 * Set controls orientation, using orientation code form OrientationCube 
+	 *
+	 * @method setOrientation
+	 */
 	setOrientation() {}
 
-/**
- * Update the orbit controls position, the keyboard movement should be optional.
- * 
- * @method update
- * @param {Mouse} mouse
- * @param {Keyboard} keyboard
- * @param {number} delta Time passed after from the last update.
- */
+	/**
+	 * Update the orbit controls position, the keyboard movement should be optional.
+	 * 
+	 * @method update
+	 * @param {Mouse} mouse
+	 * @param {Keyboard} keyboard
+	 * @param {number} delta Time passed after from the last update.
+	 */
 	update() {}
 
-/**
- * Update controls position and rotation.
- *
- * Should be called if some of its properties are changed manually.
- * 
- * @method updateControls
- */
+	/**
+	 * Update controls position and rotation.
+	 *
+	 * Should be called if some of its properties are changed manually.
+	 * 
+	 * @method updateControls
+	 */
 	updateControls() {}
 
 }

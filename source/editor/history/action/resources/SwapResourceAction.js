@@ -15,36 +15,40 @@ import {Editor} from "../../../Editor.js";
  * @param {ResourceManager} manager Manager to insert the resource into.
  * @param {string} category Category of the resource.
  */
-class SwapResourceAction extends Action {
-	constructor(oldResource, newResource, manager, category) {
-	super();
-	
-	this.oldResource = oldResource;
-	this.newResource = newResource;
-	this.manager = manager;
-	this.category = category;
-	}
-
-	apply() {
-	ResourceCrawler.swapResource(this.manager, this.category, this.oldResource, this.newResource);
-	
-	if (this.oldResource.dispose !== undefined)
+class SwapResourceAction extends Action 
+{
+	constructor(oldResource, newResource, manager, category) 
 	{
-		this.oldResource.dispose();
+		super();
+	
+		this.oldResource = oldResource;
+		this.newResource = newResource;
+		this.manager = manager;
+		this.category = category;
 	}
 
-	SwapResourceAction.updateGUI();
-	}
-
-	revert() {
-	ResourceCrawler.swapResource(this.manager, this.category, this.newResource, this.oldResource);
-
-	if (this.newResource.dispose !== undefined)
+	apply() 
 	{
-		this.newResource.dispose();
+		ResourceCrawler.swapResource(this.manager, this.category, this.oldResource, this.newResource);
+	
+		if (this.oldResource.dispose !== undefined)
+		{
+			this.oldResource.dispose();
+		}
+
+		SwapResourceAction.updateGUI();
 	}
 
-	SwapResourceAction.updateGUI();
+	revert() 
+	{
+		ResourceCrawler.swapResource(this.manager, this.category, this.newResource, this.oldResource);
+
+		if (this.newResource.dispose !== undefined)
+		{
+			this.newResource.dispose();
+		}
+
+		SwapResourceAction.updateGUI();
 	}
 
 }

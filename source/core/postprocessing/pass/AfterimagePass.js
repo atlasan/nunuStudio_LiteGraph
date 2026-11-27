@@ -13,109 +13,109 @@ import {Pass} from "../Pass.js";
  */
 class AfterimagePass extends Pass
 {
-constructor(damp)
+	constructor(damp)
+	{
+		super();
+
+		this.type = "Afterimage";
+
+		this.uniforms = UniformsUtils.clone(AfterimageShader.uniforms);
+
+		this.textureComp = new WebGLRenderTarget(1, 1,
+			{
+				minFilter: LinearFilter,
+				magFilter: NearestFilter,
+				format: RGBAFormat
+			});
+
+		this.textureOld = new WebGLRenderTarget(1, 1,
+			{
+				minFilter: LinearFilter,
+				magFilter: NearestFilter,
+				format: RGBAFormat
+			});
+
+		this.shaderMaterial = new ShaderMaterial(
+			{
+				uniforms: this.uniforms,
+				vertexShader: AfterimageShader.vertexShader,
+				fragmentShader: AfterimageShader.fragmentShader
+			});
+
+		this.basicMaterial = new MeshBasicMaterial();
+
+		this.createQuadScene();
+
+		Object.defineProperties(this,
+			{
+				/**
+				 * Dampening applied to the previous frame.
+				 *
+				 * @property damp
+				 * @type {number}
+				 */
+				damp:
 {
-super();
-
-this.type = "Afterimage";
-
-this.uniforms = UniformsUtils.clone(AfterimageShader.uniforms);
-
-this.textureComp = new WebGLRenderTarget(1, 1,
-{
-minFilter: LinearFilter,
-magFilter: NearestFilter,
-format: RGBAFormat
-});
-
-this.textureOld = new WebGLRenderTarget(1, 1,
-{
-minFilter: LinearFilter,
-magFilter: NearestFilter,
-format: RGBAFormat
-});
-
-this.shaderMaterial = new ShaderMaterial(
-{
-uniforms: this.uniforms,
-vertexShader: AfterimageShader.vertexShader,
-fragmentShader: AfterimageShader.fragmentShader
-});
-
-this.basicMaterial = new MeshBasicMaterial();
-
-this.createQuadScene();
-
-Object.defineProperties(this,
-{
-/**
- * Dampening applied to the previous frame.
- *
- * @property damp
- * @type {number}
- */
-damp:
-{
-get: function() {return this.uniforms["damp"].value;},
-set: function(value) {this.uniforms["damp"].value = value;}
+	get: function() {return this.uniforms["damp"].value;},
+	set: function(value) {this.uniforms["damp"].value = value;}
 }
-});
+			});
 
-this.damp = damp !== undefined ? damp : 0.96;
-}
+		this.damp = damp !== undefined ? damp : 0.96;
+	}
 
-render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
-{
-// Swap texture
-var temp = this.textureOld;
-this.textureOld = this.textureComp;
-this.textureComp = temp;
+	render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
+	{
+		// Swap texture
+		var temp = this.textureOld;
+		this.textureOld = this.textureComp;
+		this.textureComp = temp;
 
-// Setup uniforms
-this.uniforms["tNew"].value = readBuffer.texture;
-this.uniforms["tOld"].value = this.textureOld.texture;
+		// Setup uniforms
+		this.uniforms["tNew"].value = readBuffer.texture;
+		this.uniforms["tOld"].value = this.textureOld.texture;
 
-// Render textureComp
-this.quad.material = this.shaderMaterial;
-renderer.autoClear = false;
-renderer.setRenderTarget(this.textureComp);
-renderer.render(this.scene, this.camera);
+		// Render textureComp
+		this.quad.material = this.shaderMaterial;
+		renderer.autoClear = false;
+		renderer.setRenderTarget(this.textureComp);
+		renderer.render(this.scene, this.camera);
 
-// Set copy from texture
-this.basicMaterial.map = this.textureComp.texture;
+		// Set copy from texture
+		this.basicMaterial.map = this.textureComp.texture;
 
-// Clear configuration
-if (this.clear)
-{
-renderer.autoClear = true;
-renderer.autoClearColor = true;
-renderer.autoClearDepth = true;
-renderer.autoClearStencil = true;
-}
-else
-{
-renderer.autoClear = false;
-}
+		// Clear configuration
+		if (this.clear)
+		{
+			renderer.autoClear = true;
+			renderer.autoClearColor = true;
+			renderer.autoClearDepth = true;
+			renderer.autoClearStencil = true;
+		}
+		else
+		{
+			renderer.autoClear = false;
+		}
 
-this.quad.material = this.basicMaterial;
-renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
-renderer.render(this.scene, this.camera);
-}
+		this.quad.material = this.basicMaterial;
+		renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
+		renderer.render(this.scene, this.camera);
+	}
 
-setSize(width, height)
-{
-this.textureComp.setSize(width, height);
-this.textureOld.setSize(width, height);
-}
+	setSize(width, height)
+	{
+		this.textureComp.setSize(width, height);
+		this.textureOld.setSize(width, height);
+	}
 
-toJSON(meta)
-{
-var data = super.toJSON(meta);
+	toJSON(meta)
+	{
+		var data = super.toJSON(meta);
 
-data.damp = this.damp;
+		data.damp = this.damp;
 
-return data;
-}
+		return data;
+	}
 }
 
 export {AfterimagePass};

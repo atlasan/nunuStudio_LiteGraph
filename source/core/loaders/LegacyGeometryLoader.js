@@ -12,49 +12,49 @@ import {BufferGeometry, DefaultLoadingManager, FileLoader} from "three";
  */
 class LegacyGeometryLoader
 {
-constructor(manager)
-{
-this.manager = manager !== undefined ? manager : DefaultLoadingManager;
-this.withCredentials = false;
-}
+	constructor(manager)
+	{
+		this.manager = manager !== undefined ? manager : DefaultLoadingManager;
+		this.withCredentials = false;
+	}
 
-load(url, onLoad, onProgress, onError)
-{
-var self = this;
+	load(url, onLoad, onProgress, onError)
+	{
+		var self = this;
 
-var loader = new FileLoader(this.manager);
-loader.setWithCredentials(this.withCredentials);
-loader.load(url, function(text)
-{
-var json = JSON.parse(text);
-var object = self.parse(json);
-onLoad(object.geometry, object.materials);
-}, onProgress, onError);
-}
+		var loader = new FileLoader(this.manager);
+		loader.setWithCredentials(this.withCredentials);
+		loader.load(url, function(text)
+		{
+			var json = JSON.parse(text);
+			var object = self.parse(json);
+			onLoad(object.geometry, object.materials);
+		}, onProgress, onError);
+	}
 
-setPath(value)
-{
-this.path = value;
-return this;
-}
+	setPath(value)
+	{
+		this.path = value;
+		return this;
+	}
 
-setResourcePath(value)
-{
-this.resourcePath = value;
-return this;
-}
+	setResourcePath(value)
+	{
+		this.resourcePath = value;
+		return this;
+	}
 
-setCrossOrigin(value)
-{
-this.crossOrigin = value;
-return this;
-}
+	setCrossOrigin(value)
+	{
+		this.crossOrigin = value;
+		return this;
+	}
 
-parse(json)
-{
-console.warn("nunuStudio: LegacyGeometryLoader - The old three.js JSON geometry format (Geometry/Face3) is no longer supported in three.js r137+. Returning empty BufferGeometry. Please re-export your assets.");
-return {geometry: new BufferGeometry(), materials: []};
-}
+	parse(json)
+	{
+		console.warn("nunuStudio: LegacyGeometryLoader - The old three.js JSON geometry format (Geometry/Face3) is no longer supported in three.js r137+. Returning empty BufferGeometry. Please re-export your assets.");
+		return {geometry: new BufferGeometry(), materials: []};
+	}
 }
 
 export {LegacyGeometryLoader};

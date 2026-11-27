@@ -11,44 +11,48 @@ import {AddAction} from "./AddAction.js";
  * @param {Object3D} object
  * @param {Object3D} parent Optional.
  */
-class RemoveAction extends Action {
-	constructor(object, parent) {
-	super();
+class RemoveAction extends Action 
+{
+	constructor(object, parent) 
+	{
+		super();
 	
-	this.object = object;
+		this.object = object;
 
-	this.parent = parent !== undefined ? parent : object.parent;
-	this.index = -1;
+		this.parent = parent !== undefined ? parent : object.parent;
+		this.index = -1;
 	}
 
-	apply() {
-	if (this.object instanceof Camera)
+	apply() 
 	{
-		var scene = this.object.getScene();
-		if (scene !== null)
+		if (this.object instanceof Camera)
 		{
-			scene.removeCamera(this.object);
+			var scene = this.object.getScene();
+			if (scene !== null)
+			{
+				scene.removeCamera(this.object);
+			}
 		}
-	}
 	
-	this.index = this.parent.children.indexOf(this.object);
-	this.parent.remove(this.object);
+		this.index = this.parent.children.indexOf(this.object);
+		this.parent.remove(this.object);
 
-	RemoveAction.updateGUI(this.object, this.parent);
+		RemoveAction.updateGUI(this.object, this.parent);
 	}
 
-	revert() {
-	if (this.index === -1)
+	revert() 
 	{
-		this.parent.add(this.object);
-	}
-	else
-	{
-		this.parent.children.splice(this.index, 0, this.object);
-		this.object.parent = this.parent;
-	}
+		if (this.index === -1)
+		{
+			this.parent.add(this.object);
+		}
+		else
+		{
+			this.parent.children.splice(this.index, 0, this.object);
+			this.object.parent = this.parent;
+		}
 
-	AddAction.updateGUI(this.object, this.parent, this.index);
+		AddAction.updateGUI(this.object, this.parent, this.index);
 	}
 
 }

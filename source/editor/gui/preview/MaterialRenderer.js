@@ -8,92 +8,94 @@ import {PreviewRenderer} from "./PreviewRenderer.js";
  * @class MaterialRenderer
  * @extends {PreviewRenderer}
  */
-class MaterialRenderer extends PreviewRenderer {
-	constructor() {
-	super();
-
-	// Camera
-	this.camera = new OrthographicCamera(2.15, 1);
-
-	// Geometry
-	this.geometry = new SphereGeometry(1, 16, 16);
-
-	// Mesh
-	this.mesh = new Mesh(this.geometry);
-	this.scene.add(this.mesh);
-
-	// Points
-	this.points = new Points(this.geometry);
-	this.scene.add(this.points);
-
-	// Line
-	this.line = new Line(this.geometry);
-	this.scene.add(this.line);
-
-	// Sprite
-	this.sprite = new Sprite();
-	this.sprite.scale.set(2, 2, 1);
-	this.scene.add(this.sprite);
-
-	// Ambient light
-	var ambient = new AmbientLight(0x999999);
-	this.scene.add(ambient);
-
-	// Point light
-	var point = new PointLight(0x999999);
-	point.position.set(-0.5, 1, 1.5);
-	this.scene.add(point);
-	}
-
-
-
-	render(material, onRender) {
-	if (material instanceof SpriteMaterial)
+class MaterialRenderer extends PreviewRenderer 
+{
+	constructor() 
 	{
-		this.mesh.visible = false;
-		this.sprite.visible = true;
-		this.points.visible = false;
-		this.line.visible = false;
+		super();
 
-		this.sprite.material = material;
-		this.camera.position.set(0, 0, 0.5);
+		// Camera
+		this.camera = new OrthographicCamera(2.15, 1);
+
+		// Geometry
+		this.geometry = new SphereGeometry(1, 16, 16);
+
+		// Mesh
+		this.mesh = new Mesh(this.geometry);
+		this.scene.add(this.mesh);
+
+		// Points
+		this.points = new Points(this.geometry);
+		this.scene.add(this.points);
+
+		// Line
+		this.line = new Line(this.geometry);
+		this.scene.add(this.line);
+
+		// Sprite
+		this.sprite = new Sprite();
+		this.sprite.scale.set(2, 2, 1);
+		this.scene.add(this.sprite);
+
+		// Ambient light
+		var ambient = new AmbientLight(0x999999);
+		this.scene.add(ambient);
+
+		// Point light
+		var point = new PointLight(0x999999);
+		point.position.set(-0.5, 1, 1.5);
+		this.scene.add(point);
 	}
-	else if (material instanceof LineBasicMaterial)
+
+
+	render(material, onRender) 
 	{
-		this.mesh.visible = false;
-		this.sprite.visible = false;
-		this.points.visible = false;
-		this.line.visible = true;
+		if (material instanceof SpriteMaterial)
+		{
+			this.mesh.visible = false;
+			this.sprite.visible = true;
+			this.points.visible = false;
+			this.line.visible = false;
 
-		this.line.material = material;
-		this.camera.position.set(0, 0, 0.5);
-	}
-	else if (material instanceof PointsMaterial)
-	{
-		this.mesh.visible = false;
-		this.sprite.visible = false;
-		this.points.visible = true;
-		this.line.visible = false;
+			this.sprite.material = material;
+			this.camera.position.set(0, 0, 0.5);
+		}
+		else if (material instanceof LineBasicMaterial)
+		{
+			this.mesh.visible = false;
+			this.sprite.visible = false;
+			this.points.visible = false;
+			this.line.visible = true;
 
-		this.points.material = material;
-		this.camera.position.set(0, 0, 0.5);
-	}
-	else
-	{
-		this.sprite.visible = false;
-		this.mesh.visible = true;
-		this.points.visible = false;
-		this.line.visible = false;
+			this.line.material = material;
+			this.camera.position.set(0, 0, 0.5);
+		}
+		else if (material instanceof PointsMaterial)
+		{
+			this.mesh.visible = false;
+			this.sprite.visible = false;
+			this.points.visible = true;
+			this.line.visible = false;
 
-		this.mesh.material = material;
-		this.camera.position.set(0, 0, 1.5);
-	}
+			this.points.material = material;
+			this.camera.position.set(0, 0, 0.5);
+		}
+		else
+		{
+			this.sprite.visible = false;
+			this.mesh.visible = true;
+			this.points.visible = false;
+			this.line.visible = false;
 
-	// Render
-	this.renderer.render(this.scene, this.camera);
+			this.mesh.material = material;
+			this.camera.position.set(0, 0, 1.5);
+		}
 
-	// Callback
-	onRender(this.canvas.toDataURL());
+		// Render
+		this.renderer.render(this.scene, this.camera);
+
+		// Callback
+		onRender(this.canvas.toDataURL());
 	}
 
 }

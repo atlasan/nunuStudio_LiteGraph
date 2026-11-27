@@ -12,133 +12,142 @@ import {ButtonMenu} from "./ButtonMenu.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class ContextMenu extends Component {
-	constructor(parent) {
-	super(parent, "div");
-
-	var self = this;
-
-	this.element.style.overflow = "visible";
-	this.element.style.zIndex = "300";
-	this.element.onmouseleave = function()
+class ContextMenu extends Component 
+{
+	constructor(parent) 
 	{
-		self.destroy();
-	};
+		super(parent, "div");
 
-	this.offset = new Vector2(20, 10);
+		var self = this;
+
+		this.element.style.overflow = "visible";
+		this.element.style.zIndex = "300";
+		this.element.onmouseleave = function()
+		{
+			self.destroy();
+		};
+
+		this.offset = new Vector2(20, 10);
 	
+		/**
+		 * Options in this menu.
+		 * 
+		 * @attribute options
+		 * @type {Array}
+		 */
+		this.options = [];
+	}
+
 	/**
-	 * Options in this menu.
+	 * Set the text of this context menu.
 	 * 
-	 * @attribute options
-	 * @type {Array}
+	 * @method setText
+	 * @param {string} text
 	 */
-	this.options = [];
-	}
-
-/**
- * Set the text of this context menu.
- * 
- * @method setText
- * @param {string} text
- */
-	setText(text) {
-	this.text.setText(text);
-	}
-
-/**
- * Remove option from context menu.
- *
- * @method removeOption
- * @param {number} index
- */
-	removeOption(index) {
-	if (index >= 0 && index < this.options.length)
+	setText(text) 
 	{
-		this.options[index].destroy();
-		this.options.splice(index, 1);
-	}
+		this.text.setText(text);
 	}
 
-/**
- * Add new option to context menu
- *
- * @method addOption
- * @param {string} name of the option
- * @param {Function} callback Callback function
- */
-	addOption(name, callback) {
-	var button = new ButtonMenu(this);
-	button.setStyle("zIndex", "10000");
-	button.setText(name);
-	button.text.setAlignment(Text.LEFT);
-	button.position.x = 25;
-
-	var self = this;
-	button.setOnClick(function()
+	/**
+	 * Remove option from context menu.
+	 *
+	 * @method removeOption
+	 * @param {number} index
+	 */
+	removeOption(index) 
 	{
-		callback();
-		self.destroy();
-	});
+		if (index >= 0 && index < this.options.length)
+		{
+			this.options[index].destroy();
+			this.options.splice(index, 1);
+		}
+	}
+
+	/**
+	 * Add new option to context menu
+	 *
+	 * @method addOption
+	 * @param {string} name of the option
+	 * @param {Function} callback Callback function
+	 */
+	addOption(name, callback) 
+	{
+		var button = new ButtonMenu(this);
+		button.setStyle("zIndex", "10000");
+		button.setText(name);
+		button.text.setAlignment(Text.LEFT);
+		button.position.x = 25;
+
+		var self = this;
+		button.setOnClick(function()
+		{
+			callback();
+			self.destroy();
+		});
 	
-	this.options.push(button);
+		this.options.push(button);
 	}
 
-/**
- * Add new menu to context menu
- *
- * @method addOption
- * @param {string} name of the option.
- * @return {DropdownMenu} The new menu created.
- */
-	addMenu(name) {
-	var menu = new DropdownMenu(this);
-	menu.setText(name);
-	menu.setDirection(DropdownMenu.LEFT);
-	menu.showArrow();
-	menu.setAlignment(Text.LEFT);
-	menu.setMargin(25);
-
-	this.options.push(menu);
-
-	return menu;
-	}
-
-/**
- * Update all options in the menu.
- * 
- * @method updateOptions
- */
-	updateOptions() {
-	for (var i = 0; i < this.options.length; i++)
+	/**
+	 * Add new menu to context menu
+	 *
+	 * @method addOption
+	 * @param {string} name of the option.
+	 * @return {DropdownMenu} The new menu created.
+	 */
+	addMenu(name) 
 	{
-		this.options[i].size.copy(this.size);
-		this.options[i].position.set(0, this.size.y * i);
-		this.options[i].updateInterface();
+		var menu = new DropdownMenu(this);
+		menu.setText(name);
+		menu.setDirection(DropdownMenu.LEFT);
+		menu.showArrow();
+		menu.setAlignment(Text.LEFT);
+		menu.setMargin(25);
+
+		this.options.push(menu);
+
+		return menu;
 	}
-	}
 
-	updateSize() {
-	this.element.style.width = this.size.x + "px";
-	this.element.style.height = this.size.y * this.options.length + "px";
-
-	this.updateOptions();
-	}
-
-	updatePosition() {
-	this.element.style.top = this.position.y - this.offset.y + "px";
-	this.element.style.left = this.position.x - this.offset.x + "px";
-
-	// Check if its inside window
-	var out = DOMUtils.checkBorder(this.element);
-	if (out.x !== 0)
+	/**
+	 * Update all options in the menu.
+	 * 
+	 * @method updateOptions
+	 */
+	updateOptions() 
 	{
-		this.element.style.left = this.position.x + this.offset.x - this.size.x + "px"; 
+		for (var i = 0; i < this.options.length; i++)
+		{
+			this.options[i].size.copy(this.size);
+			this.options[i].position.set(0, this.size.y * i);
+			this.options[i].updateInterface();
+		}
 	}
-	if (out.y !== 0)
+
+	updateSize() 
 	{
-		this.element.style.top = this.position.y - this.offset.y - out.y + "px";
+		this.element.style.width = this.size.x + "px";
+		this.element.style.height = this.size.y * this.options.length + "px";
+
+		this.updateOptions();
 	}
+
+	updatePosition() 
+	{
+		this.element.style.top = this.position.y - this.offset.y + "px";
+		this.element.style.left = this.position.x - this.offset.x + "px";
+
+		// Check if its inside window
+		var out = DOMUtils.checkBorder(this.element);
+		if (out.x !== 0)
+		{
+			this.element.style.left = this.position.x + this.offset.x - this.size.x + "px"; 
+		}
+		if (out.y !== 0)
+		{
+			this.element.style.top = this.position.y - this.offset.y - out.y + "px";
+		}
 	}
 
 }

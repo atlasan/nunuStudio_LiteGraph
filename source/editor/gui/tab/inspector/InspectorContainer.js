@@ -66,259 +66,268 @@ import {MaterialInspector} from "./materials/MaterialInspector.js";
  * @class InspectorContainer
  * @extends {TabComponent}
  */
-class InspectorContainer extends TabComponent {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index, "Inspector", Global.FILE_PATH + "icons/misc/magnifier.png");
-
-	this.element.style.overflow = "auto";
-	this.element.style.backgroundColor = "var(--panel-color)";
-
-	/**
-	 * Text shown when there is no object select to show on the inspector.
-	 *
-	 * @attribute emptyText
-	 * @type {Text}
-	 */
-	this.emptyText = new Text(this);
-	this.emptyText.allowWordBreak(true);
-	this.emptyText.setTextSize(12);
-	this.emptyText.setTextColor("var(--color-light)");
-	this.emptyText.setText(Locale.nothingToShow);
-
-	this.panel = null;
-	}
-
-	destroyInspector() {
-	if (this.panel !== null)
+class InspectorContainer extends TabComponent 
+{
+	constructor(parent, closeable, container, index) 
 	{
-		this.panel.destroy();
+		super(parent, closeable, container, index, "Inspector", Global.FILE_PATH + "icons/misc/magnifier.png");
+
+		this.element.style.overflow = "auto";
+		this.element.style.backgroundColor = "var(--panel-color)";
+
+		/**
+		 * Text shown when there is no object select to show on the inspector.
+		 *
+		 * @attribute emptyText
+		 * @type {Text}
+		 */
+		this.emptyText = new Text(this);
+		this.emptyText.allowWordBreak(true);
+		this.emptyText.setTextSize(12);
+		this.emptyText.setTextColor("var(--color-light)");
+		this.emptyText.setText(Locale.nothingToShow);
+
 		this.panel = null;
 	}
 
-	this.emptyText.setVisibility(true);
-	}
-
-	attach(object) {
-	if (this.panel !== null)
+	destroyInspector() 
 	{
-		this.panel.attach(object);
-		this.panel.updateInspector();
-	}
+		if (this.panel !== null)
+		{
+			this.panel.destroy();
+			this.panel = null;
+		}
+
+		this.emptyText.setVisibility(true);
 	}
 
-	isAttached(object) {
-	if (this.panel !== null)
+	attach(object) 
 	{
-		return this.panel.object === object;
+		if (this.panel !== null)
+		{
+			this.panel.attach(object);
+			this.panel.updateInspector();
+		}
 	}
 
-	return false;
+	isAttached(object) 
+	{
+		if (this.panel !== null)
+		{
+			return this.panel.object === object;
+		}
+
+		return false;
 	}
 
-	updateObjectsView() {
-	if (this.panel !== null)
+	updateObjectsView() 
+	{
+		if (this.panel !== null)
+		{	
+			var object = this.panel.object;
+
+			if (object.isObject3D === true && object.parent === null)
+			{
+				if (!(object instanceof Program))
+				{
+					this.destroyInspector();
+				}
+			}
+		}
+	}
+
+	updateSelection() 
 	{	
-		var object = this.panel.object;
-
-		if (object.isObject3D === true && object.parent === null)
-		{
-			if (!(object instanceof Program))
-			{
-				this.destroyInspector();
-			}
-		}
-	}
-	}
-
-	updateSelection() {	
-	var object = Editor.hasObjectSelected() ? Editor.selection[0] : null;
+		var object = Editor.hasObjectSelected() ? Editor.selection[0] : null;
 	
-	if (this.panel !== null && this.panel.object === object)
-	{
-		return;
-	}
+		if (this.panel !== null && this.panel.object === object)
+		{
+			return;
+		}
 
-	this.destroyInspector();
+		this.destroyInspector();
 
-	if (object instanceof Object3D)
-	{
-		if (object.locked)
+		if (object instanceof Object3D)
 		{
-			this.panel = new LockedInspector(this, object);
-		}
-		else if (object instanceof ParticleEmitter)
-		{
-			this.panel = new ParticleEmitterInspector(this, object);
-		}
-		else if (object instanceof SpineAnimation)
-		{
-			this.panel = new SpineInspector(this, object);
-		}
-		else if (object instanceof InstancedMesh)
-		{
-			this.panel = new InstancedMeshInspector(this, object);
-		}
-		else if (object instanceof SkinnedMesh)
-		{
-			this.panel = new MeshInspector(this, object);
-		}
-		else if (object instanceof TextSprite)
-		{
-			this.panel = new TextSpriteInspector(this, object);
-		}
-		else if (object instanceof TextBitmap)
-		{
-			this.panel = new TextBitmapInspector(this, object);
-		}
-		else if (object instanceof TextMesh)
-		{
-			this.panel = new TextMeshInspector(this, object);
-		}
-		else if (object instanceof Mesh || object instanceof Points || object instanceof Line)
-		{
-			this.panel = new MeshInspector(this, object);
-		}
-		else if (object instanceof Light)
-		{
-			if (object instanceof PointLight)
+			if (object.locked)
 			{
-				this.panel = new PointLightInspector(this, object);
+				this.panel = new LockedInspector(this, object);
 			}
-			else if (object instanceof RectAreaLight)
+			else if (object instanceof ParticleEmitter)
 			{
-				this.panel = new RectAreaLightInspector(this, object);
+				this.panel = new ParticleEmitterInspector(this, object);
 			}
-			else if (object instanceof SpotLight)
+			else if (object instanceof SpineAnimation)
 			{
-				this.panel = new SpotLightInspector(this, object);
+				this.panel = new SpineInspector(this, object);
 			}
-			else if (object instanceof DirectionalLight)
+			else if (object instanceof InstancedMesh)
 			{
-				this.panel = new DirectionalLightInspector(this, object);
+				this.panel = new InstancedMeshInspector(this, object);
 			}
-			else if (object instanceof HemisphereLight)
+			else if (object instanceof SkinnedMesh)
 			{
-				this.panel = new HemisphereLightInspector(this, object);
+				this.panel = new MeshInspector(this, object);
 			}
-			else if (object instanceof LightProbe)
+			else if (object instanceof TextSprite)
 			{
-				this.panel = new LightProbeInspector(this, object);
+				this.panel = new TextSpriteInspector(this, object);
+			}
+			else if (object instanceof TextBitmap)
+			{
+				this.panel = new TextBitmapInspector(this, object);
+			}
+			else if (object instanceof TextMesh)
+			{
+				this.panel = new TextMeshInspector(this, object);
+			}
+			else if (object instanceof Mesh || object instanceof Points || object instanceof Line)
+			{
+				this.panel = new MeshInspector(this, object);
+			}
+			else if (object instanceof Light)
+			{
+				if (object instanceof PointLight)
+				{
+					this.panel = new PointLightInspector(this, object);
+				}
+				else if (object instanceof RectAreaLight)
+				{
+					this.panel = new RectAreaLightInspector(this, object);
+				}
+				else if (object instanceof SpotLight)
+				{
+					this.panel = new SpotLightInspector(this, object);
+				}
+				else if (object instanceof DirectionalLight)
+				{
+					this.panel = new DirectionalLightInspector(this, object);
+				}
+				else if (object instanceof HemisphereLight)
+				{
+					this.panel = new HemisphereLightInspector(this, object);
+				}
+				else if (object instanceof LightProbe)
+				{
+					this.panel = new LightProbeInspector(this, object);
+				}
+				else
+				{
+					this.panel = new AmbientLightInspector(this, object);
+				}
+			}
+			else if (object instanceof Sky)
+			{
+				this.panel = new SkyInspector(this, object);
+			}
+			else if (object instanceof PerspectiveCamera)
+			{
+				this.panel = new PerspectiveCameraInspector(this, object);
+			}
+			else if (object instanceof OrthographicCamera)
+			{
+				this.panel = new OrthographicCameraInspector(this, object);
+			}
+			else if (object instanceof CubeCamera)
+			{
+				this.panel = new CubeCameraInspector(this, object);
+			}
+			else if (object instanceof Audio)
+			{
+				this.panel = new AudioEmitterInspector(this, object);
+			}
+			else if (object instanceof Scene)
+			{
+				this.panel = new SceneInspector(this, object);
+			}
+			else if (object instanceof Script)
+			{
+				this.panel = new ScriptInspector(this, object);
+			}
+			else if (object instanceof Program)
+			{
+				this.panel = new ProgramInspector(this, object);
+			}
+			else if (object instanceof PhysicsObject)
+			{
+				this.panel = new PhysicsInspector(this, object);
+			}
+			else if (object instanceof OrbitControls)
+			{
+				this.panel = new OrbitControlsInspector(this, object);
+			}
+			else if (object instanceof FirstPersonControls)
+			{
+				this.panel = new FirstPersonControlsInspector(this, object);
 			}
 			else
 			{
-				this.panel = new AmbientLightInspector(this, object);
+				this.panel = new ObjectInspector(this, object);
 			}
 		}
-		else if (object instanceof Sky)
+		else if (object instanceof BufferGeometry)
 		{
-			this.panel = new SkyInspector(this, object);
+			this.panel = new GeometryInspector(this, object);
 		}
-		else if (object instanceof PerspectiveCamera)
+		else if (object instanceof Resource)
 		{
-			this.panel = new PerspectiveCameraInspector(this, object);
+			if (object instanceof Audio)
+			{
+				this.panel = new AudioInspector(this, object);
+			}
+			else if (object instanceof Image)
+			{
+				this.panel = new ImageInspector(this, object);
+			}
+			else if (object instanceof Video)
+			{
+				this.panel = new VideoInspector(this, object);
+			}
+			else
+			{
+				this.panel = new ResourceInspector(this, object);
+			}
 		}
-		else if (object instanceof OrthographicCamera)
+		else if (object instanceof Material)
 		{
-			this.panel = new OrthographicCameraInspector(this, object);
+			this.panel = new MaterialInspector(this, object);
 		}
-		else if (object instanceof CubeCamera)
+		else if (object instanceof Texture)
 		{
-			this.panel = new CubeCameraInspector(this, object);
+			this.panel = new TextureInspector(this, object);
 		}
-		else if (object instanceof Audio)
-		{
-			this.panel = new AudioEmitterInspector(this, object);
-		}
-		else if (object instanceof Scene)
-		{
-			this.panel = new SceneInspector(this, object);
-		}
-		else if (object instanceof Script)
-		{
-			this.panel = new ScriptInspector(this, object);
-		}
-		else if (object instanceof Program)
-		{
-			this.panel = new ProgramInspector(this, object);
-		}
-		else if (object instanceof PhysicsObject)
-		{
-			this.panel = new PhysicsInspector(this, object);
-		}
-		else if (object instanceof OrbitControls)
-		{
-			this.panel = new OrbitControlsInspector(this, object);
-		}
-		else if (object instanceof FirstPersonControls)
-		{
-			this.panel = new FirstPersonControlsInspector(this, object);
-		}
-		else
-		{
-			this.panel = new ObjectInspector(this, object);
-		}
-	}
-	else if (object instanceof BufferGeometry)
-	{
-		this.panel = new GeometryInspector(this, object);
-	}
-	else if (object instanceof Resource)
-	{
-		if (object instanceof Audio)
-		{
-			this.panel = new AudioInspector(this, object);
-		}
-		else if (object instanceof Image)
-		{
-			this.panel = new ImageInspector(this, object);
-		}
-		else if (object instanceof Video)
-		{
-			this.panel = new VideoInspector(this, object);
-		}
-		else
-		{
-			this.panel = new ResourceInspector(this, object);
-		}
-	}
-	else if (object instanceof Material)
-	{
-		this.panel = new MaterialInspector(this, object);
-	}
-	else if (object instanceof Texture)
-	{
-		this.panel = new TextureInspector(this, object);
-	}
 
-	if (this.panel !== null)
-	{
-		this.emptyText.setVisibility(false);
+		if (this.panel !== null)
+		{
+			this.emptyText.setVisibility(false);
 		
-		this.panel.updateInspector();
-		this.panel.size.copy(this.size);
-		this.panel.updateInterface();
-	}
-	}
-
-	updateValues() {	
-	if (this.panel !== null)
-	{
-		this.panel.updateInspector();
-	}
+			this.panel.updateInspector();
+			this.panel.size.copy(this.size);
+			this.panel.updateInterface();
+		}
 	}
 
-	updateSize() {	
-	super.updateSize();
-
-	this.emptyText.position.x = this.size.x * 0.1;
-	this.emptyText.size.set(this.size.x * 0.8, this.size.y);
-	this.emptyText.updateInterface();
-
-	if (this.panel !== null)
-	{
-		this.panel.size.copy(this.size);
-		this.panel.updateInterface();
+	updateValues() 
+	{	
+		if (this.panel !== null)
+		{
+			this.panel.updateInspector();
+		}
 	}
+
+	updateSize() 
+	{	
+		super.updateSize();
+
+		this.emptyText.position.x = this.size.x * 0.1;
+		this.emptyText.size.set(this.size.x * 0.8, this.size.y);
+		this.emptyText.updateInterface();
+
+		if (this.panel !== null)
+		{
+			this.panel.size.copy(this.size);
+			this.panel.updateInterface();
+		}
 	}
 
 }

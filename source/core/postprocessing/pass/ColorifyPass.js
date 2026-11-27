@@ -10,36 +10,36 @@ import {Pass} from "../Pass.js";
  */
 class ColorifyPass extends ShaderPass
 {
-constructor()
-{
-super(ColorifyShader);
+	constructor()
+	{
+		super(ColorifyShader);
 
-this.type = "Colorify";
+		this.type = "Colorify";
 
-Object.defineProperties(this,
+		Object.defineProperties(this,
+			{
+				color:
 {
-color:
-{
-get: function() {return this.uniforms["color"].value;},
-set: function(value) {this.uniforms["color"].value = value;}
+	get: function() {return this.uniforms["color"].value;},
+	set: function(value) {this.uniforms["color"].value = value;}
 }
-});
-}
+			});
+	}
 
-/**
- * Serialize pass to json.
- *
- * @method toJSON
- * @param {Object} meta Metadata object.
- */
-toJSON(meta)
-{
-var data = Pass.prototype.toJSON.call(this, meta);
+	/**
+	 * Serialize pass to json.
+	 *
+	 * @method toJSON
+	 * @param {Object} meta Metadata object.
+	 */
+	toJSON(meta)
+	{
+		var data = Pass.prototype.toJSON.call(this, meta);
 
-data.color = this.color.getHex();
+		data.color = this.color.getHex();
 
-return data;
-}
+		return data;
+	}
 }
 
 export {ColorifyPass};

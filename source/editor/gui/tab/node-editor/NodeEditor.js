@@ -5,103 +5,110 @@ import {Locale} from "../../../locale/LocaleManager.js";
 import {TabComponent} from "../../../components/tabs/TabComponent.js";
 import {SideBar} from "./SideBar.js";
 
-class NodeEditor extends TabComponent {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index, Locale.about, Global.FILE_PATH + "icons/misc/about.png");
+class NodeEditor extends TabComponent 
+{
+	constructor(parent, closeable, container, index) 
+	{
+		super(parent, closeable, container, index, Locale.about, Global.FILE_PATH + "icons/misc/about.png");
 
-	this.element.style.backgroundColor = "var(--bar-color)";
+		this.element.style.backgroundColor = "var(--bar-color)";
 	
-	/**
-	 * Node script being edited in this tab.
-	 * 
-	 * @attribute graph
-	 * @type {NodeScript}
-	 */
-	this.node = null;
+		/**
+		 * Node script being edited in this tab.
+		 * 
+		 * @attribute graph
+		 * @type {NodeScript}
+		 */
+		this.node = null;
 
-	/**
-	 * Side bar contains the buttons to add new nodes into the node editor graph.
-	 *
-	 * @attribute sideBar
-	 * @type {SideBar}
-	 */
-	this.sideBar = new SideBar(this);
+		/**
+		 * Side bar contains the buttons to add new nodes into the node editor graph.
+		 *
+		 * @attribute sideBar
+		 * @type {SideBar}
+		 */
+		this.sideBar = new SideBar(this);
 
-	/**
-	 * Canvas used to display the graph.
-	 * 
-	 * @attribute canvas
-	 * @type {Canvas}
-	 */
-	this.canvas = new Canvas(this);
-	this.canvas.watchPointer();
+		/**
+		 * Canvas used to display the graph.
+		 * 
+		 * @attribute canvas
+		 * @type {Canvas}
+		 */
+		this.canvas = new Canvas(this);
+		this.canvas.watchPointer();
 
-	/**
-	 * Viewport used to display the graph.
-	 * 
-	 * @attribute canvas
-	 * @type {Canvas}
-	 */
-	this.viewport = new Viewport(this.canvas.element);
+		/**
+		 * Viewport used to display the graph.
+		 * 
+		 * @attribute canvas
+		 * @type {Canvas}
+		 */
+		this.viewport = new Viewport(this.canvas.element);
 
-	/**
-	 * 2D renderer object used to draw the graph editor into the canvas.
-	 * 
-	 * @attribute renderer
-	 * @type {Renderer}
-	 */
-	this.renderer = new Renderer(this.canvas.element);
+		/**
+		 * 2D renderer object used to draw the graph editor into the canvas.
+		 * 
+		 * @attribute renderer
+		 * @type {Renderer}
+		 */
+		this.renderer = new Renderer(this.canvas.element);
 
-	/**
-	 * Viewport controls used to control the viewport object.
-	 * 
-	 * @attribute controls
-	 * @type {ViewportControls}
-	 */
-	this.controls = new ViewportControls(this.viewport);
+		/**
+		 * Viewport controls used to control the viewport object.
+		 * 
+		 * @attribute controls
+		 * @type {ViewportControls}
+		 */
+		this.controls = new ViewportControls(this.viewport);
 	}
 
-	updateMetadata() {
-	if (this.node !== null)
+	updateMetadata() 
 	{
-		this.setName(this.node.name);
-	}	
-	}
-
-	attach(node) {
-	this.node = node;
-	this.updateMetadata();
-	}
-
-	isAttached(node) {
-	return this.node === node;
-	}
-
-	update() {
-	if (this.node !== null && this.node.graph !== null)
-	{
-		if (this.canvas.pointerInside)
+		if (this.node !== null)
 		{
-			this.controls.update(this.renderer.pointer);
+			this.setName(this.node.name);
+		}	
+	}
+
+	attach(node) 
+	{
+		this.node = node;
+		this.updateMetadata();
+	}
+
+	isAttached(node) 
+	{
+		return this.node === node;
+	}
+
+	update() 
+	{
+		if (this.node !== null && this.node.graph !== null)
+		{
+			if (this.canvas.pointerInside)
+			{
+				this.controls.update(this.renderer.pointer);
+			}
+
+			this.renderer.update(this.node.graph, this.viewport);
 		}
-
-		this.renderer.update(this.node.graph, this.viewport);
-	}
 	}
 
-	updateSize() {
-	super.updateSize();
+	updateSize() 
+	{
+		super.updateSize();
 
-	this.sideBar.position.set(0, 0);
-	this.sideBar.size.set(40, this.size.y);
-	this.sideBar.updateInterface();
+		this.sideBar.position.set(0, 0);
+		this.sideBar.size.set(40, this.size.y);
+		this.sideBar.updateInterface();
 
-	var width = this.size.x - this.sideBar.size.x;
-	var height = this.size.y;
+		var width = this.size.x - this.sideBar.size.x;
+		var height = this.size.y;
 
-	this.canvas.position.set(this.sideBar.size.x, 0);
-	this.canvas.size.set(width, height);
-	this.canvas.updateInterface();
+		this.canvas.position.set(this.sideBar.size.x, 0);
+		this.canvas.size.set(width, height);
+		this.canvas.updateInterface();
 	}
 
 }

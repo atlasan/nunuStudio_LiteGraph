@@ -19,39 +19,41 @@ import {Component} from "../../../components/Component.js";
  * @class ConsoleTab
  * @extends {TabComponent}
  */
-class ConsoleTab extends TabComponent {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index, Locale.console, Global.FILE_PATH + "icons/misc/console.png");
+class ConsoleTab extends TabComponent 
+{
+	constructor(parent, closeable, container, index) 
+	{
+		super(parent, closeable, container, index, Locale.console, Global.FILE_PATH + "icons/misc/console.png");
 
-	var self = this;
+		var self = this;
 
-	/**
-	 * History of the last commands written into the console.
-	 *
-	 * Can be navigate to view previously used commands.
-	 * 
-	 * @attribute history
-	 * @type {Array}
-	 */
-	this.history = [];
+		/**
+		 * History of the last commands written into the console.
+		 *
+		 * Can be navigate to view previously used commands.
+		 * 
+		 * @attribute history
+		 * @type {Array}
+		 */
+		this.history = [];
 
-	/**
-	 * History pointer for navigation of the history using the up arrow in the console input box.
-	 * 
-	 * @attribute historyPointer
-	 * @type {number}
-	 */
-	this.historyPointer = -1;
+		/**
+		 * History pointer for navigation of the history using the up arrow in the console input box.
+		 * 
+		 * @attribute historyPointer
+		 * @type {number}
+		 */
+		this.historyPointer = -1;
 
-	/**
-	 * Stores a pointer to the original console functions.
-	 *
-	 * Used to enable and disable the virtual console.
-	 *
-	 * @attribute handlers
-	 * @type {Object}
-	 */
-	this.handlers = 
+		/**
+		 * Stores a pointer to the original console functions.
+		 *
+		 * Used to enable and disable the virtual console.
+		 *
+		 * @attribute handlers
+		 * @type {Object}
+		 */
+		this.handlers = 
 	{
 		log: window.console.log,
 		info: window.console.info,
@@ -60,356 +62,363 @@ class ConsoleTab extends TabComponent {
 		clear: window.console.clear
 	};
 
-	/**
-	 * Indicates if the virtual console is enable or disable.
-	 *
-	 * @attribute enable
-	 * @type {boolean} 
-	 */
-	this.enabled = true;
+		/**
+		 * Indicates if the virtual console is enable or disable.
+		 *
+		 * @attribute enable
+		 * @type {boolean} 
+		 */
+		this.enabled = true;
 
-	/**
-	 * Search box to filter console content.
-	 *
-	 * @property search
-	 * @type {SearchBox}
-	 */
-	this.search = new SearchBox(this.bar);
-	this.search.setMode(Component.TOP_RIGHT);
-	this.search.size.set(200, 25);
-	this.search.position.set(1, 0);
-	this.search.updateInterface();
-	this.search.setOnChange(function()
-	{
-		self.filterByName(self.search.search.getText());
-	});
+		/**
+		 * Search box to filter console content.
+		 *
+		 * @property search
+		 * @type {SearchBox}
+		 */
+		this.search = new SearchBox(this.bar);
+		this.search.setMode(Component.TOP_RIGHT);
+		this.search.size.set(200, 25);
+		this.search.position.set(1, 0);
+		this.search.updateInterface();
+		this.search.setOnChange(function()
+		{
+			self.filterByName(self.search.search.getText());
+		});
 
-	/**
-	 * Console content division, where the messages are displayed.
-	 *
-	 * @attribute console
-	 * @type {Component}
-	 */
-	this.content = document.createElement("div");
-	this.content.style.position = "absolute";
-	this.content.style.overflow = "auto";
-	this.content.style.top = "0px";
-	this.content.style.left = "0px";
-	this.content.oncontextmenu = function(event)
-	{
-		var context = new ContextMenu(DocumentBody);
-		context.size.set(150, 20);
-		context.position.set(event.clientX, event.clientY);
+		/**
+		 * Console content division, where the messages are displayed.
+		 *
+		 * @attribute console
+		 * @type {Component}
+		 */
+		this.content = document.createElement("div");
+		this.content.style.position = "absolute";
+		this.content.style.overflow = "auto";
+		this.content.style.top = "0px";
+		this.content.style.left = "0px";
+		this.content.oncontextmenu = function(event)
+		{
+			var context = new ContextMenu(DocumentBody);
+			context.size.set(150, 20);
+			context.position.set(event.clientX, event.clientY);
 		
-		context.addOption(Locale.clear, function()
-		{
-			console.clear();
-		});
+			context.addOption(Locale.clear, function()
+			{
+				console.clear();
+			});
 
-		context.addOption(self.enabled ? Locale.disable : Locale.enable, function()
-		{
-			self.useConsole(!self.enabled);
-		});
+			context.addOption(self.enabled ? Locale.disable : Locale.enable, function()
+			{
+				self.useConsole(!self.enabled);
+			});
 
-		context.updateInterface();
-	};
-	this.element.appendChild(this.content);
+			context.updateInterface();
+		};
+		this.element.appendChild(this.content);
 
-	/**
-	 * Console input code division, where the user inserts JS code.
-	 *
-	 * @attribute input
-	 * @type {DOM} 
-	 */
-	this.input = document.createElement("div");
-	this.input.style.position = "absolute";
-	this.input.style.overflow = "auto";
-	this.input.style.bottom = "0px";
-	this.input.style.left = "0px";
-	this.element.appendChild(this.input);
+		/**
+		 * Console input code division, where the user inserts JS code.
+		 *
+		 * @attribute input
+		 * @type {DOM} 
+		 */
+		this.input = document.createElement("div");
+		this.input.style.position = "absolute";
+		this.input.style.overflow = "auto";
+		this.input.style.bottom = "0px";
+		this.input.style.left = "0px";
+		this.element.appendChild(this.input);
 
-	/**
-	 * Command input division, shown as a codemirror code editor division for docs and hint access.
-	 *
-	 * @attribute code
-	 * @type {CodeMirror}
-	 */
-	this.code = new CodeMirror(this.input, {
-		dragDrop: false,
-		firstLineNumber: 1,
-		indentUnit: 0,
-		indentWithTabs: false,
-		keyMap: Editor.settings.code.keymap,
-		lineNumbers: false,
-		lineWrapping: false,
-		matchBrackets: true,
-		mode: "javascript",
-		styleActiveLine: false,
-		styleSelectedText: false,
-		tabSize: Editor.settings.code.tabSize,
-		theme: Editor.settings.code.theme,
-		undoDepth: 0,
-		value: "",
-		viewportMargin: 1,
-		wholeLineUpdateBefore: false,
-		showMatchesOnScrollbar: false,
-		lint: false,
-		hintOptions:
+		/**
+		 * Command input division, shown as a codemirror code editor division for docs and hint access.
+		 *
+		 * @attribute code
+		 * @type {CodeMirror}
+		 */
+		this.code = new CodeMirror(this.input, {
+			dragDrop: false,
+			firstLineNumber: 1,
+			indentUnit: 0,
+			indentWithTabs: false,
+			keyMap: Editor.settings.code.keymap,
+			lineNumbers: false,
+			lineWrapping: false,
+			matchBrackets: true,
+			mode: "javascript",
+			styleActiveLine: false,
+			styleSelectedText: false,
+			tabSize: Editor.settings.code.tabSize,
+			theme: Editor.settings.code.theme,
+			undoDepth: 0,
+			value: "",
+			viewportMargin: 1,
+			wholeLineUpdateBefore: false,
+			showMatchesOnScrollbar: false,
+			lint: false,
+			hintOptions:
 		{
 			hint: CodeMirror.hint.anyword,
 			completeSingle: false
 		}
-	});
-
-	/**
-	 * Tern server used to provide code analysis.
-	 *
-	 * @attribute server
-	 * @type {CodeMirror.TernServer}
-	 */
-	this.server = new CodeMirror.TernServer(
-		{
-			caseInsensitive: false,
-			defs: Editor.ternDefinitions
 		});
 
-	this.code.on("keypress", function(cm, event)
-	{
-		var typed = String.fromCharCode(event.charCode);
+		/**
+		 * Tern server used to provide code analysis.
+		 *
+		 * @attribute server
+		 * @type {CodeMirror.TernServer}
+		 */
+		this.server = new CodeMirror.TernServer(
+			{
+				caseInsensitive: false,
+				defs: Editor.ternDefinitions
+			});
 
-		if (/[\w\.]/.exec(typed))
+		this.code.on("keypress", function(cm, event)
 		{
-			self.server.complete(cm);
+			var typed = String.fromCharCode(event.charCode);
 
-			// If there is no tern sugestion suggest known words
-			if (!cm.state.completionActive || !cm.state.completionActive.widget)
+			if (/[\w\.]/.exec(typed))
 			{
-				CodeMirror.commands.autocomplete(cm, null);
-			}
-		}
-	});
+				self.server.complete(cm);
 
-	this.code.setOption("extraKeys",
-		{
-			"Enter": function()
-			{
-				self.runCommand(self.code.getValue());
-				self.code.setValue("");
-			},
-			"Up": function()
-			{
-				if (self.history.length > 0 && self.historyPointer > 0)
+				// If there is no tern sugestion suggest known words
+				if (!cm.state.completionActive || !cm.state.completionActive.widget)
 				{
-					self.setText(self.history[self.historyPointer--]);
+					CodeMirror.commands.autocomplete(cm, null);
 				}
 			}
 		});
 
-	this.input.oncontextmenu = function(event)
-	{
-		var context = new ContextMenu(DocumentBody);
-		context.size.set(130, 20);
-		context.position.set(event.clientX, event.clientY);
-		
-		context.addOption(Locale.copy, function()
-		{
-			var text = self.code.getSelection();
-			if (text !== "")
+		this.code.setOption("extraKeys",
 			{
-				Editor.clipboard.set(text, "text");
-			}
-		});
-		context.addOption(Locale.cut, function()
-		{
-			var text = self.code.getSelection();
-			if (text !== "")
-			{
-				Editor.clipboard.set(text, "text");
-				self.code.replaceSelection("");
-			}
-		});
-		context.addOption(Locale.paste, function()
-		{
-			self.code.replaceSelection(Editor.clipboard.get("text"));
-		});
-		
-		context.updateInterface();
-	};
+				"Enter": function()
+				{
+					self.runCommand(self.code.getValue());
+					self.code.setValue("");
+				},
+				"Up": function()
+				{
+					if (self.history.length > 0 && self.historyPointer > 0)
+					{
+						self.setText(self.history[self.historyPointer--]);
+					}
+				}
+			});
 
-	this.useConsole(this.enabled);
+		this.input.oncontextmenu = function(event)
+		{
+			var context = new ContextMenu(DocumentBody);
+			context.size.set(130, 20);
+			context.position.set(event.clientX, event.clientY);
+		
+			context.addOption(Locale.copy, function()
+			{
+				var text = self.code.getSelection();
+				if (text !== "")
+				{
+					Editor.clipboard.set(text, "text");
+				}
+			});
+			context.addOption(Locale.cut, function()
+			{
+				var text = self.code.getSelection();
+				if (text !== "")
+				{
+					Editor.clipboard.set(text, "text");
+					self.code.replaceSelection("");
+				}
+			});
+			context.addOption(Locale.paste, function()
+			{
+				self.code.replaceSelection(Editor.clipboard.get("text"));
+			});
+		
+			context.updateInterface();
+		};
+
+		this.useConsole(this.enabled);
 	}
 
-/**
- * Run a user command from the console, commands are regular code, they have access to the global application space.
- *
- * Its possible to create global variables and access enviroments varibles for the program loaded into the platform.
- *
- * @method runCommand
- */
-	runCommand(code) {
-	var container = document.createElement("div");
-	container.style.paddingLeft = "5px";
-	container.style.paddingTop = "5px";
-	container.style.paddingBottom = "5px";
-	CodeMirror.runMode(code, "javascript", container, {
-		mode: "javascript",
-		tabSize: Editor.settings.code.tabSize,
-		theme: Editor.settings.code.theme
-	});
-	this.content.appendChild(container);
-	
-	try
+	/**
+	 * Run a user command from the console, commands are regular code, they have access to the global application space.
+	 *
+	 * Its possible to create global variables and access enviroments varibles for the program loaded into the platform.
+	 *
+	 * @method runCommand
+	 */
+	runCommand(code) 
 	{
-		window.program = Editor.program;
-		var result = eval.call(window, code);
-		if (result !== undefined) 
+		var container = document.createElement("div");
+		container.style.paddingLeft = "5px";
+		container.style.paddingTop = "5px";
+		container.style.paddingBottom = "5px";
+		CodeMirror.runMode(code, "javascript", container, {
+			mode: "javascript",
+			tabSize: Editor.settings.code.tabSize,
+			theme: Editor.settings.code.theme
+		});
+		this.content.appendChild(container);
+	
+		try
 		{
-			console.log(result);
+			window.program = Editor.program;
+			var result = eval.call(window, code);
+			if (result !== undefined) 
+			{
+				console.log(result);
+			}
+		}
+		catch (e)
+		{
+			console.error(e);
+		}
+
+		this.history.push(code);
+		this.historyPointer = this.history.length - 1;
+	}
+
+
+	/**
+	 * Use this console as the predefined console.
+	 *
+	 * Overrides the browser provided window.console methods and displays the logs in this tab.
+	 *
+	 * @method useConsole
+	 * @param {boolean} enabled
+	 */
+	useConsole(enabled) 
+	{
+		var self = this;
+
+		this.enabled = enabled;
+
+		if (this.enabled)
+		{
+			window.console.log = function()
+			{
+				self.log(arguments);
+				self.handlers.log.apply(null, arguments);
+			};
+
+			window.console.warn = function()
+			{
+				self.warn(arguments);
+				self.handlers.warn.apply(null, arguments);
+			};
+
+			window.console.error = function()
+			{
+				self.error(arguments);
+				self.handlers.error.apply(null, arguments);
+			};
+
+			window.console.clear = function()
+			{
+				self.clear(arguments);
+				self.handlers.clear.apply(null, arguments);
+			};
+		}
+		else
+		{
+			window.console.log = self.handlers.log;
+			window.console.warn = self.handlers.warn;
+			window.console.error = self.handlers.error;
+			window.console.clear = self.handlers.clear;
 		}
 	}
-	catch (e)
+
+	/**
+	 * Show a log messsage in the console.
+	 *
+	 * The content is display using different element depending on its type.
+	 *
+	 * Multiple objects are shown in different lines.
+	 *
+	 * @method warn
+	 */
+	log(args) 
 	{
-		console.error(e);
-	}
-
-	this.history.push(code);
-	this.historyPointer = this.history.length - 1;
-	}
-
-
-/**
- * Use this console as the predefined console.
- *
- * Overrides the browser provided window.console methods and displays the logs in this tab.
- *
- * @method useConsole
- * @param {boolean} enabled
- */
-	useConsole(enabled) {
-	var self = this;
-
-	this.enabled = enabled;
-
-	if (this.enabled)
-	{
-		window.console.log = function()
+		for (var i = 0; i < args.length; i++)
 		{
-			self.log(arguments);
-			self.handlers.log.apply(null, arguments);
-		};
+			this.content.appendChild(ConsoleTab.createMessage(args[i]));
+		}
 
-		window.console.warn = function()
+		// TODO <REMOVE CODE>
+		// var stack = ConsoleTab.getStackTrace();
+		// this.handlers.log(stack, stack[2]);
+		// TODO <CHECK IF THIS Class is a part of the call stack to detect recursion>
+
+		this.content.appendChild(ConsoleTab.createBar());
+		this.content.scrollTop = Number.MAX_SAFE_INTEGER;
+	}
+
+	/**
+	 * Show an warning message from a console.warn() call.
+	 *
+	 * @method warn
+	 */
+	warn(args) 
+	{
+		for (var i = 0; i < args.length; i++)
 		{
-			self.warn(arguments);
-			self.handlers.warn.apply(null, arguments);
-		};
+			var log = ConsoleTab.createMessage(args[i]);
+			log.style.color = "var(--color-console-warn)";
+			log.style.backgroundColor = "var(--color-console-warn-background)";
+			this.content.appendChild(log);
+		}
 
-		window.console.error = function()
+		this.content.appendChild(ConsoleTab.createBar());
+		this.content.scrollTop = Number.MAX_SAFE_INTEGER;
+	}
+
+	/**
+	 * Show an error message from a console.error() call.
+	 *
+	 * @method error
+	 */
+	error(args) 
+	{
+		for (var i = 0; i < args.length; i++)
 		{
-			self.error(arguments);
-			self.handlers.error.apply(null, arguments);
-		};
+			var log = ConsoleTab.createMessage(args[i]);
+			log.style.color = "var(--color-console-error)";
+			log.style.backgroundColor = "var(--color-console-error-background)";
+			this.content.appendChild(log);
+		}
 
-		window.console.clear = function()
+		this.content.appendChild(ConsoleTab.createBar());
+		this.content.scrollTop = Number.MAX_SAFE_INTEGER;
+	}
+
+	/**
+	 * Clear content from the console, remove all nodes created and reset GUI.
+	 *
+	 * @method clear 
+	 */
+	clear() 
+	{
+		this.history = [];
+
+		while (this.content.hasChildNodes())
 		{
-			self.clear(arguments);
-			self.handlers.clear.apply(null, arguments);
-		};
-	}
-	else
-	{
-		window.console.log = self.handlers.log;
-		window.console.warn = self.handlers.warn;
-		window.console.error = self.handlers.error;
-		window.console.clear = self.handlers.clear;
-	}
-	}
-
-/**
- * Show a log messsage in the console.
- *
- * The content is display using different element depending on its type.
- *
- * Multiple objects are shown in different lines.
- *
- * @method warn
- */
-	log(args) {
-	for (var i = 0; i < args.length; i++)
-	{
-		this.content.appendChild(ConsoleTab.createMessage(args[i]));
-	}
-
-	// TODO <REMOVE CODE>
-	// var stack = ConsoleTab.getStackTrace();
-	// this.handlers.log(stack, stack[2]);
-	// TODO <CHECK IF THIS Class is a part of the call stack to detect recursion>
-
-	this.content.appendChild(ConsoleTab.createBar());
-	this.content.scrollTop = Number.MAX_SAFE_INTEGER;
-	}
-
-/**
- * Show an warning message from a console.warn() call.
- *
- * @method warn
- */
-	warn(args) {
-	for (var i = 0; i < args.length; i++)
-	{
-		var log = ConsoleTab.createMessage(args[i]);
-		log.style.color = "var(--color-console-warn)";
-		log.style.backgroundColor = "var(--color-console-warn-background)";
-		this.content.appendChild(log);
-	}
-
-	this.content.appendChild(ConsoleTab.createBar());
-	this.content.scrollTop = Number.MAX_SAFE_INTEGER;
-	}
-
-/**
- * Show an error message from a console.error() call.
- *
- * @method error
- */
-	error(args) {
-	for (var i = 0; i < args.length; i++)
-	{
-		var log = ConsoleTab.createMessage(args[i]);
-		log.style.color = "var(--color-console-error)";
-		log.style.backgroundColor = "var(--color-console-error-background)";
-		this.content.appendChild(log);
-	}
-
-	this.content.appendChild(ConsoleTab.createBar());
-	this.content.scrollTop = Number.MAX_SAFE_INTEGER;
-	}
-
-/**
- * Clear content from the console, remove all nodes created and reset GUI.
- *
- * @method clear 
- */
-	clear() {
-	this.history = [];
-
-	while (this.content.hasChildNodes())
-	{
     	this.content.removeChild(this.content.lastChild);
+		}
+
+		this.content.scrollTop = Number.MAX_SAFE_INTEGER;
 	}
 
-	this.content.scrollTop = Number.MAX_SAFE_INTEGER;
-	}
+	updateSize() 
+	{
+		super.updateSize();
 
-	updateSize() {
-	super.updateSize();
+		this.content.style.height = this.size.y - 30 + "px";
+		this.content.style.width = this.size.x + "px";
 
-	this.content.style.height = this.size.y - 30 + "px";
-	this.content.style.width = this.size.x + "px";
-
-	this.input.style.height = "30px";
-	this.input.style.width = this.size.x + "px";
-	this.code.setSize(this.size.x, 30);
+		this.input.style.height = "30px";
+		this.input.style.width = this.size.x + "px";
+		this.code.setSize(this.size.x, 30);
 	}
 
 }

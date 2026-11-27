@@ -10,64 +10,67 @@ import {Button} from "./Button.js";
  * @extends {Button}
  * @param {Component} parent Parent element.
  */
-class ButtonToggle extends Button {
-	constructor(parent) {
-	super(parent);
-
-	/**
-	 * Indicates if the toggle button is currently selected.
-	 *
-	 * @attribute selected
-	 * @type {boolean}
-	 */
-	this.selected = false;
-
-	/**
-	 * Style to be used when the button is selected. If set to null the over style is used.
-	 *
-	 * @attribute styleSelected
-	 */
-	this.styleSelected = {backgroundColor: "var(--button-over-color)"};
-
-	var self = this;
-
-	this.addEvent("click", function()
+class ButtonToggle extends Button 
+{
+	constructor(parent) 
 	{
-		self.setSelected(!self.selected);
-	});
+		super(parent);
 
-	this.replaceEvent("mouseleave", function()
-	{
-		if (!self.disabled)
+		/**
+		 * Indicates if the toggle button is currently selected.
+		 *
+		 * @attribute selected
+		 * @type {boolean}
+		 */
+		this.selected = false;
+
+		/**
+		 * Style to be used when the button is selected. If set to null the over style is used.
+		 *
+		 * @attribute styleSelected
+		 */
+		this.styleSelected = {backgroundColor: "var(--button-over-color)"};
+
+		var self = this;
+
+		this.addEvent("click", function()
 		{
-			if (self.selected)
+			self.setSelected(!self.selected);
+		});
+
+		this.replaceEvent("mouseleave", function()
+		{
+			if (!self.disabled)
 			{
-				self.setStyles(self.styleSelected !== null ? self.styleSelected : self.stylePointerOver);
+				if (self.selected)
+				{
+					self.setStyles(self.styleSelected !== null ? self.styleSelected : self.stylePointerOver);
+				}
+				else
+				{
+					self.setStyles(self.styleBase);
+				}
 			}
-			else
-			{
-				self.setStyles(self.styleBase);
-			}
+		});
+	}
+
+	/**
+	 * Set the selected state of the toggle button.
+	 *
+	 * @param {boolean} value Selected state of the button.
+	 */
+	setSelected(value) 
+	{
+		this.selected = value;
+
+		if (this.selected)
+		{
+			this.setStyles(this.styleSelected !== null ? this.styleSelected : this.stylePointerOver);	
 		}
-	});
-	}
-
-/**
- * Set the selected state of the toggle button.
- *
- * @param {boolean} value Selected state of the button.
- */
-	setSelected(value) {
-	this.selected = value;
-
-	if (this.selected)
-	{
-		this.setStyles(this.styleSelected !== null ? this.styleSelected : this.stylePointerOver);	
-	}
-	else
-	{
-		this.setStyles(this.styleBase);
-	}
+		else
+		{
+			this.setStyles(this.styleBase);
+		}
 	}
 
 }

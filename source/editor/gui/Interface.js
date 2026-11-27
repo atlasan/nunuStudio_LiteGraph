@@ -21,109 +21,115 @@ import {MainMenu} from "./MainMenu.js";
  *
  * @class Interface
  */
-class Interface {
-	constructor() {
+class Interface 
+{
+	constructor() 
+	{
 	/**
 	 * Main tab container that has all the interface tabs.
 	 * 
 	 * @attribute tab
 	 * @type {TabContainer}
 	 */
-	this.tab = new TabContainer(DocumentBody);
-	this.tab.attach(new TabGroupSplit());
+		this.tab = new TabContainer(DocumentBody);
+		this.tab.attach(new TabGroupSplit());
 
-	var main = this.tab.split(TabGroup.RIGHT).parent;
-	main.tabPosition = 0.7;
+		var main = this.tab.split(TabGroup.RIGHT).parent;
+		main.tabPosition = 0.7;
 
-	var left = main.elementA.split(TabGroup.BOTTOM).parent;
-	left.tabPosition = 0.7;
-	var leftBottom = left.elementB;
+		var left = main.elementA.split(TabGroup.BOTTOM).parent;
+		left.tabPosition = 0.7;
+		var leftBottom = left.elementB;
 
-	var right = main.elementB.split(TabGroup.BOTTOM).parent;
-	var rightTop = right.elementA;
-	var rightBottom = right.elementB;
+		var right = main.elementB.split(TabGroup.BOTTOM).parent;
+		var rightTop = right.elementA;
+		var rightBottom = right.elementB;
 
-	this.assetExplorer = leftBottom.addTab(AssetExplorer, false);
+		this.assetExplorer = leftBottom.addTab(AssetExplorer, false);
 
-	this.console = leftBottom.addTab(ConsoleTab, false);
+		this.console = leftBottom.addTab(ConsoleTab, false);
 
-	this.animation = leftBottom.addTab(AnimationTab, false);
+		this.animation = leftBottom.addTab(AnimationTab, false);
 
-	if (DEVELOPMENT)
-	{
-		leftBottom.addTab(ProfilingTab, false);
-	}
-
-	this.tree = rightTop.addTab(TreeView, false);
-
-	this.inspector = rightBottom.addTab(InspectorContainer, false);
-
-	this.menuBar = new MainMenu(DocumentBody);
-	}
-
-/**
- * Save program into file.
- *
- * Dpending on the plaftorm created the required GUI elements to select save file.
- *
- * @method saveProgram
- */
-	saveProgram() {
-	if (Nunu.runningOnDesktop())
-	{
-		FileSystem.chooseFile(function(files)
+		if (DEVELOPMENT)
 		{
-			Editor.saveProgram(files[0].path, true);
-		}, ".nsp", true);
-	}
-	else
-	{
-		FileSystem.chooseFileName(function(fname)
-		{
-			Editor.saveProgram(fname, true);
-		}, ".nsp", Editor.openFile !== null ? Editor.openFile : "file");
-	}
+			leftBottom.addTab(ProfilingTab, false);
+		}
+
+		this.tree = rightTop.addTab(TreeView, false);
+
+		this.inspector = rightBottom.addTab(InspectorContainer, false);
+
+		this.menuBar = new MainMenu(DocumentBody);
 	}
 
-/** 
- * Load new project from file.
- *
- * Creates the necessary GUI elements to select the file.
- *
- * @method loadProgram
- */
-	loadProgram() {
-	if (Editor.confirm(Locale.changesWillBeLost + " " + Locale.loadProject))
+	/**
+	 * Save program into file.
+	 *
+	 * Dpending on the plaftorm created the required GUI elements to select save file.
+	 *
+	 * @method saveProgram
+	 */
+	saveProgram() 
 	{
-		FileSystem.chooseFile(function(files)
+		if (Nunu.runningOnDesktop())
 		{
-			if (files.length > 0)
+			FileSystem.chooseFile(function(files)
 			{
-				Editor.loadProgram(files[0], files[0].name.endsWith(".nsp"));
-			}
-		}, ".isp, .nsp");
-	}
+				Editor.saveProgram(files[0].path, true);
+			}, ".nsp", true);
+		}
+		else
+		{
+			FileSystem.chooseFileName(function(fname)
+			{
+				Editor.saveProgram(fname, true);
+			}, ".nsp", Editor.openFile !== null ? Editor.openFile : "file");
+		}
 	}
 
-/**
- * Create new program.
- *
- * @method newProgram
- */
-	newProgram() {
-	if (Editor.confirm(Locale.changesWillBeLost + " " + Locale.createProject))
+	/** 
+	 * Load new project from file.
+	 *
+	 * Creates the necessary GUI elements to select the file.
+	 *
+	 * @method loadProgram
+	 */
+	loadProgram() 
 	{
-		Editor.createNewProgram();
-	}
+		if (Editor.confirm(Locale.changesWillBeLost + " " + Locale.loadProject))
+		{
+			FileSystem.chooseFile(function(files)
+			{
+				if (files.length > 0)
+				{
+					Editor.loadProgram(files[0], files[0].name.endsWith(".nsp"));
+				}
+			}, ".isp, .nsp");
+		}
 	}
 
-	updateInterface() {
-	var width = window.innerWidth;
-	var height = window.innerHeight;
+	/**
+	 * Create new program.
+	 *
+	 * @method newProgram
+	 */
+	newProgram() 
+	{
+		if (Editor.confirm(Locale.changesWillBeLost + " " + Locale.createProject))
+		{
+			Editor.createNewProgram();
+		}
+	}
 
-	this.tab.position.set(0, this.menuBar.size.y);
-	this.tab.size.set(width, height - this.menuBar.size.y);
-	this.tab.updateInterface();
+	updateInterface() 
+	{
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+
+		this.tab.position.set(0, this.menuBar.size.y);
+		this.tab.size.set(width, height - this.menuBar.size.y);
+		this.tab.updateInterface();
 	}
 
 }

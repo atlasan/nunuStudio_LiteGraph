@@ -9,36 +9,39 @@ import {PreviewRenderer} from "./PreviewRenderer.js";
  * @class FontRenderer
  * @extends {PreviewRenderer}
  */
-class FontRenderer extends PreviewRenderer {
-	constructor() {
-	super();
+class FontRenderer extends PreviewRenderer 
+{
+	constructor() 
+	{
+		super();
 
-	// Camera
-	this.camera = new OrthographicCamera(3, 1);
+		// Camera
+		this.camera = new OrthographicCamera(3, 1);
 
-	// Text
-	this.text = new TextMesh("Abc", new MeshBasicMaterial({color: 0xFFFFFF}), null);
-	this.text.position.z = -3;
-	this.scene.add(this.text);
+		// Text
+		this.text = new TextMesh("Abc", new MeshBasicMaterial({color: 0xFFFFFF}), null);
+		this.text.position.z = -3;
+		this.scene.add(this.text);
 	}
 
 
-	render(font, onRender) {
-	this.text.setFont(font);
+	render(font, onRender) 
+	{
+		this.text.setFont(font);
 
-	this.text.geometry.computeBoundingBox();
+		this.text.geometry.computeBoundingBox();
 	
-	var box = this.text.geometry.boundingBox;
-	this.text.position.x = -(box.max.x - box.min.x) / 2;
-	this.text.position.y = -(box.max.y - box.min.y) / 2;
+		var box = this.text.geometry.boundingBox;
+		this.text.position.x = -(box.max.x - box.min.x) / 2;
+		this.text.position.y = -(box.max.y - box.min.y) / 2;
 
-	this.camera.size = box.max.x - box.min.x;
-	this.camera.updateProjectionMatrix();
+		this.camera.size = box.max.x - box.min.x;
+		this.camera.updateProjectionMatrix();
 	
-	this.renderer.render(this.scene, this.camera);
+		this.renderer.render(this.scene, this.camera);
 
-	// Callback
-	onRender(this.canvas.toDataURL());
+		// Callback
+		onRender(this.canvas.toDataURL());
 	}
 
 }

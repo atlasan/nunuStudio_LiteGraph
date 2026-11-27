@@ -7,110 +7,113 @@ import {NumberBox} from "../../../components/input/NumberBox.js";
 import {ImageChooser} from "../../../components/input/ImageChooser.js";
 import {TextureEditor} from "./TextureEditor.js";
 
-class SpriteSheetTextureEditor extends TextureEditor {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index);
-
-	var self = this;
-
-	// Image
-	this.form.addText(Locale.image);
-	this.source = new ImageChooser(this.form);
-	this.source.size.set(0, 100);
-	this.source.setOnChange(function()
+class SpriteSheetTextureEditor extends TextureEditor 
+{
+	constructor(parent, closeable, container, index) 
 	{
-		Editor.addAction(new CallbackAction(new ChangeAction(self.texture, "sourceImage", self.source.getValue()), function()
+		super(parent, closeable, container, index);
+
+		var self = this;
+
+		// Image
+		this.form.addText(Locale.image);
+		this.source = new ImageChooser(this.form);
+		this.source.size.set(0, 100);
+		this.source.setOnChange(function()
 		{
-			self.texture.updateSource();
-		}));
-	});
-	this.form.add(this.source);
-	this.form.nextRow();
+			Editor.addAction(new CallbackAction(new ChangeAction(self.texture, "sourceImage", self.source.getValue()), function()
+			{
+				self.texture.updateSource();
+			}));
+		});
+		this.form.add(this.source);
+		this.form.nextRow();
 
-	// Sheet format
-	this.form.addText("Sheet format");
-	this.frames = new VectorBox(this.form);
-	this.frames.setType(VectorBox.VECTOR2);
-	this.frames.size.set(120, 18);
-	this.frames.setValue(1, 1, 0);
-	this.frames.setStep(1.0);
-	this.frames.setOnChange(function()
-	{
-		var value = self.frames.getValue();
-		self.texture.framesHorizontal = value.x;
-		self.texture.framesVertical = value.y;
+		// Sheet format
+		this.form.addText("Sheet format");
+		this.frames = new VectorBox(this.form);
+		this.frames.setType(VectorBox.VECTOR2);
+		this.frames.size.set(120, 18);
+		this.frames.setValue(1, 1, 0);
+		this.frames.setStep(1.0);
+		this.frames.setOnChange(function()
+		{
+			var value = self.frames.getValue();
+			self.texture.framesHorizontal = value.x;
+			self.texture.framesVertical = value.y;
 
-		self.totalFrames.setValue(self.texture.totalFrames);
-		self.beginFrame.setValue(self.texture.beginFrame);
-		self.endFrame.setValue(self.texture.endFrame);
-	});
-	this.form.add(this.frames);
-	this.form.nextRow();
+			self.totalFrames.setValue(self.texture.totalFrames);
+			self.beginFrame.setValue(self.texture.beginFrame);
+			self.endFrame.setValue(self.texture.endFrame);
+		});
+		this.form.add(this.frames);
+		this.form.nextRow();
 
-	// Total frames
-	this.form.addText("Total Frames");
-	this.totalFrames = new NumberBox(this.form);
-	this.totalFrames.size.set(60, 18);
-	this.totalFrames.setStep(1.0);
-	this.totalFrames.setRange(0, Number.MAX_SAFE_INTEGER);
-	this.totalFrames.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.texture, "totalFrames", self.totalFrames.getValue()));
-		self.beginFrame.setValue(self.texture.beginFrame);
-		self.endFrame.setValue(self.texture.endFrame);
-	});
-	this.form.add(this.totalFrames);
-	this.form.nextRow();
+		// Total frames
+		this.form.addText("Total Frames");
+		this.totalFrames = new NumberBox(this.form);
+		this.totalFrames.size.set(60, 18);
+		this.totalFrames.setStep(1.0);
+		this.totalFrames.setRange(0, Number.MAX_SAFE_INTEGER);
+		this.totalFrames.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.texture, "totalFrames", self.totalFrames.getValue()));
+			self.beginFrame.setValue(self.texture.beginFrame);
+			self.endFrame.setValue(self.texture.endFrame);
+		});
+		this.form.add(this.totalFrames);
+		this.form.nextRow();
 
-	// Begin frame
-	this.form.addText("Begin Frame");
-	this.beginFrame = new NumberBox(this.form);
-	this.beginFrame.size.set(60, 18);
-	this.beginFrame.setStep(1.0);
-	this.beginFrame.setRange(0, Number.MAX_SAFE_INTEGER);
-	this.beginFrame.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.texture, "beginFrame", self.beginFrame.getValue()));
-	});
-	this.form.add(this.beginFrame);
-	this.form.nextRow();
+		// Begin frame
+		this.form.addText("Begin Frame");
+		this.beginFrame = new NumberBox(this.form);
+		this.beginFrame.size.set(60, 18);
+		this.beginFrame.setStep(1.0);
+		this.beginFrame.setRange(0, Number.MAX_SAFE_INTEGER);
+		this.beginFrame.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.texture, "beginFrame", self.beginFrame.getValue()));
+		});
+		this.form.add(this.beginFrame);
+		this.form.nextRow();
 
-	// End frame
-	this.form.addText("End Frame");
-	this.endFrame = new NumberBox(this.form);
-	this.endFrame.size.set(60, 18);
-	this.endFrame.setStep(1.0);
-	this.endFrame.setRange(0, Number.MAX_SAFE_INTEGER);
-	this.endFrame.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.texture, "endFrame", self.endFrame.getValue()));
-	});
-	this.form.add(this.endFrame);
-	this.form.nextRow();
+		// End frame
+		this.form.addText("End Frame");
+		this.endFrame = new NumberBox(this.form);
+		this.endFrame.size.set(60, 18);
+		this.endFrame.setStep(1.0);
+		this.endFrame.setRange(0, Number.MAX_SAFE_INTEGER);
+		this.endFrame.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.texture, "endFrame", self.endFrame.getValue()));
+		});
+		this.form.add(this.endFrame);
+		this.form.nextRow();
 
-	// Speed
-	this.form.addText(Locale.speed);
-	this.animationSpeed = new NumberBox(this.form);
-	this.animationSpeed.size.set(60, 18);
-	this.animationSpeed.setStep(0.01);
-	this.animationSpeed.setRange(0, Number.MAX_SAFE_INTEGER);
-	this.animationSpeed.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.texture, "animationSpeed", self.animationSpeed.getValue()));
-	});
-	this.form.add(this.animationSpeed);
-	this.form.nextRow();
+		// Speed
+		this.form.addText(Locale.speed);
+		this.animationSpeed = new NumberBox(this.form);
+		this.animationSpeed.size.set(60, 18);
+		this.animationSpeed.setStep(0.01);
+		this.animationSpeed.setRange(0, Number.MAX_SAFE_INTEGER);
+		this.animationSpeed.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.texture, "animationSpeed", self.animationSpeed.getValue()));
+		});
+		this.form.add(this.animationSpeed);
+		this.form.nextRow();
 	}
 
-	attach(texture) {
-	super.attach(texture);
+	attach(texture) 
+	{
+		super.attach(texture);
 
-	this.source.setValue(this.texture.sourceImage);
-	this.frames.setValue(this.texture.framesHorizontal, this.texture.framesVertical);
-	this.totalFrames.setValue(this.texture.totalFrames);
-	this.beginFrame.setValue(this.texture.beginFrame);
-	this.endFrame.setValue(this.texture.endFrame);
-	this.animationSpeed.setValue(this.texture.animationSpeed);
+		this.source.setValue(this.texture.sourceImage);
+		this.frames.setValue(this.texture.framesHorizontal, this.texture.framesVertical);
+		this.totalFrames.setValue(this.texture.totalFrames);
+		this.beginFrame.setValue(this.texture.beginFrame);
+		this.endFrame.setValue(this.texture.endFrame);
+		this.animationSpeed.setValue(this.texture.animationSpeed);
 	}
 
 }

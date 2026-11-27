@@ -18,67 +18,71 @@ import {Canvas} from "../../../components/Canvas.js";
  * @param container
  * @param index
  */
-class ProfilingTab extends TabComponent {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index, Locale.profiling, Global.FILE_PATH + "icons/misc/speedometer.png");
+class ProfilingTab extends TabComponent 
+{
+	constructor(parent, closeable, container, index) 
+	{
+		super(parent, closeable, container, index, Locale.profiling, Global.FILE_PATH + "icons/misc/speedometer.png");
 
-	/**
-	 * Canvas used to draw the profilling graphs.
-	 * 
-	 * @attribute canvas
-	 * @type {Canvas}
-	 */
-	this.canvas = new Canvas(this);
-	this.canvas.watchPointer();
+		/**
+		 * Canvas used to draw the profilling graphs.
+		 * 
+		 * @attribute canvas
+		 * @type {Canvas}
+		 */
+		this.canvas = new Canvas(this);
+		this.canvas.watchPointer();
 
-	this.group = new Object2D();
+		this.group = new Object2D();
 
-	this.viewport = new Viewport(this.canvas.element);
+		this.viewport = new Viewport(this.canvas.element);
 
-	this.renderer = new Renderer(this.canvas.element);
+		this.renderer = new Renderer(this.canvas.element);
 
-	this.controls = new ViewportControls(this.viewport);
+		this.controls = new ViewportControls(this.viewport);
 
-	var box = new Box();
-	box.position.set(-100, 0);
-	this.group.add(box);
+		var box = new Box();
+		box.position.set(-100, 0);
+		this.group.add(box);
 
-	var circle = new Circle();
-	circle.position.set(100, 0);
-	circle.radius = 50;
-	this.group.add(circle);
+		var circle = new Circle();
+		circle.position.set(100, 0);
+		circle.radius = 50;
+		this.group.add(circle);
 	}
 
-	update() {
-	// Renderer info
-	var tabs = Editor.gui.tab.getActiveTab();
-	for (var i = 0; i < tabs.length; i++)
+	update() 
 	{
-		var tab = tabs[i];
-		var renderer = tab.renderer || (tab.canvas ? tab.canvas.renderer : undefined);
-		if (renderer !== undefined)
+	// Renderer info
+		var tabs = Editor.gui.tab.getActiveTab();
+		for (var i = 0; i < tabs.length; i++)
 		{
+			var tab = tabs[i];
+			var renderer = tab.renderer || (tab.canvas ? tab.canvas.renderer : undefined);
+			if (renderer !== undefined)
+			{
 			// TODO <CHANGE THIS>
 			// console.log(renderer.info);
+			}
 		}
-	}
 
-	if (this.canvas.pointerInside)
-	{
-		this.controls.update(this.renderer.pointer);
-	}
-	this.renderer.update(this.group, this.viewport);
+		if (this.canvas.pointerInside)
+		{
+			this.controls.update(this.renderer.pointer);
+		}
+		this.renderer.update(this.group, this.viewport);
 
 	// System metrics
 	// TODO <ADD CODE HERE>
 	}
 
-	updateSize() {
-	super.updateSize();
+	updateSize() 
+	{
+		super.updateSize();
 
-	this.canvas.size.copy(this.size);
-	this.canvas.position.set(0, 0);
-	this.canvas.updateInterface();
+		this.canvas.size.copy(this.size);
+		this.canvas.position.set(0, 0);
+		this.canvas.updateInterface();
 	}
 
 }

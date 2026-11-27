@@ -11,133 +11,147 @@ import {Component} from "../Component.js";
  * @param {Component} parent Parent element.
  * @param {string} type Type of the media element (e.g audio, video)
  */
-class Media extends Component {
-	constructor(parent, type) {
-	super(parent, "div");
+class Media extends Component 
+{
+	constructor(parent, type) 
+	{
+		super(parent, "div");
+
+		/**
+		 * Media DOM element that compatible with media controls.
+		 *
+		 * @attribute media
+		 * @type {Element}
+		 */
+		this.media = document.createElement(type);
+		this.element.appendChild(this.media);
+	}
 
 	/**
-	 * Media DOM element that compatible with media controls.
-	 *
-	 * @attribute media
-	 * @type {Element}
+	 * Set element Media volume.
+	 * 
+	 * @method setVolume
+	 * @param {number} volume Volume level from 0 to 1.
 	 */
-	this.media = document.createElement(type);
-	this.element.appendChild(this.media);
+	setVolume(volume) 
+	{
+		this.media.volume = volume;	
 	}
 
-/**
- * Set element Media volume.
- * 
- * @method setVolume
- * @param {number} volume Volume level from 0 to 1.
- */
-	setVolume(volume) {
-	this.media.volume = volume;	
+	/**
+	 * Set video to be played.
+	 *
+	 * @method setValue
+	 * @param {Video} value Video resource to play.
+	 */
+	setValue(video) 
+	{
+		this.media.src = video.data;
 	}
 
-/**
- * Set video to be played.
- *
- * @method setValue
- * @param {Video} value Video resource to play.
- */
-	setValue(video) {
-	this.media.src = video.data;
+	/**
+	 * Set URL of the media to play.
+	 *
+	 * @method setURL
+	 * @param {string} value Media url.
+	 */
+	setURL(value) 
+	{
+		this.media.src = value;
 	}
 
-/**
- * Set URL of the media to play.
- *
- * @method setURL
- * @param {string} value Media url.
- */
-	setURL(value) {
-	this.media.src = value;
+	/**
+	 * Set the playback time.
+	 *
+	 * @method setTime
+	 * @param {number} time Time to be set.
+	 */
+	setTime(time) 
+	{
+		this.media.currentTime = time;
 	}
 
-/**
- * Set the playback time.
- *
- * @method setTime
- * @param {number} time Time to be set.
- */
-	setTime(time) {
-	this.media.currentTime = time;
+	/**
+	 * Set autoplay mode.
+	 * 
+	 * @method setAutoplay
+	 * @param {boolean} value If true the media starts playing automatically.
+	 */
+	setAutoplay(value) 
+	{
+		this.media.autoplay = value;
 	}
 
-/**
- * Set autoplay mode.
- * 
- * @method setAutoplay
- * @param {boolean} value If true the media starts playing automatically.
- */
-	setAutoplay(value) {
-	this.media.autoplay = value;
+	/**
+	 * Check if the media is playing.
+	 * 
+	 * @method isPlaying
+	 * @return {boolean} True if the media is playing.
+	 */
+	isPlaying(value) 
+	{
+		return !this.media.paused;
 	}
 
-/**
- * Check if the media is playing.
- * 
- * @method isPlaying
- * @return {boolean} True if the media is playing.
- */
-	isPlaying(value) {
-	return !this.media.paused;
+	/**
+	 * Set loop mode.
+	 * 
+	 * @method setLoop
+	 * @param {boolean} value If true the media plays in loop.
+	 */
+	setLoop(value) 
+	{
+		this.media.loop = value;
 	}
 
-/**
- * Set loop mode.
- * 
- * @method setLoop
- * @param {boolean} value If true the media plays in loop.
- */
-	setLoop(value) {
-	this.media.loop = value;
+	/**
+	 * Set playback rate.
+	 * 
+	 * @method setPlaybackRate
+	 * @param {number} setPlaybackRate The velocity of playback.
+	 */
+	setPlaybackRate(playbackRate) 
+	{
+		this.media.playbackRate = playbackRate;
 	}
 
-/**
- * Set playback rate.
- * 
- * @method setPlaybackRate
- * @param {number} setPlaybackRate The velocity of playback.
- */
-	setPlaybackRate(playbackRate) {
-	this.media.playbackRate = playbackRate;
+	/**
+	 * Play media playback.
+	 * 
+	 * @method play
+	 */
+	play() 
+	{
+		this.media.play();
 	}
 
-/**
- * Play media playback.
- * 
- * @method play
- */
-	play() {
-	this.media.play();
+	/**
+	 * Stop media playback.
+	 * 
+	 * @method stop
+	 */
+	stop() 
+	{
+		this.media.currentTime = 0;
+		this.media.pause();
 	}
 
-/**
- * Stop media playback.
- * 
- * @method stop
- */
-	stop() {
-	this.media.currentTime = 0;
-	this.media.pause();
+	/**
+	 * Pause media.
+	 * 
+	 * @method pause
+	 */
+	pause() 
+	{
+		this.media.pause();
 	}
 
-/**
- * Pause media.
- * 
- * @method pause
- */
-	pause() {
-	this.media.pause();
-	}
+	updateSize() 
+	{
+		super.updateSize();
 
-	updateSize() {
-	super.updateSize();
-
-	this.media.style.width = this.size.x + "px";
-	this.media.style.height = this.size.y + "px";
+		this.media.style.width = this.size.x + "px";
+		this.media.style.height = this.size.y + "px";
 	}
 
 }

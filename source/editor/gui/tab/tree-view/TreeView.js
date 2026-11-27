@@ -19,291 +19,302 @@ import {TreeNode} from "./TreeNode.js";
  * @param {TabGroup} container The container where this tab is inserted.
  * @param {number} index Index inside the container button array.
  */
-class TreeView extends TabComponent {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index, "Project Explorer", Global.FILE_PATH + "icons/misc/menu.png");
-
-	var self = this;
-
-	this.element.style.overflow = "auto";
-	this.element.style.backgroundColor = null;
-
-	this.search = new SearchBox(this);
-	this.search.element.style.backgroundColor = "var(--bar-color)";
-	this.search.setOnChange(function()
+class TreeView extends TabComponent 
+{
+	constructor(parent, closeable, container, index) 
 	{
-		self.selectByName(self.search.search.getText());
-	});
+		super(parent, closeable, container, index, "Project Explorer", Global.FILE_PATH + "icons/misc/menu.png");
 
-	this.program = null;
-	this.root = null;
-	}
+		var self = this;
 
-/**
- * Select tree nodes by their name.
- *
- * All nodes that contain the name will be selected.
- *
- * @method selectByName
- * @param {string} search String with portion of the name to be found and filtered.
- */
-	selectByName(search) {
-	search = search.toLowerCase();
+		this.element.style.overflow = "auto";
+		this.element.style.backgroundColor = null;
 
-	Editor.clearSelection();
-
-	function filterRecursive(node)
-	{
-		var text = node.object.name.toLowerCase();
-		if (text.search(search) !== -1)
+		this.search = new SearchBox(this);
+		this.search.element.style.backgroundColor = "var(--bar-color)";
+		this.search.setOnChange(function()
 		{
-			Editor.addToSelection(node.object);
-		}
+			self.selectByName(self.search.search.getText());
+		});
 
-		for (var i = 0; i < node.children.length; i++)
-		{
-			filterRecursive(node.children[i]);
-		}
-	}
-
-	filterRecursive(this.root);
-	}
-
-/**
- * Attach a program to the tree view.
- *
- * @method attach
- */
-	attach(program) {
-	if (this.program === program)
-	{
-		return;
-	}
-
-	this.program = program;
-
-	// Destroy old root object
-	if (this.root !== null)
-	{
-		this.root.destroy();
+		this.program = null;
 		this.root = null;
 	}
 
-	// Create program tree
-	this.buildTree();
-	this.updateChildPosition();
-	}
-
-/**
- * Traverse the whole tree view and call the callback method.
- *
- * The callback method receives the object attached to the tree and the depth.
- *
- * @method traverse
- * @param {Function} callback Callback function(treeNode)
- */
-	traverse(callback) {
-	function traverse(node)
+	/**
+	 * Select tree nodes by their name.
+	 *
+	 * All nodes that contain the name will be selected.
+	 *
+	 * @method selectByName
+	 * @param {string} search String with portion of the name to be found and filtered.
+	 */
+	selectByName(search) 
 	{
-		callback(node);
+		search = search.toLowerCase();
 
-		for (var i = 0; i < node.children.length; i++)
+		Editor.clearSelection();
+
+		function filterRecursive(node)
 		{
-			traverse(node.children[i]);
+			var text = node.object.name.toLowerCase();
+			if (text.search(search) !== -1)
+			{
+				Editor.addToSelection(node.object);
+			}
+
+			for (var i = 0; i < node.children.length; i++)
+			{
+				filterRecursive(node.children[i]);
+			}
 		}
+
+		filterRecursive(this.root);
 	}
 
-	traverse(this.root);
-	}
-
-/**
- * Add new object to a parent in a specific position.
- *
- * @method addObject
- * @param {Object3D} object New object to add to the tree.
- * @param {Object3D} parent Parent to insert the object.
- * @param {number} index Index to insert the object.
- */
-	addObject(object, parent, index) {
-	var parentNode = null;
-	this.traverse(function(node)
+	/**
+	 * Attach a program to the tree view.
+	 *
+	 * @method attach
+	 */
+	attach(program) 
 	{
-		if (node.uuid === parent.uuid)
+		if (this.program === program)
 		{
-			parentNode = node;
+			return;
 		}
-	});
 
-	// Create object and children
-	var element = parentNode.insertObject(object, index);
-	for (var k = 0; k < object.children.length; k++)
-	{
-		insertObject(element, object.children[k]);
+		this.program = program;
+
+		// Destroy old root object
+		if (this.root !== null)
+		{
+			this.root.destroy();
+			this.root = null;
+		}
+
+		// Create program tree
+		this.buildTree();
+		this.updateChildPosition();
 	}
 
-	this.updateChildPosition();
-
-	// Auxiliar method to insert object recursivelly
-	function insertObject(parent, object)
+	/**
+	 * Traverse the whole tree view and call the callback method.
+	 *
+	 * The callback method receives the object attached to the tree and the depth.
+	 *
+	 * @method traverse
+	 * @param {Function} callback Callback function(treeNode)
+	 */
+	traverse(callback) 
 	{
-		var element = parent.addObject(object);
+		function traverse(node)
+		{
+			callback(node);
 
+			for (var i = 0; i < node.children.length; i++)
+			{
+				traverse(node.children[i]);
+			}
+		}
+
+		traverse(this.root);
+	}
+
+	/**
+	 * Add new object to a parent in a specific position.
+	 *
+	 * @method addObject
+	 * @param {Object3D} object New object to add to the tree.
+	 * @param {Object3D} parent Parent to insert the object.
+	 * @param {number} index Index to insert the object.
+	 */
+	addObject(object, parent, index) 
+	{
+		var parentNode = null;
+		this.traverse(function(node)
+		{
+			if (node.uuid === parent.uuid)
+			{
+				parentNode = node;
+			}
+		});
+
+		// Create object and children
+		var element = parentNode.insertObject(object, index);
 		for (var k = 0; k < object.children.length; k++)
 		{
 			insertObject(element, object.children[k]);
 		}
-	}
-	}
 
-/**
- * Remove a object from the treeview.
- *
- * @method removeObject
- * @param {Object3D} object Object to be removed from the tree.
- * @param {Object3D} parent Parent object.
- */
-	removeObject(object, parent) {
-	var parentNode = null;
-	this.traverse(function(node)
-	{
-		if (node.uuid === parent.uuid)
+		this.updateChildPosition();
+
+		// Auxiliar method to insert object recursivelly
+		function insertObject(parent, object)
 		{
-			parentNode = node;
-		}
-	});
+			var element = parent.addObject(object);
 
-	var node = parentNode.removeElementUUID(object.uuid);
-
-	if (node !== null)
-	{
-		node.destroy();
-	}
-	else
-	{
-		console.warn("nunuStudio: Failed to remove node from tree view.", object, parent, node, parentNode);
-	}
-
-	this.updateChildPosition();
-	}
-
-/**
- * Move object in the tree, from a position to another position and parent.
- *
- * @method addObject
- * @param {Object3D} object New object to add to the tree.
- * @param {Object3D} oldParent Old parent to remove the object from.
- * @param {Object3D} newParent New parent to insert the object into.
- * @param {number} index New index to insert the object.
- */
-	moveObject(object, oldParent, newParent, index) {
-	this.removeObject(object, oldParent);
-	this.addObject(object, newParent, index);
-	this.updateChildPosition();
-	}
-
-/**
- * Fill the tree view with the attached object children.
- *
- * @method buildTree
- */
-	buildTree() {
-	function fillTree(root, object)
-	{
-		var element = root.addObject(object);
-
-		for (var i = 0; i < object.children.length; i++)
-		{
-			fillTree(element, object.children[i]);
-		}
-	}
-
-	if (this.root !== null)
-	{
-		this.root.destroy();
-		this.root = null;
-	}
-
-	this.root = new TreeNode(this);
-	this.root.attach(this.program);
-	this.root.updateInterface();
-
-	for (var i = 0; i < this.program.children.length; i++)
-	{
-		fillTree(this.root, this.program.children[i]);
-	}
-	}
-
-/**
- * Update tree view children positions.
- *
- * @method updateChildPosition
- */
-	updateChildPosition() {
-	// Check if parent if folded (recursive)
-	function checkParentFolded(element)
-	{
-		if (element.parent === null)
-		{
-			return false;
-		}
-
-		if (element.folded === true)
-		{
-			return true;
-		}
-
-		return checkParentFolded(element.parent);
-	}
-
-	// Update childs position (recursive)
-	function updateChildPosition(parent, position, level, folded)
-	{
-		var children = parent.children;
-		var length = parent.children.length;
-
-		for (var i = 0; i < length; i++)
-		{
-			var element = children[i];
-
-			if (folded || checkParentFolded(parent))
+			for (var k = 0; k < object.children.length; k++)
 			{
-				element.setVisibility(false);
-				folded = true;
+				insertObject(element, object.children[k]);
 			}
-			else
-			{
-				element.visible = true;
-				element.position.set(0, position);
-				element.level = level;
-				element.updateInterface();
+		}
+	}
 
-				folded = false;
-				position += 20;
+	/**
+	 * Remove a object from the treeview.
+	 *
+	 * @method removeObject
+	 * @param {Object3D} object Object to be removed from the tree.
+	 * @param {Object3D} parent Parent object.
+	 */
+	removeObject(object, parent) 
+	{
+		var parentNode = null;
+		this.traverse(function(node)
+		{
+			if (node.uuid === parent.uuid)
+			{
+				parentNode = node;
 			}
+		});
 
-			if (element.children.length > 0)
+		var node = parentNode.removeElementUUID(object.uuid);
+
+		if (node !== null)
+		{
+			node.destroy();
+		}
+		else
+		{
+			console.warn("nunuStudio: Failed to remove node from tree view.", object, parent, node, parentNode);
+		}
+
+		this.updateChildPosition();
+	}
+
+	/**
+	 * Move object in the tree, from a position to another position and parent.
+	 *
+	 * @method addObject
+	 * @param {Object3D} object New object to add to the tree.
+	 * @param {Object3D} oldParent Old parent to remove the object from.
+	 * @param {Object3D} newParent New parent to insert the object into.
+	 * @param {number} index New index to insert the object.
+	 */
+	moveObject(object, oldParent, newParent, index) 
+	{
+		this.removeObject(object, oldParent);
+		this.addObject(object, newParent, index);
+		this.updateChildPosition();
+	}
+
+	/**
+	 * Fill the tree view with the attached object children.
+	 *
+	 * @method buildTree
+	 */
+	buildTree() 
+	{
+		function fillTree(root, object)
+		{
+			var element = root.addObject(object);
+
+			for (var i = 0; i < object.children.length; i++)
 			{
-				position = updateChildPosition(children[i], position, level + 1, folded);
+				fillTree(element, object.children[i]);
 			}
 		}
 
-		return position;
-	}
+		if (this.root !== null)
+		{
+			this.root.destroy();
+			this.root = null;
+		}
 
-	if (this.root !== null)
-	{
-		this.root.position.set(0, this.search.size.y);
+		this.root = new TreeNode(this);
+		this.root.attach(this.program);
 		this.root.updateInterface();
 
-		this.size.y = updateChildPosition(this.root, this.search.size.y + 20, 1, this.root.folded);
-	}
+		for (var i = 0; i < this.program.children.length; i++)
+		{
+			fillTree(this.root, this.program.children[i]);
+		}
 	}
 
-	updateSize() {
-	super.updateSize();
+	/**
+	 * Update tree view children positions.
+	 *
+	 * @method updateChildPosition
+	 */
+	updateChildPosition() 
+	{
+	// Check if parent if folded (recursive)
+		function checkParentFolded(element)
+		{
+			if (element.parent === null)
+			{
+				return false;
+			}
 
-	this.search.size.set(this.size.x, 25);
-	this.search.updateInterface();
+			if (element.folded === true)
+			{
+				return true;
+			}
+
+			return checkParentFolded(element.parent);
+		}
+
+		// Update childs position (recursive)
+		function updateChildPosition(parent, position, level, folded)
+		{
+			var children = parent.children;
+			var length = parent.children.length;
+
+			for (var i = 0; i < length; i++)
+			{
+				var element = children[i];
+
+				if (folded || checkParentFolded(parent))
+				{
+					element.setVisibility(false);
+					folded = true;
+				}
+				else
+				{
+					element.visible = true;
+					element.position.set(0, position);
+					element.level = level;
+					element.updateInterface();
+
+					folded = false;
+					position += 20;
+				}
+
+				if (element.children.length > 0)
+				{
+					position = updateChildPosition(children[i], position, level + 1, folded);
+				}
+			}
+
+			return position;
+		}
+
+		if (this.root !== null)
+		{
+			this.root.position.set(0, this.search.size.y);
+			this.root.updateInterface();
+
+			this.size.y = updateChildPosition(this.root, this.search.size.y + 20, 1, this.root.folded);
+		}
+	}
+
+	updateSize() 
+	{
+		super.updateSize();
+
+		this.search.size.set(this.size.x, 25);
+		this.search.updateInterface();
 	}
 
 }

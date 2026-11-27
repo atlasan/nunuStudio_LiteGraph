@@ -8,12 +8,14 @@ import {Component} from "./Component.js";
  * @extends {TextBox}
  * @param {Component} parent Parent element.
  */
-class PasswordBox extends TextBox {
-	constructor(parent) {
-	super(parent);
+class PasswordBox extends TextBox 
+{
+	constructor(parent) 
+	{
+		super(parent);
 
-	this.element.type = "password";
-}
+		this.element.type = "password";
+	}
 }
 
 export {PasswordBox};

@@ -21,152 +21,152 @@ class SSAONOHPass extends Pass
 {
 	constructor()
 	{
-	super();
+		super();
 
-	this.type = "SSAONOH";
+		this.type = "SSAONOH";
 	
-	this.kernel = [];
-	this.noiseTexture = null;
-	this.createQuadScene();
+		this.kernel = [];
+		this.noiseTexture = null;
+		this.createQuadScene();
 
-	/**
-	 * Depth texture attached to the normal material
-	 *
-	 * @attribute depthTexture
-	 * @type {DepthTexture}
-	 */
-	this.depthTexture = new DepthTexture();
-	this.depthTexture.type = UnsignedShortType;
-	this.depthTexture.minFilter = NearestFilter;
-	this.depthTexture.maxFilter = NearestFilter;
-
-	/**
-	 * Normal rendering material.
-	 *
-	 * @attribute normalMaterial
-	 * @type {MeshNormalMaterial}
-	 */
-	this.normalMaterial = new MeshNormalMaterial();
-	this.normalMaterial.blending = NoBlending;
-
-	// Normal render target
-	this.normalRenderTarget = new WebGLRenderTarget(1, 1,
-		{
-			minFilter: LinearFilter,
-			magFilter: LinearFilter,
-			format: RGBAFormat,
-			depthTexture: this.depthTexture,
-			depthBuffer: true
-		});
-
-	// SSAO render target
-	this.ssaoRenderTarget = new WebGLRenderTarget(1, 1, Pass.RGBALinear);
-
-	// Blur render target
-	this.blurRenderTarget = new WebGLRenderTarget(1, 1, Pass.RGBALinear);
-
-	/**
-	 * Blur pass render material.
-	 *
-	 * @attribute blurMaterial
-	 * @type {ShaderMaterial}
-	 */
-	this.blurMaterial = new ShaderMaterial(
-		{
-			defines: Object.assign({}, SSAOBlurShader.defines),
-			uniforms: UniformsUtils.clone(SSAOBlurShader.uniforms),
-			vertexShader: SSAOBlurShader.vertexShader,
-			fragmentShader: SSAOBlurShader.fragmentShader
-		});
-	this.blurMaterial.uniforms["tDiffuse"].value = this.ssaoRenderTarget.texture;
-
-	/**
-	 * Shader material for the SSAO render pass.
-	 *
-	 * @attribute ssaoMaterial
-	 * @type {ShaderMaterial}
-	 */
-	this.ssaoMaterial = new ShaderMaterial(
-		{
-			defines: Object.assign({}, SSAOShader.defines),
-			uniforms: UniformsUtils.clone(SSAOShader.uniforms),
-			vertexShader: SSAOShader.vertexShader,
-			fragmentShader: SSAOShader.fragmentShader,
-			blending: NoBlending
-		});
-	this.ssaoMaterial.uniforms["tNormal"].value = this.normalRenderTarget.texture;
-	
-	/**
-	 * Material used to copy data between buffers.
-	 *
-	 * @attribute copyMaterial
-	 * @type {ShaderMaterial}
-	 */
-	this.copyMaterial = new ShaderMaterial(
-		{
-			uniforms: UniformsUtils.clone(CopyShader.uniforms),
-			vertexShader: CopyShader.vertexShader,
-			fragmentShader: CopyShader.fragmentShader,
-			transparent: true,
-			depthTest: false,
-			depthWrite: false,
-			blendSrc: DstColorFactor,
-			blendDst: ZeroFactor,
-			blendEquation: AddEquation,
-			blendSrcAlpha: DstAlphaFactor,
-			blendDstAlpha: ZeroFactor,
-			blendEquationAlpha: AddEquation
-		});
-
-	this._kernelSize = 0;
-	
-	var self = this;
-
-	Object.defineProperties(this,
-		{
 		/**
-		 * Kernel radius used for the SSAO effect.
+		 * Depth texture attached to the normal material
 		 *
-		 * @property kernelRadius
-		 * @type {boolean}
+		 * @attribute depthTexture
+		 * @type {DepthTexture}
 		 */
-			kernelRadius:
+		this.depthTexture = new DepthTexture();
+		this.depthTexture.type = UnsignedShortType;
+		this.depthTexture.minFilter = NearestFilter;
+		this.depthTexture.maxFilter = NearestFilter;
+
+		/**
+		 * Normal rendering material.
+		 *
+		 * @attribute normalMaterial
+		 * @type {MeshNormalMaterial}
+		 */
+		this.normalMaterial = new MeshNormalMaterial();
+		this.normalMaterial.blending = NoBlending;
+
+		// Normal render target
+		this.normalRenderTarget = new WebGLRenderTarget(1, 1,
+			{
+				minFilter: LinearFilter,
+				magFilter: LinearFilter,
+				format: RGBAFormat,
+				depthTexture: this.depthTexture,
+				depthBuffer: true
+			});
+
+		// SSAO render target
+		this.ssaoRenderTarget = new WebGLRenderTarget(1, 1, Pass.RGBALinear);
+
+		// Blur render target
+		this.blurRenderTarget = new WebGLRenderTarget(1, 1, Pass.RGBALinear);
+
+		/**
+		 * Blur pass render material.
+		 *
+		 * @attribute blurMaterial
+		 * @type {ShaderMaterial}
+		 */
+		this.blurMaterial = new ShaderMaterial(
+			{
+				defines: Object.assign({}, SSAOBlurShader.defines),
+				uniforms: UniformsUtils.clone(SSAOBlurShader.uniforms),
+				vertexShader: SSAOBlurShader.vertexShader,
+				fragmentShader: SSAOBlurShader.fragmentShader
+			});
+		this.blurMaterial.uniforms["tDiffuse"].value = this.ssaoRenderTarget.texture;
+
+		/**
+		 * Shader material for the SSAO render pass.
+		 *
+		 * @attribute ssaoMaterial
+		 * @type {ShaderMaterial}
+		 */
+		this.ssaoMaterial = new ShaderMaterial(
+			{
+				defines: Object.assign({}, SSAOShader.defines),
+				uniforms: UniformsUtils.clone(SSAOShader.uniforms),
+				vertexShader: SSAOShader.vertexShader,
+				fragmentShader: SSAOShader.fragmentShader,
+				blending: NoBlending
+			});
+		this.ssaoMaterial.uniforms["tNormal"].value = this.normalRenderTarget.texture;
+	
+		/**
+		 * Material used to copy data between buffers.
+		 *
+		 * @attribute copyMaterial
+		 * @type {ShaderMaterial}
+		 */
+		this.copyMaterial = new ShaderMaterial(
+			{
+				uniforms: UniformsUtils.clone(CopyShader.uniforms),
+				vertexShader: CopyShader.vertexShader,
+				fragmentShader: CopyShader.fragmentShader,
+				transparent: true,
+				depthTest: false,
+				depthWrite: false,
+				blendSrc: DstColorFactor,
+				blendDst: ZeroFactor,
+				blendEquation: AddEquation,
+				blendSrcAlpha: DstAlphaFactor,
+				blendDstAlpha: ZeroFactor,
+				blendEquationAlpha: AddEquation
+			});
+
+		this._kernelSize = 0;
+	
+		var self = this;
+
+		Object.defineProperties(this,
+			{
+				/**
+				 * Kernel radius used for the SSAO effect.
+				 *
+				 * @property kernelRadius
+				 * @type {boolean}
+				 */
+				kernelRadius:
 		{
 			get: function() {return self.ssaoMaterial.uniforms["kernelRadius"].value;},
 			set: function(value) {self.ssaoMaterial.uniforms["kernelRadius"].value = value;}
 		},
 
-			/**
-			 * Minimum camera distance considered for the SSAO effect.
-			 *
-			 * @property minDistance
-			 * @type {number}
-			 */
-			minDistance:
+				/**
+				 * Minimum camera distance considered for the SSAO effect.
+				 *
+				 * @property minDistance
+				 * @type {number}
+				 */
+				minDistance:
 		{
 			get: function() {return self.ssaoMaterial.uniforms["minDistance"].value;},
 			set: function(value) {self.ssaoMaterial.uniforms["minDistance"].value = value;}
 		},
 
-			/**
-			 * Maximum camera distance considered for the SSAO effect.
-			 *
-			 * @property maxDistance
-			 * @type {number}
-			 */
-			maxDistance:
+				/**
+				 * Maximum camera distance considered for the SSAO effect.
+				 *
+				 * @property maxDistance
+				 * @type {number}
+				 */
+				maxDistance:
 		{
 			get: function() {return self.ssaoMaterial.uniforms["maxDistance"].value;},
 			set: function(value) {self.ssaoMaterial.uniforms["maxDistance"].value = value;}
 		},
 
-			/**
-			 * SSAO effect kernel size.
-			 *
-			 * @property kernelSize
-			 * @type {number}
-			 */
-			kernelSize:
+				/**
+				 * SSAO effect kernel size.
+				 *
+				 * @property kernelSize
+				 * @type {number}
+				 */
+				kernelSize:
 		{
 			get: function() {return self._kernelSize;},
 			set: function(value)
@@ -178,12 +178,12 @@ class SSAONOHPass extends Pass
 				self.ssaoMaterial.uniforms["kernel"].value = self.kernel;
 			}
 		}
-		});
+			});
 
-	this.kernelSize = 64;
-	this.kernelRadius = 8;
-	this.minDistance = 0.1;
-	this.maxDistance = 1000;
+		this.kernelSize = 64;
+		this.kernelRadius = 8;
+		this.minDistance = 0.1;
+		this.maxDistance = 1000;
 	}
 
 	/** 

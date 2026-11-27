@@ -11,44 +11,48 @@ import {Component} from "./Component.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class SearchBox extends Component {
-	constructor(parent) {
-	super(parent, "div");
+class SearchBox extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "div");
 
-	/**
-	 * Input text box of the search box.
-	 *
-	 * @property search
-	 * @type {TextBox}
-	 */
-	this.search = new TextBox(this);
-	this.search.setMode(Component.TOP_RIGHT);
-	this.search.element.placeholder = Locale.search;
+		/**
+		 * Input text box of the search box.
+		 *
+		 * @property search
+		 * @type {TextBox}
+		 */
+		this.search = new TextBox(this);
+		this.search.setMode(Component.TOP_RIGHT);
+		this.search.element.placeholder = Locale.search;
 
-	/**
-	 * Search icon.
-	 *
-	 * @property searchIcon
-	 * @type {Component}
-	 */
-	this.searchIcon = new ImageContainer(this);
-	this.searchIcon.setImage(Global.FILE_PATH + "icons/misc/search.png");
+		/**
+		 * Search icon.
+		 *
+		 * @property searchIcon
+		 * @type {Component}
+		 */
+		this.searchIcon = new ImageContainer(this);
+		this.searchIcon.setImage(Global.FILE_PATH + "icons/misc/search.png");
 	}
 
-	setOnChange(callback) {
-	this.search.setOnInput(callback, 100);
+	setOnChange(callback) 
+	{
+		this.search.setOnInput(callback, 100);
 	}
 
-	updateSize() {
-	super.updateSize();
+	updateSize() 
+	{
+		super.updateSize();
 
-	this.searchIcon.size.set(this.size.y * 0.6, this.size.y * 0.6);
-	this.searchIcon.position.set(this.size.y * 0.2, this.size.y * 0.2);
-	this.searchIcon.updateInterface();
+		this.searchIcon.size.set(this.size.y * 0.6, this.size.y * 0.6);
+		this.searchIcon.position.set(this.size.y * 0.2, this.size.y * 0.2);
+		this.searchIcon.updateInterface();
 
-	this.search.size.set(this.size.x - this.size.y * 1.4, this.size.y * 0.8);
-	this.search.position.set(this.size.y * 0.2, this.size.y * 0.1);
-	this.search.updateInterface();
+		this.search.size.set(this.size.x - this.size.y * 1.4, this.size.y * 0.8);
+		this.search.position.set(this.size.y * 0.2, this.size.y * 0.1);
+		this.search.updateInterface();
 	}
 
 }

@@ -13,230 +13,240 @@ import {Global} from "../../Global.js";
 import {Editor} from "../../Editor.js";
 import {Component} from "../Component.js";
 
-class TextureChooser extends Component {
-	constructor(parent) {
-	super(parent, "div");
-
-	// Preview
-	this.preview = document.createElement("div");
-	this.preview.style.cursor = "pointer";
-	this.preview.style.visibility = "inherit";
-	this.preview.style.position = "absolute";
-	this.preview.style.top = "0px";
-	this.preview.style.left = "0px";
-	this.preview.style.backgroundImage = "url(\"" + Global.FILE_PATH + "alpha.png\")";
-	this.preview.style.backgroundRepeat = "repeat";
-	this.preview.style.backgroundSize = "120px 120px";
-	this.element.appendChild(this.preview);
-
-	// Image
-	this.img = document.createElement("img");
-	this.img.style.pointerEvents = "none";
-	this.img.style.position = "absolute";
-	this.img.style.left = "0px";
-	this.img.style.top = "0px";
-	this.img.style.width = "100%";
-	this.img.style.height = "100%";
-	this.preview.appendChild(this.img);
-
-	// Video
-	this.video = document.createElement("video");
-	this.video.autoplay = true;
-	this.video.loop = true;
-	this.video.volume = 0.0;
-	this.video.style.pointerEvents = "none";
-	this.video.style.position = "absolute";
-	this.video.style.left = "0px";
-	this.video.style.top = "0px";
-	this.video.style.width = "100%";
-	this.video.style.height = "100%";
-	this.preview.appendChild(this.video);
-
-	var self = this;
-
-	// On drop get file dropped
-	this.preview.ondrop = function(event)
+class TextureChooser extends Component 
+{
+	constructor(parent) 
 	{
-		// File
-		if (event.dataTransfer.files.length > 0)
-		{
-			self.loadTexture(event.dataTransfer.files[0]);
-		}
-		// Resource
-		else
-		{
-			var uuid = event.dataTransfer.getData("uuid");
-			var value = DragBuffer.get(uuid);
+		super(parent, "div");
 
-			// Texture
-			if (value instanceof Texture && (self.acceptAll || !value.isCubeTexture))
+		// Preview
+		this.preview = document.createElement("div");
+		this.preview.style.cursor = "pointer";
+		this.preview.style.visibility = "inherit";
+		this.preview.style.position = "absolute";
+		this.preview.style.top = "0px";
+		this.preview.style.left = "0px";
+		this.preview.style.backgroundImage = "url(\"" + Global.FILE_PATH + "alpha.png\")";
+		this.preview.style.backgroundRepeat = "repeat";
+		this.preview.style.backgroundSize = "120px 120px";
+		this.element.appendChild(this.preview);
+
+		// Image
+		this.img = document.createElement("img");
+		this.img.style.pointerEvents = "none";
+		this.img.style.position = "absolute";
+		this.img.style.left = "0px";
+		this.img.style.top = "0px";
+		this.img.style.width = "100%";
+		this.img.style.height = "100%";
+		this.preview.appendChild(this.img);
+
+		// Video
+		this.video = document.createElement("video");
+		this.video.autoplay = true;
+		this.video.loop = true;
+		this.video.volume = 0.0;
+		this.video.style.pointerEvents = "none";
+		this.video.style.position = "absolute";
+		this.video.style.left = "0px";
+		this.video.style.top = "0px";
+		this.video.style.width = "100%";
+		this.video.style.height = "100%";
+		this.preview.appendChild(this.video);
+
+		var self = this;
+
+		// On drop get file dropped
+		this.preview.ondrop = function(event)
+		{
+		// File
+			if (event.dataTransfer.files.length > 0)
 			{
-				self.setTexture(value);
+				self.loadTexture(event.dataTransfer.files[0]);
 			}
-			// Image
-			else if (value instanceof Image)
-			{
-				self.setTexture(new Texture(value));
-			}
-			// Video
-			else if (value instanceof Video)
-			{
-				self.setTexture(new VideoTexture(value));
-			}
+			// Resource
 			else
 			{
-				Editor.alert("Only textures, videos and images accepted");
-			}
-		}
+				var uuid = event.dataTransfer.getData("uuid");
+				var value = DragBuffer.get(uuid);
 
-		event.preventDefault();
-	};
-
-	// Onclick select image or video file
-	this.preview.onclick = function()
-	{
-		if (self.onChange !== null)
-		{
-			FileSystem.chooseFile(function(files)
-			{
-				if (files.length > 0)
+				// Texture
+				if (value instanceof Texture && (self.acceptAll || !value.isCubeTexture))
 				{
-					self.loadTexture(files[0]);
+					self.setTexture(value);
 				}
-			}, "image/*, video/*, .tga");
-		}
-	};
+				// Image
+				else if (value instanceof Image)
+				{
+					self.setTexture(new Texture(value));
+				}
+				// Video
+				else if (value instanceof Video)
+				{
+					self.setTexture(new VideoTexture(value));
+				}
+				else
+				{
+					Editor.alert("Only textures, videos and images accepted");
+				}
+			}
 
-	/**
-	 * On change callback function.
-	 *
-	 * @property onChange
-	 * @type {Function}
-	 */
-	this.onChange = null;
+			event.preventDefault();
+		};
 
-	this.acceptAll = false;
+		// Onclick select image or video file
+		this.preview.onclick = function()
+		{
+			if (self.onChange !== null)
+			{
+				FileSystem.chooseFile(function(files)
+				{
+					if (files.length > 0)
+					{
+						self.loadTexture(files[0]);
+					}
+				}, "image/*, video/*, .tga");
+			}
+		};
 
-	/**
-	 * Texture stored in chooser.
-	 *
-	 * @property texture
-	 * @type {Texture}
-	 */
-	this.texture = null;
-	}
+		/**
+		 * On change callback function.
+		 *
+		 * @property onChange
+		 * @type {Function}
+		 */
+		this.onChange = null;
 
-/**
- * Set onchange callback, called after changes.
- *
- * @method setOnChange
- * @param {Function} onChange
- */
-	setOnChange(onChange) {
-	this.onChange = onChange;
-	}
+		this.acceptAll = false;
 
-// Set texture value
-	setValue(texture) {
-	if (texture instanceof Texture)
-	{
-		this.texture = texture;
-		this.updatePreview();
-	}
-	else
-	{
+		/**
+		 * Texture stored in chooser.
+		 *
+		 * @property texture
+		 * @type {Texture}
+		 */
 		this.texture = null;
 	}
-	}
 
-/**
- * Get value stored in the input element.
- *
- * @method getValue
- * @return {Object} Value stored in the input element.
- */
-	getValue() {
-	return this.texture;
-	}
-
-// Set Texture
-	setTexture(texture) {
-	this.setValue(texture);
-
-	if (this.onChange !== null)
+	/**
+	 * Set onchange callback, called after changes.
+	 *
+	 * @method setOnChange
+	 * @param {Function} onChange
+	 */
+	setOnChange(onChange) 
 	{
-		this.onChange();
-	}
+		this.onChange = onChange;
 	}
 
-// Load texture from file
-	loadTexture(file) {
-	var self = this;
-	var onLoad = function(texture)
+	// Set texture value
+	setValue(texture) 
 	{
-		self.texture = texture;
-		self.updatePreview();
-
-		if (self.onChange !== null)
+		if (texture instanceof Texture)
 		{
-			self.onChange();
+			this.texture = texture;
+			this.updatePreview();
 		}
-	};
-
-	if (Image.fileIsImage(file))
-	{
-		Loaders.loadTexture(file, onLoad);
-	}
-	else if (Video.fileIsVideo(file))
-	{
-		Loaders.loadVideoTexture(file, onLoad);
-	}
+		else
+		{
+			this.texture = null;
+		}
 	}
 
-// Update texture preview
-	updatePreview() {
-	var texture = this.texture;
-
-	if (texture instanceof CanvasTexture)
+	/**
+	 * Get value stored in the input element.
+	 *
+	 * @method getValue
+	 * @return {Object} Value stored in the input element.
+	 */
+	getValue() 
 	{
-		this.video.style.display = "none";
-		this.img.style.display = "block";
-		this.img.src = texture.image.toDataURL();
-	}
-	else if (texture instanceof VideoTexture || texture instanceof WebcamTexture)
-	{
-		this.img.style.display = "none";
-		this.video.style.display = "block";
-		this.video.src = texture.image.src;
-	}
-	else if (texture instanceof CubeTexture)
-	{
-		this.video.style.display = "none";
-		this.img.style.display = "block";
-		this.img.src = texture.image[0].toDataURL();
-	}
-	else if (texture instanceof Texture || texture instanceof SpriteSheetTexture)
-	{
-		this.video.style.display = "none";
-		this.img.style.display = "block";
-		this.img.src = texture.image.src;
-	}
-	else
-	{
-		this.img.style.display = "none";
-		this.video.style.display = "none";
-	}
+		return this.texture;
 	}
 
-	updateVisibility() {
-	this.element.style.visibility = this.visible ? "visible" : "hidden";
+	// Set Texture
+	setTexture(texture) 
+	{
+		this.setValue(texture);
+
+		if (this.onChange !== null)
+		{
+			this.onChange();
+		}
 	}
 
-	updateSize() {
-	this.preview.style.width = this.size.y + "px";
-	this.preview.style.height = this.size.y + "px";
+	// Load texture from file
+	loadTexture(file) 
+	{
+		var self = this;
+		var onLoad = function(texture)
+		{
+			self.texture = texture;
+			self.updatePreview();
 
-	super.updateSize();
+			if (self.onChange !== null)
+			{
+				self.onChange();
+			}
+		};
+
+		if (Image.fileIsImage(file))
+		{
+			Loaders.loadTexture(file, onLoad);
+		}
+		else if (Video.fileIsVideo(file))
+		{
+			Loaders.loadVideoTexture(file, onLoad);
+		}
+	}
+
+	// Update texture preview
+	updatePreview() 
+	{
+		var texture = this.texture;
+
+		if (texture instanceof CanvasTexture)
+		{
+			this.video.style.display = "none";
+			this.img.style.display = "block";
+			this.img.src = texture.image.toDataURL();
+		}
+		else if (texture instanceof VideoTexture || texture instanceof WebcamTexture)
+		{
+			this.img.style.display = "none";
+			this.video.style.display = "block";
+			this.video.src = texture.image.src;
+		}
+		else if (texture instanceof CubeTexture)
+		{
+			this.video.style.display = "none";
+			this.img.style.display = "block";
+			this.img.src = texture.image[0].toDataURL();
+		}
+		else if (texture instanceof Texture || texture instanceof SpriteSheetTexture)
+		{
+			this.video.style.display = "none";
+			this.img.style.display = "block";
+			this.img.src = texture.image.src;
+		}
+		else
+		{
+			this.img.style.display = "none";
+			this.video.style.display = "none";
+		}
+	}
+
+	updateVisibility() 
+	{
+		this.element.style.visibility = this.visible ? "visible" : "hidden";
+	}
+
+	updateSize() 
+	{
+		this.preview.style.width = this.size.y + "px";
+		this.preview.style.height = this.size.y + "px";
+
+		super.updateSize();
 	}
 
 }

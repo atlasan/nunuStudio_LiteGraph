@@ -7,12 +7,14 @@ import {Component} from "./Component.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class Division extends Component {
-	constructor(parent) {
-	super(parent, "div");
+class Division extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "div");
 
-	this.element.style.overflow = "visible";
-}
+		this.element.style.overflow = "visible";
+	}
 }
 
 export {Division};

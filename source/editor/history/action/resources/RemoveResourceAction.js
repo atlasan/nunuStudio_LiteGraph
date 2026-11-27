@@ -15,30 +15,34 @@ import {AddResourceAction} from "./AddResourceAction.js";
  * @param {ResourceManager} manager Manager to insert the resource into.
  * @param {string} category Category of the resource.
  */
-class RemoveResourceAction extends Action {
-	constructor(resource, manager, category) {
-	super();
-	
-	this.resource = resource;
-	this.category = category;
-	this.manager = manager;
-	}
-
-	apply() {
-	ResourceCrawler.removeResource(this.manager, this.resource, this.category);
-
-	if (this.resource.dispose !== undefined)
+class RemoveResourceAction extends Action 
+{
+	constructor(resource, manager, category) 
 	{
-		this.resource.dispose();
+		super();
+	
+		this.resource = resource;
+		this.category = category;
+		this.manager = manager;
 	}
 
-	RemoveResourceAction.updateGUI();
+	apply() 
+	{
+		ResourceCrawler.removeResource(this.manager, this.resource, this.category);
+
+		if (this.resource.dispose !== undefined)
+		{
+			this.resource.dispose();
+		}
+
+		RemoveResourceAction.updateGUI();
 	}
 
-	revert() {
-	ResourceCrawler.addResource(this.manager, this.resource, this.category);
+	revert() 
+	{
+		ResourceCrawler.addResource(this.manager, this.resource, this.category);
 
-	AddResourceAction.updateGUI();
+		AddResourceAction.updateGUI();
 	}
 
 }

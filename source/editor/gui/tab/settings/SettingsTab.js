@@ -9,27 +9,30 @@ import {GeneralSettingsTab} from "./GeneralSettingsTab.js";
 import {EditorSettingsTab} from "./EditorSettingsTab.js";
 import {CodeSettingsTab} from "./CodeSettingsTab.js";
 
-class SettingsTab extends TabComponent {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index, Locale.settings, Global.FILE_PATH + "icons/misc/settings.png");
+class SettingsTab extends TabComponent 
+{
+	constructor(parent, closeable, container, index) 
+	{
+		super(parent, closeable, container, index, Locale.settings, Global.FILE_PATH + "icons/misc/settings.png");
 
-	this.tab = new TabGroup(this, TabGroup.LEFT);
-	this.tab.element.style.backgroundColor = "var(--bar-color)";
-	this.tab.buttonSize.set(200, 25);
+		this.tab = new TabGroup(this, TabGroup.LEFT);
+		this.tab.element.style.backgroundColor = "var(--bar-color)";
+		this.tab.buttonSize.set(200, 25);
 
-	this.tab.addTab(GeneralSettingsTab, false).activate();
-	this.tab.addTab(EditorSettingsTab, false);
-	this.tab.addTab(UnitsSettingsTab, false);
-	this.tab.addTab(RenderSettingsTab, false);
-	this.tab.addTab(CodeSettingsTab, false);
-	this.tab.addTab(JSHintSettingsTab, false);
+		this.tab.addTab(GeneralSettingsTab, false).activate();
+		this.tab.addTab(EditorSettingsTab, false);
+		this.tab.addTab(UnitsSettingsTab, false);
+		this.tab.addTab(RenderSettingsTab, false);
+		this.tab.addTab(CodeSettingsTab, false);
+		this.tab.addTab(JSHintSettingsTab, false);
 	}
 
-	updateSize() {
-	super.updateSize();
+	updateSize() 
+	{
+		super.updateSize();
 
-	this.tab.size.copy(this.size);
-	this.tab.updateInterface();
+		this.tab.size.copy(this.size);
+		this.tab.updateInterface();
 	}
 
 }

@@ -12,46 +12,46 @@ import {Pass} from "../Pass.js";
  */
 class HueSaturationPass extends ShaderPass
 {
-constructor(hue, saturation)
-{
-super(HueSaturationShader);
+	constructor(hue, saturation)
+	{
+		super(HueSaturationShader);
 
-this.type = "HueSaturation";
+		this.type = "HueSaturation";
 
-Object.defineProperties(this,
+		Object.defineProperties(this,
+			{
+				hue:
 {
-hue:
-{
-get: function() {return this.uniforms["hue"].value;},
-set: function(value) {this.uniforms["hue"].value = value;}
+	get: function() {return this.uniforms["hue"].value;},
+	set: function(value) {this.uniforms["hue"].value = value;}
 },
 
-saturation:
+				saturation:
 {
-get: function() {return this.uniforms["saturation"].value;},
-set: function(value) {this.uniforms["saturation"].value = value;}
+	get: function() {return this.uniforms["saturation"].value;},
+	set: function(value) {this.uniforms["saturation"].value = value;}
 }
-});
+			});
 
-this.hue = hue !== undefined ? hue : 0;
-this.saturation = saturation !== undefined ? saturation : 0;
-}
+		this.hue = hue !== undefined ? hue : 0;
+		this.saturation = saturation !== undefined ? saturation : 0;
+	}
 
-/**
- * Serialize pass to json.
- *
- * @method toJSON
- * @param {Object} meta Metadata object.
- */
-toJSON(meta)
-{
-var data = Pass.prototype.toJSON.call(this, meta);
+	/**
+	 * Serialize pass to json.
+	 *
+	 * @method toJSON
+	 * @param {Object} meta Metadata object.
+	 */
+	toJSON(meta)
+	{
+		var data = Pass.prototype.toJSON.call(this, meta);
 
-data.hue = this.hue;
-data.saturation = this.saturation;
+		data.hue = this.hue;
+		data.saturation = this.saturation;
 
-return data;
-}
+		return data;
+	}
 }
 
 export {HueSaturationPass};

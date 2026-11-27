@@ -4,52 +4,55 @@ import {Editor} from "../../../Editor.js";
 import {DropdownList} from "../../../components/input/DropdownList.js";
 import {TextureEditor} from "./TextureEditor.js";
 
-class CanvasTextureEditor extends TextureEditor {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index);
-
-	var self = this;
-
-	// Width
-	this.form.addText(Locale.width);
-	this.width = new DropdownList(this.form);
-	this.width.size.set(120, 18);
-	this.width.setOnChange(function()
+class CanvasTextureEditor extends TextureEditor 
+{
+	constructor(parent, closeable, container, index) 
 	{
-		Editor.addAction(new ChangeAction(self.texture, "width", self.width.getValue()));
-		self.texture.updateSize();
-		self.updatePreview();
-	});
-	this.form.add(this.width);
-	this.form.nextRow();
+		super(parent, closeable, container, index);
 
-	// Height
-	this.form.addText(Locale.height);
-	this.height = new DropdownList(this.form);
-	this.height.size.set(120, 18);
-	this.height.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.texture, "height", self.height.getValue()));
-		self.texture.updateSize();
-		self.updatePreview();
-	});
-	this.form.add(this.height);
-	this.form.nextRow();
+		var self = this;
 
-	// Size options
-	for (var i = 3; i < 13; i++)
-	{
-		var size = Math.pow(2, i);
-		this.width.addValue(size, size);
-		this.height.addValue(size, size);
+		// Width
+		this.form.addText(Locale.width);
+		this.width = new DropdownList(this.form);
+		this.width.size.set(120, 18);
+		this.width.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.texture, "width", self.width.getValue()));
+			self.texture.updateSize();
+			self.updatePreview();
+		});
+		this.form.add(this.width);
+		this.form.nextRow();
+
+		// Height
+		this.form.addText(Locale.height);
+		this.height = new DropdownList(this.form);
+		this.height.size.set(120, 18);
+		this.height.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.texture, "height", self.height.getValue()));
+			self.texture.updateSize();
+			self.updatePreview();
+		});
+		this.form.add(this.height);
+		this.form.nextRow();
+
+		// Size options
+		for (var i = 3; i < 13; i++)
+		{
+			var size = Math.pow(2, i);
+			this.width.addValue(size, size);
+			this.height.addValue(size, size);
+		}
 	}
-	}
 
-	attach(texture) {
-	super.attach(texture);
+	attach(texture) 
+	{
+		super.attach(texture);
 
-	this.width.setValue(this.texture.width);
-	this.height.setValue(this.texture.height);
+		this.width.setValue(this.texture.width);
+		this.height.setValue(this.texture.height);
 	}
 
 }

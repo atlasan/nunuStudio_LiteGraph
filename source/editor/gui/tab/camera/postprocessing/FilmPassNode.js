@@ -5,61 +5,64 @@ import {NumberBox} from "../../../../components/input/NumberBox.js";
 import {CheckBox} from "../../../../components/input/CheckBox.js";
 import {PassNode} from "./PassNode.js";
 
-class FilmPassNode extends PassNode {
-	constructor(parent) {
-	super(parent, "Film");
-
-	var self = this;
-
-	this.addText("Grayscale");
-	this.grayscale = new CheckBox(this);
-	this.grayscale.size.set(18, 18);
-	this.grayscale.setOnChange(function()
+class FilmPassNode extends PassNode 
+{
+	constructor(parent) 
 	{
-		Editor.addAction(new ChangeAction(self.pass, "grayscale", self.grayscale.getValue()));
-	});
-	this.add(this.grayscale);
-	this.nextRow();
+		super(parent, "Film");
 
-	this.addText("Noise");
-	this.noiseIntensity = new NumberBox(this);
-	this.noiseIntensity.size.set(60, 18);
-	this.noiseIntensity.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "noiseIntensity", self.noiseIntensity.getValue()));
-	});
-	this.add(this.noiseIntensity);
-	this.nextRow();
+		var self = this;
 
-	this.addText(Locale.intensity);
-	this.scanlinesIntensity = new NumberBox(this);
-	this.scanlinesIntensity.size.set(60, 18);
-	this.scanlinesIntensity.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "scanlinesIntensity", self.scanlinesIntensity.getValue()));
-	});
-	this.add(this.scanlinesIntensity);
-	this.nextRow();
+		this.addText("Grayscale");
+		this.grayscale = new CheckBox(this);
+		this.grayscale.size.set(18, 18);
+		this.grayscale.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "grayscale", self.grayscale.getValue()));
+		});
+		this.add(this.grayscale);
+		this.nextRow();
 
-	this.addText("Scanlines");
-	this.scanlinesCount = new NumberBox(this);
-	this.scanlinesCount.size.set(60, 18);
-	this.scanlinesCount.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "scanlinesCount", self.scanlinesCount.getValue()));
-	});
-	this.add(this.scanlinesCount);
-	this.nextRow();
+		this.addText("Noise");
+		this.noiseIntensity = new NumberBox(this);
+		this.noiseIntensity.size.set(60, 18);
+		this.noiseIntensity.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "noiseIntensity", self.noiseIntensity.getValue()));
+		});
+		this.add(this.noiseIntensity);
+		this.nextRow();
+
+		this.addText(Locale.intensity);
+		this.scanlinesIntensity = new NumberBox(this);
+		this.scanlinesIntensity.size.set(60, 18);
+		this.scanlinesIntensity.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "scanlinesIntensity", self.scanlinesIntensity.getValue()));
+		});
+		this.add(this.scanlinesIntensity);
+		this.nextRow();
+
+		this.addText("Scanlines");
+		this.scanlinesCount = new NumberBox(this);
+		this.scanlinesCount.size.set(60, 18);
+		this.scanlinesCount.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "scanlinesCount", self.scanlinesCount.getValue()));
+		});
+		this.add(this.scanlinesCount);
+		this.nextRow();
 	}
 
 
-	setPass(pass) {
-	super.setPass(pass);
+	setPass(pass) 
+	{
+		super.setPass(pass);
 
-	this.grayscale.setValue(pass.grayscale);
-	this.noiseIntensity.setValue(pass.noiseIntensity);
-	this.scanlinesIntensity.setValue(pass.scanlinesIntensity);
-	this.scanlinesCount.setValue(pass.scanlinesCount);
+		this.grayscale.setValue(pass.grayscale);
+		this.noiseIntensity.setValue(pass.noiseIntensity);
+		this.scanlinesIntensity.setValue(pass.scanlinesIntensity);
+		this.scanlinesCount.setValue(pass.scanlinesCount);
 	}
 
 }

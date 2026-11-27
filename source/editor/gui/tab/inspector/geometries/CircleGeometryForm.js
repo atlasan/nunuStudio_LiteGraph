@@ -5,80 +5,84 @@ import {Editor} from "../../../../Editor.js";
 import {NumberBox} from "../../../../components/input/NumberBox.js";
 import {CheckBox} from "../../../../components/input/CheckBox.js";
 
-class CircleGeometryForm {
-	constructor(form, object) {
-	this.form = form;
-	this.object = object;
-
-	var self = this;
-
-	var updateGeometry = function()
+class CircleGeometryForm 
+{
+	constructor(form, object) 
 	{
-		self.updateGeometry();
-	};
+		this.form = form;
+		this.object = object;
 
-	this.form.addText(Locale.circle);
-	this.form.nextRow();
+		var self = this;
 
-	// Radius
-	this.form.addText(Locale.radius);
-	this.radius = new NumberBox(this.form);
-	this.radius.size.set(60, 18);
-	this.radius.setStep(0.1);
-	this.radius.setRange(0, Number.MAX_SAFE_INTEGER);
-	this.radius.setOnChange(updateGeometry);
-	this.form.add(this.radius);
-	this.form.nextRow();
+		var updateGeometry = function()
+		{
+			self.updateGeometry();
+		};
 
-	// Segments
-	this.form.addText(Locale.segments);
-	this.segments = new NumberBox(this.form);
-	this.segments.size.set(60, 18);
-	this.segments.setStep(1.0);
-	this.segments.setRange(3, Number.MAX_SAFE_INTEGER);
-	this.segments.setOnChange(updateGeometry);
-	this.form.add(this.segments);
-	this.form.nextRow();
+		this.form.addText(Locale.circle);
+		this.form.nextRow();
 
-	// Theta start
-	this.form.addText(Locale.thetaStart);
-	this.thetaStart = new NumberBox(this.form);
-	this.thetaStart.size.set(60, 18);
-	this.thetaStart.setStep(0.1);
-	this.thetaStart.setOnChange(updateGeometry);
-	this.form.add(this.thetaStart);
-	this.form.nextRow();
+		// Radius
+		this.form.addText(Locale.radius);
+		this.radius = new NumberBox(this.form);
+		this.radius.size.set(60, 18);
+		this.radius.setStep(0.1);
+		this.radius.setRange(0, Number.MAX_SAFE_INTEGER);
+		this.radius.setOnChange(updateGeometry);
+		this.form.add(this.radius);
+		this.form.nextRow();
 
-	// Theta length
-	this.form.addText(Locale.thetaLength);
-	this.thetaLength = new NumberBox(this.form);
-	this.thetaLength.size.set(60, 18);
-	this.thetaLength.setStep(0.1);
-	this.thetaLength.setOnChange(updateGeometry);
-	this.form.add(this.thetaLength);
-	this.form.nextRow();
+		// Segments
+		this.form.addText(Locale.segments);
+		this.segments = new NumberBox(this.form);
+		this.segments.size.set(60, 18);
+		this.segments.setStep(1.0);
+		this.segments.setRange(3, Number.MAX_SAFE_INTEGER);
+		this.segments.setOnChange(updateGeometry);
+		this.form.add(this.segments);
+		this.form.nextRow();
 
-	// Buffer
-	this.buffer = new CheckBox(this.form);
-	this.form.addText(Locale.buffered);
-	this.buffer.size.set(18, 18);
-	this.buffer.setOnChange(updateGeometry);
-	this.form.add(this.buffer);
-	this.form.nextRow();
+		// Theta start
+		this.form.addText(Locale.thetaStart);
+		this.thetaStart = new NumberBox(this.form);
+		this.thetaStart.size.set(60, 18);
+		this.thetaStart.setStep(0.1);
+		this.thetaStart.setOnChange(updateGeometry);
+		this.form.add(this.thetaStart);
+		this.form.nextRow();
+
+		// Theta length
+		this.form.addText(Locale.thetaLength);
+		this.thetaLength = new NumberBox(this.form);
+		this.thetaLength.size.set(60, 18);
+		this.thetaLength.setStep(0.1);
+		this.thetaLength.setOnChange(updateGeometry);
+		this.form.add(this.thetaLength);
+		this.form.nextRow();
+
+		// Buffer
+		this.buffer = new CheckBox(this.form);
+		this.form.addText(Locale.buffered);
+		this.buffer.size.set(18, 18);
+		this.buffer.setOnChange(updateGeometry);
+		this.form.add(this.buffer);
+		this.form.nextRow();
 	}
 
-	updateGeometry() {
-	this.object.geometry.dispose();
-	var GeometryConstructor = this.buffer.getValue() ? CircleGeometry : CircleGeometry;
-	Editor.addAction(new ChangeAction(this.object, "geometry", new GeometryConstructor(this.radius.getValue(), this.segments.getValue(), this.thetaStart.getValue(), this.thetaLength.getValue())));
+	updateGeometry() 
+	{
+		this.object.geometry.dispose();
+		var GeometryConstructor = this.buffer.getValue() ? CircleGeometry : CircleGeometry;
+		Editor.addAction(new ChangeAction(this.object, "geometry", new GeometryConstructor(this.radius.getValue(), this.segments.getValue(), this.thetaStart.getValue(), this.thetaLength.getValue())));
 	}
 
-	updateValues() {
-	this.radius.setValue(this.object.geometry.parameters.radius || 1);
-	this.segments.setValue(this.object.geometry.parameters.segments || 32);
-	this.thetaStart.setValue(this.object.geometry.parameters.thetaStart || 0);
-	this.thetaLength.setValue(this.object.geometry.parameters.thetaLength || Math.PI * 2);
-	this.buffer.setValue(this.object.geometry instanceof BufferGeometry);
+	updateValues() 
+	{
+		this.radius.setValue(this.object.geometry.parameters.radius || 1);
+		this.segments.setValue(this.object.geometry.parameters.segments || 32);
+		this.thetaStart.setValue(this.object.geometry.parameters.thetaStart || 0);
+		this.thetaLength.setValue(this.object.geometry.parameters.thetaLength || Math.PI * 2);
+		this.buffer.setValue(this.object.geometry instanceof BufferGeometry);
 	}
 
 }

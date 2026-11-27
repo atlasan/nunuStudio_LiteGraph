@@ -4,33 +4,36 @@ import {Editor} from "../../../../Editor.js";
 import {ColorChooser} from "../../../../components/input/ColorChooser.js";
 import {PassNode} from "./PassNode.js";
 
-class ColorifyPassNode extends PassNode {
-	constructor(parent) {
-	super(parent, "Colorify");
-
-	var self = this;
-
-	this.addText(Locale.color);
-	this.color = new ColorChooser(this);
-	this.color.size.set(80, 18);
-	this.color.setOnChange(function()
+class ColorifyPassNode extends PassNode 
+{
+	constructor(parent) 
 	{
-		var value = self.color.getValue();
+		super(parent, "Colorify");
 
-		var color = self.pass.color.clone();
-		color.setRGB(value.r, value.g, value.b);
+		var self = this;
 
-		Editor.addAction(new ChangeAction(self.pass, "color", color));
-	});
-	this.add(this.color);
-	this.nextRow();
+		this.addText(Locale.color);
+		this.color = new ColorChooser(this);
+		this.color.size.set(80, 18);
+		this.color.setOnChange(function()
+		{
+			var value = self.color.getValue();
+
+			var color = self.pass.color.clone();
+			color.setRGB(value.r, value.g, value.b);
+
+			Editor.addAction(new ChangeAction(self.pass, "color", color));
+		});
+		this.add(this.color);
+		this.nextRow();
 	}
 
 
-	setPass(pass) {
-	super.setPass(pass);
+	setPass(pass) 
+	{
+		super.setPass(pass);
 
-	this.color.setValue(this.pass.color.r, this.pass.color.g, this.pass.color.b);
+		this.color.setValue(this.pass.color.r, this.pass.color.g, this.pass.color.b);
 	}
 
 }

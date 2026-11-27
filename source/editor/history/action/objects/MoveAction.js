@@ -15,74 +15,79 @@ import {Editor} from "../../../Editor.js";
  * @param {Object3D} newParent New parent of the object.
  * @param {number} newIndex Index to insert the object.
  */
-class MoveAction extends Action {
-	constructor(object, newParent, newIndex, keepGlobalPose) {
-	super();
+class MoveAction extends Action 
+{
+	constructor(object, newParent, newIndex, keepGlobalPose) 
+	{
+		super();
 	
-	this.object = object;
+		this.object = object;
 
-	this.oldParent = object.parent;
-	this.oldIndex = this.oldParent.children.indexOf(this.object);
+		this.oldParent = object.parent;
+		this.oldIndex = this.oldParent.children.indexOf(this.object);
 
-	this.newParent = newParent;
-	this.newIndex = newIndex;
+		this.newParent = newParent;
+		this.newIndex = newIndex;
 
-	this.keepGlobalPose = keepGlobalPose !== undefined ? keepGlobalPose : Editor.settings.editor.keepTransformMove;
+		this.keepGlobalPose = keepGlobalPose !== undefined ? keepGlobalPose : Editor.settings.editor.keepTransformMove;
 	}
 
-	apply() {
-	this.oldParent.remove(this.object);
+	apply() 
+	{
+		this.oldParent.remove(this.object);
 	
-	if (this.keepGlobalPose)
+		if (this.keepGlobalPose)
+		{
+			this.inverseTransform(this.oldParent, this.newParent);
+		}
+
+		if (this.newIndex === undefined)
+		{
+			this.newParent.add(this.object);
+			this.newIndex = this.newParent.children.indexOf(this.object);
+		}
+		else
+		{
+			var children = this.newParent.children;
+			children.splice(this.newIndex, 0, this.object);
+			this.object.parent = this.newParent;
+		}
+
+		MoveAction.updateGUI(this.object, this.oldParent, this.newParent, this.newIndex);
+	}
+
+	revert() 
 	{
-		this.inverseTransform(this.oldParent, this.newParent);
+		this.newParent.remove(this.object);
+
+		if (this.keepGlobalPose)
+		{
+			this.inverseTransform(this.newParent, this.oldParent);
+		}
+
+		var children = this.oldParent.children;
+		children.splice(this.oldIndex, 0, this.object);
+		this.object.parent = this.oldParent;
+
+		MoveAction.updateGUI(this.object, this.newParent, this.oldParent, this.oldIndex);
 	}
 
-	if (this.newIndex === undefined)
+	inverseTransform(oldParent, newParent) 
 	{
-		this.newParent.add(this.object);
-		this.newIndex = this.newParent.children.indexOf(this.object);
-	}
-	else
-	{
-		var children = this.newParent.children;
-		children.splice(this.newIndex, 0, this.object);
-		this.object.parent = this.newParent;
-	}
+		var matrix = this.object.matrix;
 
-	MoveAction.updateGUI(this.object, this.oldParent, this.newParent, this.newIndex);
-	}
+		// Apply world matrix to object (calculate transform as if it was on the root)
+		matrix.multiplyMatrices(oldParent.matrixWorld, matrix);
 
-	revert() {
-	this.newParent.remove(this.object);
+		// Get inverse of the world matrix of the new parent
+		var inverse = new Matrix4();
+		inverse.copy(newParent.matrixWorld).invert();
 
-	if (this.keepGlobalPose)
-	{
-		this.inverseTransform(this.newParent, this.oldParent);
-	}
+		// Apply inverse transform to the object matrix
+		matrix.multiplyMatrices(inverse, matrix);
 
-	var children = this.oldParent.children;
-	children.splice(this.oldIndex, 0, this.object);
-	this.object.parent = this.oldParent;
-
-	MoveAction.updateGUI(this.object, this.newParent, this.oldParent, this.oldIndex);
-	}
-
-	inverseTransform(oldParent, newParent) {
-	var matrix = this.object.matrix;
-
-	// Apply world matrix to object (calculate transform as if it was on the root)
-	matrix.multiplyMatrices(oldParent.matrixWorld, matrix);
-
-	// Get inverse of the world matrix of the new parent
-	var inverse = new Matrix4();
-	inverse.copy(newParent.matrixWorld).invert();
-
-	// Apply inverse transform to the object matrix
-	matrix.multiplyMatrices(inverse, matrix);
-
-	// Decompose matrix into components
-	matrix.decompose(this.object.position, this.object.quaternion, this.object.scale);
+		// Decompose matrix into components
+		matrix.decompose(this.object.position, this.object.quaternion, this.object.scale);
 	}
 
 }

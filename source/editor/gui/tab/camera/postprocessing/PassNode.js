@@ -5,112 +5,115 @@ import {TableForm} from "../../../../components/TableForm.js";
 import {CheckBox} from "../../../../components/input/CheckBox.js";
 import {ButtonText} from "../../../../components/buttons/ButtonText.js";
 
-class PassNode extends TableForm {
-	constructor(parent, name) {
-	super(parent);
+class PassNode extends TableForm 
+{
+	constructor(parent, name) 
+	{
+		super(parent);
 
-	this.element.style.overflow = "hidden"; 
+		this.element.style.overflow = "hidden"; 
 	
-	this.defaultTextWidth = 60;
-	this.position.set(10, 5);
-	this.spacing.set(5, 5);
+		this.defaultTextWidth = 60;
+		this.position.set(10, 5);
+		this.spacing.set(5, 5);
 
-	// Pass
-	this.pass = null;
-	this.composer = null;
-	this.editor = null;
+		// Pass
+		this.pass = null;
+		this.composer = null;
+		this.editor = null;
 
-	// Render pass
-	this.addText(name !== undefined ? name : "Pass Node");
-	this.nextRow();
+		// Render pass
+		this.addText(name !== undefined ? name : "Pass Node");
+		this.nextRow();
 
-	var self = this;
+		var self = this;
 
-	// Enabled
-	this.addText(Locale.enabled);
-	this.enabled = new CheckBox(this);
-	this.enabled.size.set(18, 18);
-	this.enabled.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "enabled", self.enabled.getValue()));
-	});
-	this.add(this.enabled);
-	this.nextRow();
+		// Enabled
+		this.addText(Locale.enabled);
+		this.enabled = new CheckBox(this);
+		this.enabled.size.set(18, 18);
+		this.enabled.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "enabled", self.enabled.getValue()));
+		});
+		this.add(this.enabled);
+		this.nextRow();
 
-	// Clear
-	this.addText(Locale.clear);
-	this.clear = new CheckBox(this);
-	this.clear.size.set(18, 18);
-	this.clear.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "clear", self.clear.getValue()));
-	});
-	this.add(this.clear);
-	this.nextRow();
+		// Clear
+		this.addText(Locale.clear);
+		this.clear = new CheckBox(this);
+		this.clear.size.set(18, 18);
+		this.clear.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "clear", self.clear.getValue()));
+		});
+		this.add(this.clear);
+		this.nextRow();
 
-	// Render to screen
-	this.addText("Output");
-	this.renderToScreen = new CheckBox(this);
-	this.renderToScreen.size.set(18, 18);
-	this.renderToScreen.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "renderToScreen", self.renderToScreen.getValue()));
-	});
-	this.add(this.renderToScreen);
-	this.nextRow();
+		// Render to screen
+		this.addText("Output");
+		this.renderToScreen = new CheckBox(this);
+		this.renderToScreen.size.set(18, 18);
+		this.renderToScreen.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "renderToScreen", self.renderToScreen.getValue()));
+		});
+		this.add(this.renderToScreen);
+		this.nextRow();
 
-	// Up
-	this.up = new ButtonText(this);
-	this.up.size.set(50, 18);
-	this.up.setText("Up");
-	this.up.setOnClick(function()
-	{
-		self.composer.moveBack(self.pass);
-		self.editor.updatePostNodes();
-	});
+		// Up
+		this.up = new ButtonText(this);
+		this.up.size.set(50, 18);
+		this.up.setText("Up");
+		this.up.setOnClick(function()
+		{
+			self.composer.moveBack(self.pass);
+			self.editor.updatePostNodes();
+		});
 
-	// Down
-	this.down = new ButtonText(this);
-	this.down.size.set(50, 18);
-	this.down.setText("Down");
-	this.down.setOnClick(function()
-	{
-		self.composer.moveForward(self.pass);
-		self.editor.updatePostNodes();
-	});
+		// Down
+		this.down = new ButtonText(this);
+		this.down.size.set(50, 18);
+		this.down.setText("Down");
+		this.down.setOnClick(function()
+		{
+			self.composer.moveForward(self.pass);
+			self.editor.updatePostNodes();
+		});
 
-	// Delete
-	this.delete = new ButtonText(this);
-	this.delete.size.set(70, 18);
-	this.delete.setText(Locale.delete);
-	this.delete.setOnClick(function()
-	{
-		self.composer.removePass(self.pass);
-		self.editor.updatePostNodes();
-	});
+		// Delete
+		this.delete = new ButtonText(this);
+		this.delete.size.set(70, 18);
+		this.delete.setText(Locale.delete);
+		this.delete.setOnClick(function()
+		{
+			self.composer.removePass(self.pass);
+			self.editor.updatePostNodes();
+		});
 	}
 
 
+	setPass(pass) 
+	{
+		this.pass = pass;
 
-
-	setPass(pass) {
-	this.pass = pass;
-
-	this.enabled.setValue(pass.enabled);
-	this.clear.setValue(pass.clear);
-	this.renderToScreen.setValue(pass.renderToScreen);
+		this.enabled.setValue(pass.enabled);
+		this.clear.setValue(pass.clear);
+		this.renderToScreen.setValue(pass.renderToScreen);
 	}
 
-	setComposer(composer) {
-	this.composer = composer;
+	setComposer(composer) 
+	{
+		this.composer = composer;
 	}
 
-	setEditor(editor) {
-	this.editor = editor;
+	setEditor(editor) 
+	{
+		this.editor = editor;
 
-	this.add(this.up);
-	this.add(this.down);
-	this.add(this.delete);
+		this.add(this.up);
+		this.add(this.down);
+		this.add(this.delete);
 	}
 
 }

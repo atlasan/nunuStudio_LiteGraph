@@ -14,62 +14,62 @@ import {DOMUtils} from "../../../../editor/utils/DOMUtils.js";
  */
 class BaseNode extends Node
 {
-constructor()
-{
-super();
+	constructor()
+	{
+		super();
 
-this.fillStyle = new ColorStyle(DOMUtils.getCSSVariable("--bar-color"));
+		this.fillStyle = new ColorStyle(DOMUtils.getCSSVariable("--bar-color"));
 
-this.strokeStyle = new ColorStyle(DOMUtils.getCSSVariable("--color-light"));
+		this.strokeStyle = new ColorStyle(DOMUtils.getCSSVariable("--color-light"));
 
-this.onPointerEnter = (pointer, viewport) =>
-{
-this.fillStyle = new ColorStyle(DOMUtils.getCSSVariable("--panel-color"));
-};
+		this.onPointerEnter = (pointer, viewport) =>
+		{
+			this.fillStyle = new ColorStyle(DOMUtils.getCSSVariable("--panel-color"));
+		};
 
-this.onPointerLeave = (pointer, viewport) =>
-{
-this.fillStyle = new ColorStyle(DOMUtils.getCSSVariable("--bar-color"));
-};
+		this.onPointerLeave = (pointer, viewport) =>
+		{
+			this.fillStyle = new ColorStyle(DOMUtils.getCSSVariable("--bar-color"));
+		};
 
 
-/**
- * Button used to destroy the node and remove it from the graph.
- * 
- * @attribute destroyButton
- * @type {Circle} 
- */
-this.destroyButton = new Circle();
-this.destroyButton.serializable = false;
-this.destroyButton.layer = 2;
-this.destroyButton.radius = 8;
-this.destroyButton.onButtonDown = () => 
-{
-this.destroy();
-};
+		/**
+		 * Button used to destroy the node and remove it from the graph.
+		 * 
+		 * @attribute destroyButton
+		 * @type {Circle} 
+		 */
+		this.destroyButton = new Circle();
+		this.destroyButton.serializable = false;
+		this.destroyButton.layer = 2;
+		this.destroyButton.radius = 8;
+		this.destroyButton.onButtonDown = () => 
+		{
+			this.destroy();
+		};
 
-this.destroyButton.draw = function(context, viewport, canvas) 
-{
-Circle.prototype.draw.call(this, context, viewport, canvas);
+		this.destroyButton.draw = function(context, viewport, canvas) 
+		{
+			Circle.prototype.draw.call(this, context, viewport, canvas);
 
-const size = this.radius * 0.5;
-context.beginPath();
-context.moveTo(-size, -size);
-context.lineTo(size, size);
-context.moveTo(-size, size);
-context.lineTo(size, -size);
-context.stroke();
-};
+			const size = this.radius * 0.5;
+			context.beginPath();
+			context.moveTo(-size, -size);
+			context.lineTo(size, size);
+			context.moveTo(-size, size);
+			context.lineTo(size, -size);
+			context.stroke();
+		};
 
-this.add(this.destroyButton);
-}
+		this.add(this.destroyButton);
+	}
 
-onUpdate()
-{
-this.destroyButton.position.set(this.box.max.x, this.box.min.y);
+	onUpdate()
+	{
+		this.destroyButton.position.set(this.box.max.x, this.box.min.y);
 
-super.onUpdate();
-}
+		super.onUpdate();
+	}
 }
 
 export {BaseNode};

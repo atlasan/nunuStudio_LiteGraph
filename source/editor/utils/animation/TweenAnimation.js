@@ -13,104 +13,108 @@ import {TWEEN} from "@tweenjs/tween.js";
  * @param {number} time Time of the animation in milliseconds.
  * @param {Function} onUpdate Callback function that runs after updating the value.
  */
-class TweenAnimation {
-	constructor(object, attribute, target, time, onUpdate) {
-	var isVectorial = TweenAnimation.isVetorial(object[attribute]);
-	var self = this;
-
-	/**
-	 * Object that contains the attribute to be interpolated.
-	 *
-	 * @attribute object
-	 * @type {Object}
-	 */
-	this.object = object;
-
-	/**
-	 * Name of the attribute.
-	 *
-	 * @attribute attribute
-	 * @type {string}
-	 */
-	this.attribute = attribute;
-
-	/**
-	 * Initial value.
-	 *
-	 * @attribute initial
-	 * @type {Object}
-	 */
-	this.initial = isVectorial ? object[attribute].clone() : {x: object[attribute]};
-
-	/**
-	 * Target value.
-	 *
-	 * @attribute target
-	 * @type {Object}
-	 */
-	this.target = isVectorial ? target : {x: target};
-
-	/**
-	 * Animation duration in milliseconds.
-	 *
-	 * @attribute time
-	 * @type {number}
-	 */
-	this.time = time;
-
-	/**
-	 * On update callback method.
-	 *
-	 * @attribute onUpdate
-	 * @type {Function}
-	 */
-	this.onUpdate = onUpdate !== undefined ? onUpdate : null;
-
-	/**
-	 * TWEEN object used to execute the animation.
-	 *
-	 * @attribute tween
-	 * @type {TWEEN.Tween}
-	 */
-	this.tween = new TWEEN.Tween(this.initial);
-	this.tween.to(this.target, this.time);
-	this.tween.easing(TWEEN.Easing.Cubic.InOut);
-	this.tween.onUpdate(function()
+class TweenAnimation 
+{
+	constructor(object, attribute, target, time, onUpdate) 
 	{
-		if (isVectorial)
-		{
-			object[attribute].copy(self.initial);
-		}
-		else
-		{
-			object[attribute] = self.initial.x;
-		}
+		var isVectorial = TweenAnimation.isVetorial(object[attribute]);
+		var self = this;
 
-		if (onUpdate !== undefined)
+		/**
+		 * Object that contains the attribute to be interpolated.
+		 *
+		 * @attribute object
+		 * @type {Object}
+		 */
+		this.object = object;
+
+		/**
+		 * Name of the attribute.
+		 *
+		 * @attribute attribute
+		 * @type {string}
+		 */
+		this.attribute = attribute;
+
+		/**
+		 * Initial value.
+		 *
+		 * @attribute initial
+		 * @type {Object}
+		 */
+		this.initial = isVectorial ? object[attribute].clone() : {x: object[attribute]};
+
+		/**
+		 * Target value.
+		 *
+		 * @attribute target
+		 * @type {Object}
+		 */
+		this.target = isVectorial ? target : {x: target};
+
+		/**
+		 * Animation duration in milliseconds.
+		 *
+		 * @attribute time
+		 * @type {number}
+		 */
+		this.time = time;
+
+		/**
+		 * On update callback method.
+		 *
+		 * @attribute onUpdate
+		 * @type {Function}
+		 */
+		this.onUpdate = onUpdate !== undefined ? onUpdate : null;
+
+		/**
+		 * TWEEN object used to execute the animation.
+		 *
+		 * @attribute tween
+		 * @type {TWEEN.Tween}
+		 */
+		this.tween = new TWEEN.Tween(this.initial);
+		this.tween.to(this.target, this.time);
+		this.tween.easing(TWEEN.Easing.Cubic.InOut);
+		this.tween.onUpdate(function()
 		{
-			onUpdate();
-		}
-	});
+			if (isVectorial)
+			{
+				object[attribute].copy(self.initial);
+			}
+			else
+			{
+				object[attribute] = self.initial.x;
+			}
+
+			if (onUpdate !== undefined)
+			{
+				onUpdate();
+			}
+		});
 	}
 
 
-/**
- * Set an on complete callback function, that is executed when the animation finishes.
- *
- * @method onComplete
- * @param {Function} callback
- */
-	onComplete(callback) {
-	this.tween.onComplete(callback);
+	/**
+	 * Set an on complete callback function, that is executed when the animation finishes.
+	 *
+	 * @method onComplete
+	 * @param {Function} callback
+	 */
+	onComplete(callback) 
+	{
+		this.tween.onComplete(callback);
 	}
 
-/**
- * Start the animation.
- *
- * @method start
- */
-	start() {
-	this.tween.start();
+	/**
+	 * Start the animation.
+	 *
+	 * @method start
+	 */
+	start() 
+	{
+		this.tween.start();
 	}
 
 }

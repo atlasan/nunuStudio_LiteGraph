@@ -10,43 +10,46 @@ import {ButtonText} from "../buttons/ButtonText.js";
  * @extends {ButtonText}
  * @param {Component} parent Parent element.
  */
-class ButtonMenu extends ButtonText {
-	constructor(parent) {
-	super(parent);
+class ButtonMenu extends ButtonText 
+{
+	constructor(parent) 
+	{
+		super(parent);
 
-	this.text.span.style.textIndent = "25px";
+		this.text.span.style.textIndent = "25px";
+
+		/**
+		 * Icon DOM element displayed on the left side of the button.
+		 *
+		 * @attribute icon
+		 * @type {Element}
+		 */
+		this.icon = null;
+	}
 
 	/**
-	 * Icon DOM element displayed on the left side of the button.
+	 * Set button icon image URL.
 	 *
-	 * @attribute icon
-	 * @type {Element}
+	 * Creates the element if it still doesnt exist.
+	 *
+	 * @method setIcon
+	 * @param {string} icon Image URL.
 	 */
-	this.icon = null;
-	}
-
-/**
- * Set button icon image URL.
- *
- * Creates the element if it still doesnt exist.
- *
- * @method setIcon
- * @param {string} icon Image URL.
- */
-	setIcon(icon) {
-	if (this.icon === null)
+	setIcon(icon) 
 	{
-		this.icon = document.createElement("img");
-		this.icon.style.position = "absolute";
-		this.icon.style.display = "block";
-		this.icon.style.left = "5px";
-		this.icon.style.top = "3px";
-		this.icon.style.width = "12px";
-		this.icon.style.height = "12px";
-		this.element.appendChild(this.icon);
-	}
+		if (this.icon === null)
+		{
+			this.icon = document.createElement("img");
+			this.icon.style.position = "absolute";
+			this.icon.style.display = "block";
+			this.icon.style.left = "5px";
+			this.icon.style.top = "3px";
+			this.icon.style.width = "12px";
+			this.icon.style.height = "12px";
+			this.element.appendChild(this.icon);
+		}
 	
-	this.icon.src = icon;
+		this.icon.src = icon;
 	}
 
 }

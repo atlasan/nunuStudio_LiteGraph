@@ -9,110 +9,119 @@ import {Component} from "../Component.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class NumberBox extends Component {
-	constructor(parent) {
-	super(parent, "input");
+class NumberBox extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "input");
+
+		/**
+		 * Indicates if the number box is storing a angle value.
+		 *
+		 * If the value is an angle is has to be converted to editor coordinates.
+		 *
+		 * @attribute isAngle
+		 * @type {boolean}
+		 */
+		this.isAngle = false;
+
+		this.element.type = "number";
+		this.element.step = "0.1";
+		this.element.style.backgroundColor = "var(--box-color)";
+		this.element.style.color = "var(--color-light)";
+		this.element.style.outline = "none";
+		this.element.style.borderStyle = "none";
+		this.element.style.boxSizing = "border-box";
+		this.element.style.textIndent = "4px";
+		this.element.style.borderRadius = "4px";
+		this.element.style.boxShadow = "none";
+		this.element.style.MozAppearance = "textfield";
+		this.element.style.webkitAppearance = "caret";
+		this.element.style.appearance = "textfield";
+	}
 
 	/**
-	 * Indicates if the number box is storing a angle value.
+	 * Set the disabled state of the element.
 	 *
-	 * If the value is an angle is has to be converted to editor coordinates.
-	 *
-	 * @attribute isAngle
-	 * @type {boolean}
+	 * @method setDisabled
+	 * @param {boolean} disabled
 	 */
-	this.isAngle = false;
-
-	this.element.type = "number";
-	this.element.step = "0.1";
-	this.element.style.backgroundColor = "var(--box-color)";
-	this.element.style.color = "var(--color-light)";
-	this.element.style.outline = "none";
-	this.element.style.borderStyle = "none";
-	this.element.style.boxSizing = "border-box";
-	this.element.style.textIndent = "4px";
-	this.element.style.borderRadius = "4px";
-	this.element.style.boxShadow = "none";
-	this.element.style.MozAppearance = "textfield";
-	this.element.style.webkitAppearance = "caret";
-	this.element.style.appearance = "textfield";
-	}
-
-/**
- * Set the disabled state of the element.
- *
- * @method setDisabled
- * @param {boolean} disabled
- */
-	setDisabled(disabled) {
-	this.element.disabled = disabled;
-	}
-
-/**
- * Set number range.
- *
- * @methos setRange
- * @param {number} min
- * @param {number} max
- */
-	setRange(min, max) {
-	this.element.min = String(min);
-	this.element.max = String(max);
-	}
-
-/**
- * Set number step.
- *
- * @method setStep
- * @param {number} value
- */
-	setStep(value) {
-	this.element.step = String(value);
-	}
-
-/**
- * Set onchange callback, called after changes.
- *
- * @method setOnChange
- * @param {Function} onChange
- */
-	setOnChange(onChange) {
-	this.element.onchange = onChange;
-	}
-
-/**
- * Set value stored in the input element.
- *
- * @method setValue
- * @param {number} value
- */
-	setValue(value) {
-	if (this.isAngle)
+	setDisabled(disabled) 
 	{
-		value = UnitConverter.convert(value, "r", Editor.settings.units.angle);
+		this.element.disabled = disabled;
 	}
 
-	this.element.value = value;
-	}
-
-/**
- * Get value stored in the input element.
- *
- * @method setValue
- * @return {Object} Value stored in the input element.
- */
-	getValue() {	
-	var value = Number.parseFloat(this.element.value);
-	if (this.isAngle)
+	/**
+	 * Set number range.
+	 *
+	 * @methos setRange
+	 * @param {number} min
+	 * @param {number} max
+	 */
+	setRange(min, max) 
 	{
-		value = UnitConverter.convert(value, Editor.settings.units.angle, "r");
+		this.element.min = String(min);
+		this.element.max = String(max);
 	}
 
-	return value;
+	/**
+	 * Set number step.
+	 *
+	 * @method setStep
+	 * @param {number} value
+	 */
+	setStep(value) 
+	{
+		this.element.step = String(value);
 	}
 
-	updateVisibility() {
-	this.element.style.visibility = this.visible ? "visible" : "hidden";
+	/**
+	 * Set onchange callback, called after changes.
+	 *
+	 * @method setOnChange
+	 * @param {Function} onChange
+	 */
+	setOnChange(onChange) 
+	{
+		this.element.onchange = onChange;
+	}
+
+	/**
+	 * Set value stored in the input element.
+	 *
+	 * @method setValue
+	 * @param {number} value
+	 */
+	setValue(value) 
+	{
+		if (this.isAngle)
+		{
+			value = UnitConverter.convert(value, "r", Editor.settings.units.angle);
+		}
+
+		this.element.value = value;
+	}
+
+	/**
+	 * Get value stored in the input element.
+	 *
+	 * @method setValue
+	 * @return {Object} Value stored in the input element.
+	 */
+	getValue() 
+	{	
+		var value = Number.parseFloat(this.element.value);
+		if (this.isAngle)
+		{
+			value = UnitConverter.convert(value, Editor.settings.units.angle, "r");
+		}
+
+		return value;
+	}
+
+	updateVisibility() 
+	{
+		this.element.style.visibility = this.visible ? "visible" : "hidden";
 	}
 
 }

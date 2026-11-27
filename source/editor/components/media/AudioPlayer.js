@@ -3,325 +3,337 @@ import {EventManager} from "../../../core/utils/EventManager.js";
 import {Global} from "../../Global.js";
 import {Component} from "../Component.js";
 
-class AudioPlayer extends Component {
-	constructor(parent) {
-	super(parent, "div");
-
-	this.element.style.overflow = "visible";
-
-	var self = this;
-
-	// WebAudio context
-	this.context = AudioContext.getContext();
-
-	// Timer
-	this.timer = document.createElement("div");
-	this.timer.style.position = "absolute";
-	this.timer.style.display = "flex";
-	this.timer.style.justifyContent = "center";
-	this.timer.style.alignItems = "center";
-	this.timer.style.width = "40px";
-	this.timer.style.height = "100%";
-	this.timer.style.right = "0px";
-	this.element.appendChild(this.timer);
-
-	// Text
-	this.timerText = document.createTextNode("00:00");
-	this.timer.appendChild(this.timerText);
-
-	// Button
-	this.button = document.createElement("button");
-	this.button.style.position = "absolute";
-	this.button.style.cursor = "pointer";
-	this.button.style.background = "transparent";
-	this.button.style.border = "none";
-	this.button.style.outline = "none";
-	this.element.appendChild(this.button);
-	this.button.onclick = function()
+class AudioPlayer extends Component 
+{
+	constructor(parent) 
 	{
-		self.toggle();
-	};
+		super(parent, "div");
 
-	// Icon
-	this.icon = document.createElement("img");
-	this.icon.style.position = "absolute";
-	this.icon.style.left = "15%";
-	this.icon.style.top = "15%";
-	this.icon.style.width = "70%";
-	this.icon.style.height = "70%";
-	this.icon.src = Global.FILE_PATH + "icons/misc/play.png";
-	this.button.appendChild(this.icon);
+		this.element.style.overflow = "visible";
 
-	// Track
-	this.track = document.createElement("div");
-	this.track.style.position = "absolute";
-	this.track.style.backgroundColor = "var(--bar-color)";
-	this.track.style.cursor = "pointer";
-	this.element.appendChild(this.track);
+		var self = this;
 
-	// Progress
-	this.progress = document.createElement("div");
-	this.progress.style.pointerEvents = "none";
-	this.progress.style.position = "absolute";
-	this.progress.style.backgroundColor = "var(--button-over-color)";
-	this.progress.style.height = "100%";
-	this.track.appendChild(this.progress);
+		// WebAudio context
+		this.context = AudioContext.getContext();
 
-	// Scrubber
-	this.scrubber = document.createElement("div");
-	this.scrubber.style.position = "absolute";
-	this.scrubber.style.backgroundColor = "var(--color-light)";
-	this.scrubber.style.cursor = "pointer";
-	this.scrubber.style.width = "6px";
-	this.track.appendChild(this.scrubber);
+		// Timer
+		this.timer = document.createElement("div");
+		this.timer.style.position = "absolute";
+		this.timer.style.display = "flex";
+		this.timer.style.justifyContent = "center";
+		this.timer.style.alignItems = "center";
+		this.timer.style.width = "40px";
+		this.timer.style.height = "100%";
+		this.timer.style.right = "0px";
+		this.element.appendChild(this.timer);
 
-	// Audio source and buffer
-	this.buffer = null;
-	this.source = null;
+		// Text
+		this.timerText = document.createTextNode("00:00");
+		this.timer.appendChild(this.timerText);
 
-	// Playback control
-	this.time = 0;
-	this.startTime = 0;
-	this.playing = false;
-	this.loop = false;
-
-	// Drag control
-	this.seekStart = 0;
-	this.seekTime = 0;
-	this.seekProgress = 0;
-	this.dragging = false;
-
-	// Event manager
-	this.manager = new EventManager();
-	this.manager.add(window, "mousemove", function(event)
-	{
-		self.seekProgress = (event.pageX - self.seekStart) / self.track.offsetWidth;
-		self.seekProgress += self.seekTime / self.buffer.duration;
-
-		if (self.seekProgress < 0)
+		// Button
+		this.button = document.createElement("button");
+		this.button.style.position = "absolute";
+		this.button.style.cursor = "pointer";
+		this.button.style.background = "transparent";
+		this.button.style.border = "none";
+		this.button.style.outline = "none";
+		this.element.appendChild(this.button);
+		this.button.onclick = function()
 		{
-			self.seekProgress = 0;
-		}
-		else if (self.seekProgress > 1)
-		{
-			self.seekProgress = 1;
-		}
+			self.toggle();
+		};
 
-		self.progress.style.width = self.seekProgress * 100 + "%";
-		self.scrubber.style.left = self.progress.style.width;
-	});
-
-	this.manager.add(window, "mouseup", function()
-	{	
-		self.dragging = false;
-		self.time = self.seekProgress * self.buffer.duration;
-
-		if (self.playing)
-		{
-			self.play(self.time);
-		}
-
-		self.manager.destroy();
-	});
-
-	this.scrubber.onmousedown = function(event)
-	{
-		self.seekStart = event.pageX;
-		self.seekTime = self.time;
-		self.dragging = true;
-		self.manager.create();
-
-		event.stopPropagation();
-	};
-
-	this.track.onmousedown = function(event)
-	{
-		var progress = event.layerX / this.offsetWidth;
-
-		self.seekProgress = progress;
-		self.time = progress * self.buffer.duration;
-
-		self.progress.style.width = self.seekProgress * 100 + "%";
-		self.scrubber.style.left = self.progress.style.width;
-
-		if (self.playing)
-		{
-			self.play(self.time);
-		}
-
-		self.scrubber.onmousedown(event);
-	};
-
-	// Update elements
-	function draw()
-	{
-		if (self.playing)
-		{
-			self.time = self.context.currentTime - self.startTime;
-
-			var seconds = Math.round(self.time % 60);
-			if (seconds < 10)
-			{
-				seconds = "0" + seconds;
-			}
-
-			var minutes = Math.round(self.time / 60);
-			if (minutes < 10)
-			{
-				minutes = "0" + minutes;
-			}
-			
-			self.timerText.data = minutes + ":" + seconds;
-
-			if (self.buffer !== null)
-			{
-				if (self.time >= self.buffer.duration)
-				{
-					self.stop();
-				}
-
-				var progress = self.time / self.buffer.duration * 100;
-
-				if (!self.dragging)
-				{
-					self.progress.style.width = progress + "%";
-					self.scrubber.style.left = progress + "%";
-				}
-			}
-		}
-
-		if (self.parent !== null)
-		{
-			requestAnimationFrame(draw);
-		}
-	}
-	draw();
-	}
-
-// Decode audio
-	setAudioBuffer(buffer, onLoad) {
-	var self = this;
-
-	this.context.decodeAudioData(buffer.slice(0), function(buffer)
-	{
-		self.buffer = buffer;
-
-		if (onLoad !== undefined)
-		{
-			onLoad(buffer);
-		}
-	}.bind(this));
-	}
-
-// Connect audio source
-	connect() {
-	if (this.playing)
-	{
-		this.pause();
-	}
-
-	this.source = this.context.createBufferSource();
-	this.source.buffer = this.buffer;
-	this.source.connect(this.context.destination);
-	}
-
-// Disconnect source
-	disconnect() {
-	this.source.disconnect();
-	}
-
-// Play audio
-	play(time) {
-	this.connect();
-
-	if (time !== undefined)
-	{
-		this.time = time;
-	}
-
-	this.source.loop = this.loop;
-	this.startTime = this.context.currentTime - this.time;
-	this.source.start(this.context.currentTime, this.time);
-	this.playing = true;
-
-	this.icon.src = Global.FILE_PATH + "icons/misc/pause.png";
-	}
-
-// Pause audio
-	pause() {
-	if (this.playing)
-	{
-		this.playing = false;
-		this.source.stop();
-		this.time = this.context.currentTime - this.startTime;
-
+		// Icon
+		this.icon = document.createElement("img");
+		this.icon.style.position = "absolute";
+		this.icon.style.left = "15%";
+		this.icon.style.top = "15%";
+		this.icon.style.width = "70%";
+		this.icon.style.height = "70%";
 		this.icon.src = Global.FILE_PATH + "icons/misc/play.png";
-	}
-	}
+		this.button.appendChild(this.icon);
 
-// Stop audio playback
-	stop() {	
-	if (this.playing)
-	{
-		this.source.stop();
+		// Track
+		this.track = document.createElement("div");
+		this.track.style.position = "absolute";
+		this.track.style.backgroundColor = "var(--bar-color)";
+		this.track.style.cursor = "pointer";
+		this.element.appendChild(this.track);
+
+		// Progress
+		this.progress = document.createElement("div");
+		this.progress.style.pointerEvents = "none";
+		this.progress.style.position = "absolute";
+		this.progress.style.backgroundColor = "var(--button-over-color)";
+		this.progress.style.height = "100%";
+		this.track.appendChild(this.progress);
+
+		// Scrubber
+		this.scrubber = document.createElement("div");
+		this.scrubber.style.position = "absolute";
+		this.scrubber.style.backgroundColor = "var(--color-light)";
+		this.scrubber.style.cursor = "pointer";
+		this.scrubber.style.width = "6px";
+		this.track.appendChild(this.scrubber);
+
+		// Audio source and buffer
+		this.buffer = null;
+		this.source = null;
+
+		// Playback control
 		this.time = 0;
+		this.startTime = 0;
 		this.playing = false;
+		this.loop = false;
 
-		this.icon.src = Global.FILE_PATH + "icons/misc/play.png";
-	}
+		// Drag control
+		this.seekStart = 0;
+		this.seekTime = 0;
+		this.seekProgress = 0;
+		this.dragging = false;
+
+		// Event manager
+		this.manager = new EventManager();
+		this.manager.add(window, "mousemove", function(event)
+		{
+			self.seekProgress = (event.pageX - self.seekStart) / self.track.offsetWidth;
+			self.seekProgress += self.seekTime / self.buffer.duration;
+
+			if (self.seekProgress < 0)
+			{
+				self.seekProgress = 0;
+			}
+			else if (self.seekProgress > 1)
+			{
+				self.seekProgress = 1;
+			}
+
+			self.progress.style.width = self.seekProgress * 100 + "%";
+			self.scrubber.style.left = self.progress.style.width;
+		});
+
+		this.manager.add(window, "mouseup", function()
+		{	
+			self.dragging = false;
+			self.time = self.seekProgress * self.buffer.duration;
+
+			if (self.playing)
+			{
+				self.play(self.time);
+			}
+
+			self.manager.destroy();
+		});
+
+		this.scrubber.onmousedown = function(event)
+		{
+			self.seekStart = event.pageX;
+			self.seekTime = self.time;
+			self.dragging = true;
+			self.manager.create();
+
+			event.stopPropagation();
+		};
+
+		this.track.onmousedown = function(event)
+		{
+			var progress = event.layerX / this.offsetWidth;
+
+			self.seekProgress = progress;
+			self.time = progress * self.buffer.duration;
+
+			self.progress.style.width = self.seekProgress * 100 + "%";
+			self.scrubber.style.left = self.progress.style.width;
+
+			if (self.playing)
+			{
+				self.play(self.time);
+			}
+
+			self.scrubber.onmousedown(event);
+		};
+
+		// Update elements
+		function draw()
+		{
+			if (self.playing)
+			{
+				self.time = self.context.currentTime - self.startTime;
+
+				var seconds = Math.round(self.time % 60);
+				if (seconds < 10)
+				{
+					seconds = "0" + seconds;
+				}
+
+				var minutes = Math.round(self.time / 60);
+				if (minutes < 10)
+				{
+					minutes = "0" + minutes;
+				}
+			
+				self.timerText.data = minutes + ":" + seconds;
+
+				if (self.buffer !== null)
+				{
+					if (self.time >= self.buffer.duration)
+					{
+						self.stop();
+					}
+
+					var progress = self.time / self.buffer.duration * 100;
+
+					if (!self.dragging)
+					{
+						self.progress.style.width = progress + "%";
+						self.scrubber.style.left = progress + "%";
+					}
+				}
+			}
+
+			if (self.parent !== null)
+			{
+				requestAnimationFrame(draw);
+			}
+		}
+		draw();
 	}
 
-// Seek time
-	seek(time) {
-	if (this.playing)
+	// Decode audio
+	setAudioBuffer(buffer, onLoad) 
 	{
-		this.play(time);
+		var self = this;
+
+		this.context.decodeAudioData(buffer.slice(0), function(buffer)
+		{
+			self.buffer = buffer;
+
+			if (onLoad !== undefined)
+			{
+				onLoad(buffer);
+			}
+		}.bind(this));
 	}
-	else
+
+	// Connect audio source
+	connect() 
 	{
-		this.time = time;
-	}
+		if (this.playing)
+		{
+			this.pause();
+		}
+
+		this.source = this.context.createBufferSource();
+		this.source.buffer = this.buffer;
+		this.source.connect(this.context.destination);
 	}
 
-// Toggle play/pause
-	toggle() {
-	if (!this.playing)
+	// Disconnect source
+	disconnect() 
 	{
-		this.play();
+		this.source.disconnect();
 	}
-	else
+
+	// Play audio
+	play(time) 
 	{
-		this.pause();
-	}
+		this.connect();
+
+		if (time !== undefined)
+		{
+			this.time = time;
+		}
+
+		this.source.loop = this.loop;
+		this.startTime = this.context.currentTime - this.time;
+		this.source.start(this.context.currentTime, this.time);
+		this.playing = true;
+
+		this.icon.src = Global.FILE_PATH + "icons/misc/pause.png";
 	}
 
-	destroy() {
-	try
+	// Pause audio
+	pause() 
 	{
-		this.disconnect();
-		this.stop();
+		if (this.playing)
+		{
+			this.playing = false;
+			this.source.stop();
+			this.time = this.context.currentTime - this.startTime;
+
+			this.icon.src = Global.FILE_PATH + "icons/misc/play.png";
+		}
 	}
-	catch (e) {}
 
-	super.destroy();
+	// Stop audio playback
+	stop() 
+	{	
+		if (this.playing)
+		{
+			this.source.stop();
+			this.time = 0;
+			this.playing = false;
+
+			this.icon.src = Global.FILE_PATH + "icons/misc/play.png";
+		}
 	}
 
-	updateSize() {
-	super.updateSize();
+	// Seek time
+	seek(time) 
+	{
+		if (this.playing)
+		{
+			this.play(time);
+		}
+		else
+		{
+			this.time = time;
+		}
+	}
 
-	// Button
-	this.button.style.width = this.element.style.height;
-	this.button.style.height = this.element.style.height;
+	// Toggle play/pause
+	toggle() 
+	{
+		if (!this.playing)
+		{
+			this.play();
+		}
+		else
+		{
+			this.pause();
+		}
+	}
 
-	// Track
-	this.track.style.top = this.size.y * 0.25 + "px";
-	this.track.style.left = this.size.y * 1.05 + "px";
-	this.track.style.width = this.size.x - this.size.y * 1.5 - 35 + "px";
-	this.track.style.height = this.size.y * 0.5 + "px";
+	destroy() 
+	{
+		try
+		{
+			this.disconnect();
+			this.stop();
+		}
+		catch (e) {}
 
-	// Scrubber
-	this.scrubber.style.height = this.size.y * 0.8 + "px";
-	this.scrubber.style.top = -this.size.y * 0.15 + "px";
+		super.destroy();
+	}
+
+	updateSize() 
+	{
+		super.updateSize();
+
+		// Button
+		this.button.style.width = this.element.style.height;
+		this.button.style.height = this.element.style.height;
+
+		// Track
+		this.track.style.top = this.size.y * 0.25 + "px";
+		this.track.style.left = this.size.y * 1.05 + "px";
+		this.track.style.width = this.size.x - this.size.y * 1.5 - 35 + "px";
+		this.track.style.height = this.size.y * 0.5 + "px";
+
+		// Scrubber
+		this.scrubber.style.height = this.size.y * 0.8 + "px";
+		this.scrubber.style.top = -this.size.y * 0.15 + "px";
 	}
 
 }

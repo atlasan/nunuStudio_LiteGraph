@@ -9,32 +9,32 @@ import {Pass} from "./Pass.js";
  */
 class RenderPass extends Pass
 {
-constructor()
-{
-super();
+	constructor()
+	{
+		super();
 
-this.type = "Render";
+		this.type = "Render";
 
-this.clear = true;
-}
+		this.clear = true;
+	}
 
-render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
-{
-if (this.clear)
-{
-renderer.autoClear = true;
-renderer.autoClearColor = true;
-renderer.autoClearDepth = true;
-renderer.autoClearStencil = true;
-}
-else
-{
-renderer.autoClear = false;
-}
+	render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
+	{
+		if (this.clear)
+		{
+			renderer.autoClear = true;
+			renderer.autoClearColor = true;
+			renderer.autoClearDepth = true;
+			renderer.autoClearStencil = true;
+		}
+		else
+		{
+			renderer.autoClear = false;
+		}
 
-renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
-renderer.render(scene, camera);
-}
+		renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
+		renderer.render(scene, camera);
+	}
 }
 
 export {RenderPass};

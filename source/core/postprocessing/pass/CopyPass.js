@@ -9,12 +9,12 @@ import {ShaderPass} from "../ShaderPass.js";
  */
 class CopyPass extends ShaderPass
 {
-constructor()
-{
-super(CopyShader);
+	constructor()
+	{
+		super(CopyShader);
 
-this.type = "Copy";
-}
+		this.type = "Copy";
+	}
 }
 
 export {CopyPass};

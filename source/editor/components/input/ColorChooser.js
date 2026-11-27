@@ -1,116 +1,125 @@
 import {Color} from "three";
 import {Component} from "../Component.js";
 
-class ColorChooser extends Component {
-	constructor(parent) {
-	super(parent, "input");
+class ColorChooser extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "input");
 
-	this.element.type = "color";
-	this.element.style.outline = "none";
-	this.element.style.borderStyle = "none";
-	this.element.style.boxSizing = "border-box";
-	this.element.style.border = "0px solid";
-	this.element.style.textIndent = "4px";
-	this.element.style.borderRadius = "4px";
-	this.element.style.boxShadow = "none";
-	this.element.style.MozAppearance = "textfield";
-	this.element.style.webkitAppearance = "caret";
-	this.element.style.appearance = "textfield";
+		this.element.type = "color";
+		this.element.style.outline = "none";
+		this.element.style.borderStyle = "none";
+		this.element.style.boxSizing = "border-box";
+		this.element.style.border = "0px solid";
+		this.element.style.textIndent = "4px";
+		this.element.style.borderRadius = "4px";
+		this.element.style.boxShadow = "none";
+		this.element.style.MozAppearance = "textfield";
+		this.element.style.webkitAppearance = "caret";
+		this.element.style.appearance = "textfield";
+
+		/**
+		 * On change callback function automatically called everytime that the color is changed.
+		 *
+		 * @attribute onChange
+		 * @type {Function}
+		 */
+		this.onChange = null;
+	}
 
 	/**
-	 * On change callback function automatically called everytime that the color is changed.
+	 * Set onchange callback, called after changes.
 	 *
-	 * @attribute onChange
-	 * @type {Function}
+	 * @method setOnChange
+	 * @param {Function} onChange
 	 */
-	this.onChange = null;
+	setOnChange(onChange) 
+	{
+		this.element.onchange = onChange;
 	}
 
-/**
- * Set onchange callback, called after changes.
- *
- * @method setOnChange
- * @param {Function} onChange
- */
-	setOnChange(onChange) {
-	this.element.onchange = onChange;
+	/**
+	 * Set value stored in the input element.
+	 *
+	 * @method setValue
+	 * @param {number} r Red color channel, if a Color value is received it is used instead.
+	 * @param {number} g Green color channel.
+	 * @param {number} b Blue color channel.
+	 */
+	setValue(r, g, b) 
+	{
+		if (r instanceof Color)
+		{
+			this.element.value = "#" + r.getHexString();
+		}
+		else
+		{
+			var c = new Color(r, g, b);
+			this.element.value = "#" + c.getHexString();
+		}
 	}
 
-/**
- * Set value stored in the input element.
- *
- * @method setValue
- * @param {number} r Red color channel, if a Color value is received it is used instead.
- * @param {number} g Green color channel.
- * @param {number} b Blue color channel.
- */
-	setValue(r, g, b) {
-	if (r instanceof Color)
+	/**
+	 * Set value from numeric hex.
+	 *
+	 * @method setValueHex
+	 * @param {number} hex
+	 */
+	setValueHex(hex) 
 	{
-		this.element.value = "#" + r.getHexString();
-	}
-	else
-	{
-		var c = new Color(r, g, b);
+		hex = Math.floor(hex);
+
+		var c = new Color(hex);
 		this.element.value = "#" + c.getHexString();
 	}
+
+	/**
+	 * Set value from CSS string.
+	 *
+	 * @method setValueString
+	 * @param {number} color
+	 */
+	setValueString(color) 
+	{
+		this.element.value = color;
 	}
 
-/**
- * Set value from numeric hex.
- *
- * @method setValueHex
- * @param {number} hex
- */
-	setValueHex(hex) {
-	hex = Math.floor(hex);
-
-	var c = new Color(hex);
-	this.element.value = "#" + c.getHexString();
+	/**
+	 * Get color value HEX as string.
+	 *
+	 * @method getValueString
+	 * @return {string} String hex color.
+	 */
+	getValueString(color) 
+	{
+		return this.element.value;
 	}
 
-/**
- * Set value from CSS string.
- *
- * @method setValueString
- * @param {number} color
- */
-	setValueString(color) {
-	this.element.value = color;
+	/**
+	 * Get color value object.
+	 *
+	 * @method getValue
+	 * @return {Color} Color object.
+	 */
+	getValue() 
+	{
+		var c = new Color();
+		c.setStyle(this.element.value);
+		return c;
 	}
 
-/**
- * Get color value HEX as string.
- *
- * @method getValueString
- * @return {string} String hex color.
- */
-	getValueString(color) {
-	return this.element.value;
-	}
-
-/**
- * Get color value object.
- *
- * @method getValue
- * @return {Color} Color object.
- */
-	getValue() {
-	var c = new Color();
-	c.setStyle(this.element.value);
-	return c;
-	}
-
-/**
- * Get color value HEX.
- *
- * @method getValueHex
- * @return {number} Numeric hex color.
- */
-	getValueHex() {
-	var c = new Color();
-	c.setStyle(this.element.value);
-	return c.getHex();
+	/**
+	 * Get color value HEX.
+	 *
+	 * @method getValueHex
+	 * @return {number} Numeric hex color.
+	 */
+	getValueHex() 
+	{
+		var c = new Color();
+		c.setStyle(this.element.value);
+		return c.getHex();
 	}
 
 }

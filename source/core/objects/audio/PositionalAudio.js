@@ -16,232 +16,232 @@ import {AudioEmitter} from "./AudioEmitter.js";
  */
 class PositionalAudio extends AudioEmitter
 {
-constructor(audio)
-{
-super(audio);
+	constructor(audio)
+	{
+		super(audio);
 
-this.type = "PositionalAudio";
-this.matrixAutoUpdate = true;
+		this.type = "PositionalAudio";
+		this.matrixAutoUpdate = true;
 
-/**
- * Distance model to be applied to the audio panner.
- *
- * @property distanceModel
- * @type {string}
- */
-this.distanceModel = "inverse";
+		/**
+		 * Distance model to be applied to the audio panner.
+		 *
+		 * @property distanceModel
+		 * @type {string}
+		 */
+		this.distanceModel = "inverse";
 
-/**
- * Model to be applied to the audio panner.
- *
- * @property panningModel
- * @type {string}
- */
-this.panningModel = "HRTF";
+		/**
+		 * Model to be applied to the audio panner.
+		 *
+		 * @property panningModel
+		 * @type {string}
+		 */
+		this.panningModel = "HRTF";
 
-/**
- * WebAudio panner effect.
- *
- * https:// developer.mozilla.org/en-US/docs/Web/API/PannerNode
- *
- * @property panner
- * @type {PannerNode}
- */
-this.panner = this.context.createPanner();
-this.panner.connect(this.gain);
-this.panner.panningModel = this.panningModel;
-this.panner.distanceModel = this.distanceModel;
-this.panner.refDistance = 1;
-this.panner.maxDistance = 10000;
-this.panner.rolloffFactor = 1;
-this.panner.coneInnerAngle = 360;
-this.panner.coneOuterAngle = 0;
-this.panner.coneOuterGain = 0;
+		/**
+		 * WebAudio panner effect.
+		 *
+		 * https:// developer.mozilla.org/en-US/docs/Web/API/PannerNode
+		 *
+		 * @property panner
+		 * @type {PannerNode}
+		 */
+		this.panner = this.context.createPanner();
+		this.panner.connect(this.gain);
+		this.panner.panningModel = this.panningModel;
+		this.panner.distanceModel = this.distanceModel;
+		this.panner.refDistance = 1;
+		this.panner.maxDistance = 10000;
+		this.panner.rolloffFactor = 1;
+		this.panner.coneInnerAngle = 360;
+		this.panner.coneOuterAngle = 0;
+		this.panner.coneOuterGain = 0;
 
-/**
- * Runtime pointer to the scene to get the camera list.
- *
- * @attribute scene
- * @type {Scene}
- */
-this.scene = null;
+		/**
+		 * Runtime pointer to the scene to get the camera list.
+		 *
+		 * @attribute scene
+		 * @type {Scene}
+		 */
+		this.scene = null;
 
-this.tempPosition = new Vector3();
-this.tempPositionCamera = new Vector3();
-this.tempQuaternionCamera = new Quaternion();
-}
+		this.tempPosition = new Vector3();
+		this.tempPositionCamera = new Vector3();
+		this.tempQuaternionCamera = new Quaternion();
+	}
 
-/**
- * Initialize audio object, loads audio data decodes it and starts playback if autoplay is set to True.
- *
- * @method initialize
- */
-initialize()
-{
-super.initialize();
+	/**
+	 * Initialize audio object, loads audio data decodes it and starts playback if autoplay is set to True.
+	 *
+	 * @method initialize
+	 */
+	initialize()
+	{
+		super.initialize();
 
-var node = this.parent;
-while (node !== null)
-{
-if (node instanceof Scene)
-{
-this.scene = node;
-break;
-}
+		var node = this.parent;
+		while (node !== null)
+		{
+			if (node instanceof Scene)
+			{
+				this.scene = node;
+				break;
+			}
 
-node = node.parent;
-}
-}
+			node = node.parent;
+		}
+	}
 
-/**
- * Update positional audio panner relative to the camera.
- *
- * @method update
- */
-update(delta)
-{
-if (this.scene.cameras.length > 0)
-{
-var camera = this.scene.cameras[0];
+	/**
+	 * Update positional audio panner relative to the camera.
+	 *
+	 * @method update
+	 */
+	update(delta)
+	{
+		if (this.scene.cameras.length > 0)
+		{
+			var camera = this.scene.cameras[0];
 
-this.getWorldPosition(this.tempPosition);
-camera.getWorldPosition(this.tempPositionCamera);
-camera.getWorldQuaternion(this.tempQuaternionCamera);
+			this.getWorldPosition(this.tempPosition);
+			camera.getWorldPosition(this.tempPositionCamera);
+			camera.getWorldQuaternion(this.tempQuaternionCamera);
 
-this.tempPosition.sub(this.tempPositionCamera);
-this.tempPosition.z = -this.tempPosition.z;
+			this.tempPosition.sub(this.tempPositionCamera);
+			this.tempPosition.z = -this.tempPosition.z;
 
-this.tempPosition.applyQuaternion(this.tempQuaternionCamera);
-this.panner.setPosition(this.tempPosition.x, this.tempPosition.z, this.tempPosition.y);
-}
-else
-{
-this.panner.setPosition(0, 0, 0);
-this.panner.setOrientation(0, 0, 0);
-}
+			this.tempPosition.applyQuaternion(this.tempQuaternionCamera);
+			this.panner.setPosition(this.tempPosition.x, this.tempPosition.z, this.tempPosition.y);
+		}
+		else
+		{
+			this.panner.setPosition(0, 0, 0);
+			this.panner.setOrientation(0, 0, 0);
+		}
 
-Object3D.prototype.update.call(this, delta);
-}
+		Object3D.prototype.update.call(this, delta);
+	}
 
-/**
- * Get output audio node.
- *
- * @method getOutput
- * @return {Object} Output audio node.
- */
-getOutput()
-{
-return this.panner;
-}
+	/**
+	 * Get output audio node.
+	 *
+	 * @method getOutput
+	 * @return {Object} Output audio node.
+	 */
+	getOutput()
+	{
+		return this.panner;
+	}
 
-/**
- * Get reference distance.
- *
- * @method getRefDistance
- * @return {number} Reference distance.
- */
-getRefDistance()
-{
-return this.panner.refDistance;
-}
+	/**
+	 * Get reference distance.
+	 *
+	 * @method getRefDistance
+	 * @return {number} Reference distance.
+	 */
+	getRefDistance()
+	{
+		return this.panner.refDistance;
+	}
 
-/**
- * Set reference distance.
- *
- * @method setRefDistance
- * @param {number} value Reference distance.
- */
-setRefDistance(value)
-{
-this.panner.refDistance = value;
-}
+	/**
+	 * Set reference distance.
+	 *
+	 * @method setRefDistance
+	 * @param {number} value Reference distance.
+	 */
+	setRefDistance(value)
+	{
+		this.panner.refDistance = value;
+	}
 
-/**
- * Get rolloff factor.
- *
- * @method getRolloffFactor
- * @return {number} Rolloff factor.
- */
-getRolloffFactor()
-{
-return this.panner.rolloffFactor;
-}
+	/**
+	 * Get rolloff factor.
+	 *
+	 * @method getRolloffFactor
+	 * @return {number} Rolloff factor.
+	 */
+	getRolloffFactor()
+	{
+		return this.panner.rolloffFactor;
+	}
 
-/**
- * Set rolloff factor.
- *
- * @method setRolloffFactor
- * @param {number} value Rolloff factor.
- */
-setRolloffFactor(value)
-{
-this.panner.rolloffFactor = value;
-}
+	/**
+	 * Set rolloff factor.
+	 *
+	 * @method setRolloffFactor
+	 * @param {number} value Rolloff factor.
+	 */
+	setRolloffFactor(value)
+	{
+		this.panner.rolloffFactor = value;
+	}
 
 
-/**
- * Get distance model in use by this audio emitter.
- *
- * @method getDistanceModel
- * @return {string} Distance model.
- */
-getDistanceModel()
-{
-return this.panner.distanceModel;
-}
+	/**
+	 * Get distance model in use by this audio emitter.
+	 *
+	 * @method getDistanceModel
+	 * @return {string} Distance model.
+	 */
+	getDistanceModel()
+	{
+		return this.panner.distanceModel;
+	}
 
-/**
- * Set distance model to be used.
- *
- * Distance model defined how the emitter controls its volume from its position in the world, relative to the camera.
- *
- * By default the mode used is "inverse", can be also set to:
- *  - "linear": A linear distance model calculating the gain induced by the distance according to
- *    - 1 - rolloffFactor * (distance - refDistance) / (maxDistance - refDistance)
- *  - "inverse": An inverse distance model calculating the gain induced by the distance according to:
- *    - refDistance / (refDistance + rolloffFactor * (distance - refDistance))
- *  - "exponential": An exponential distance model calculating the gain induced by the distance according to:
- *    - pow(distance / refDistance, -rolloffFactor).
- *
- * @method setDistanceModel
- * @param {string} model Distance Model to be used.
- */
-setDistanceModel(distanceModel)
-{
-this.panner.distanceModel = distanceModel;
-}
+	/**
+	 * Set distance model to be used.
+	 *
+	 * Distance model defined how the emitter controls its volume from its position in the world, relative to the camera.
+	 *
+	 * By default the mode used is "inverse", can be also set to:
+	 *  - "linear": A linear distance model calculating the gain induced by the distance according to
+	 *    - 1 - rolloffFactor * (distance - refDistance) / (maxDistance - refDistance)
+	 *  - "inverse": An inverse distance model calculating the gain induced by the distance according to:
+	 *    - refDistance / (refDistance + rolloffFactor * (distance - refDistance))
+	 *  - "exponential": An exponential distance model calculating the gain induced by the distance according to:
+	 *    - pow(distance / refDistance, -rolloffFactor).
+	 *
+	 * @method setDistanceModel
+	 * @param {string} model Distance Model to be used.
+	 */
+	setDistanceModel(distanceModel)
+	{
+		this.panner.distanceModel = distanceModel;
+	}
 
-/**
- * Get maximum distance for this audio emitter.
- *
- * @method getMaxDistance
- * @return Maximum distance.
- */
-getMaxDistance()
-{
-return this.panner.maxDistance;
-}
+	/**
+	 * Get maximum distance for this audio emitter.
+	 *
+	 * @method getMaxDistance
+	 * @return Maximum distance.
+	 */
+	getMaxDistance()
+	{
+		return this.panner.maxDistance;
+	}
 
-/**
- * Set maximum distance for this audio emitter.
- *
- * @method setMaxDistance
- * @param {number} value Maximum distance.
- */
-setMaxDistance(value)
-{
-this.panner.maxDistance = value;
-}
+	/**
+	 * Set maximum distance for this audio emitter.
+	 *
+	 * @method setMaxDistance
+	 * @param {number} value Maximum distance.
+	 */
+	setMaxDistance(value)
+	{
+		this.panner.maxDistance = value;
+	}
 
-toJSON(meta)
-{
-var data = super.toJSON(meta);
+	toJSON(meta)
+	{
+		var data = super.toJSON(meta);
 
-data.object.distanceModel = this.distanceModel;
-data.object.panningModel = this.panningModel;
+		data.object.distanceModel = this.distanceModel;
+		data.object.panningModel = this.panningModel;
 
-return data;
-}
+		return data;
+	}
 }
 
 export {PositionalAudio};

@@ -5,61 +5,64 @@ import {NumberBox} from "../../../../components/input/NumberBox.js";
 import {CheckBox} from "../../../../components/input/CheckBox.js";
 import {PassNode} from "./PassNode.js";
 
-class SSAOPassNode extends PassNode {
-	constructor(parent) {
-	super(parent, "SSAO");
-
-	var self = this;
-
-	this.addText("Only AO");
-	this.onlyAO = new CheckBox(this);
-	this.onlyAO.size.set(18, 18);
-	this.onlyAO.setOnChange(function()
+class SSAOPassNode extends PassNode 
+{
+	constructor(parent) 
 	{
-		Editor.addAction(new ChangeAction(self.pass, "onlyAO", self.onlyAO.getValue()));
-	});
-	this.add(this.onlyAO);
-	this.nextRow();
+		super(parent, "SSAO");
 
-	this.addText(Locale.radius);
-	this.radius = new NumberBox(this);
-	this.radius.size.set(60, 18);
-	this.radius.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "radius", self.radius.getValue()));
-	});
-	this.add(this.radius);
-	this.nextRow();
+		var self = this;
 
-	this.addText("Clamp");
-	this.aoClamp = new NumberBox(this);
-	this.aoClamp.size.set(60, 18);
-	this.aoClamp.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "aoClamp", self.aoClamp.getValue()));
-	});
-	this.add(this.aoClamp);
-	this.nextRow();
+		this.addText("Only AO");
+		this.onlyAO = new CheckBox(this);
+		this.onlyAO.size.set(18, 18);
+		this.onlyAO.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "onlyAO", self.onlyAO.getValue()));
+		});
+		this.add(this.onlyAO);
+		this.nextRow();
 
-	this.addText("Lum. Influence");
-	this.lumInfluence = new NumberBox(this);
-	this.lumInfluence.size.set(60, 18);
-	this.lumInfluence.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.pass, "lumInfluence", self.lumInfluence.getValue()));
-	});
-	this.add(this.lumInfluence);
-	this.nextRow();
+		this.addText(Locale.radius);
+		this.radius = new NumberBox(this);
+		this.radius.size.set(60, 18);
+		this.radius.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "radius", self.radius.getValue()));
+		});
+		this.add(this.radius);
+		this.nextRow();
+
+		this.addText("Clamp");
+		this.aoClamp = new NumberBox(this);
+		this.aoClamp.size.set(60, 18);
+		this.aoClamp.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "aoClamp", self.aoClamp.getValue()));
+		});
+		this.add(this.aoClamp);
+		this.nextRow();
+
+		this.addText("Lum. Influence");
+		this.lumInfluence = new NumberBox(this);
+		this.lumInfluence.size.set(60, 18);
+		this.lumInfluence.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.pass, "lumInfluence", self.lumInfluence.getValue()));
+		});
+		this.add(this.lumInfluence);
+		this.nextRow();
 	}
 
 
-	setPass(pass) {
-	super.setPass(pass);
+	setPass(pass) 
+	{
+		super.setPass(pass);
 
-	this.radius.setValue(pass.radius);
-	this.onlyAO.setValue(pass.onlyAO);
-	this.aoClamp.setValue(pass.aoClamp);
-	this.lumInfluence.setValue(pass.lumInfluence);
+		this.radius.setValue(pass.radius);
+		this.onlyAO.setValue(pass.onlyAO);
+		this.aoClamp.setValue(pass.aoClamp);
+		this.lumInfluence.setValue(pass.lumInfluence);
 	}
 
 }

@@ -9,25 +9,27 @@ import {GizmoMaterial} from "../GizmoMaterial.js";
  *
  * @class TransformGizmo
  */
-class TransformGizmo extends Object3D {
-	constructor(handleGizmos, pickerGizmos) {
-	super();
+class TransformGizmo extends Object3D 
+{
+	constructor(handleGizmos, pickerGizmos) 
+	{
+		super();
 
-	this.handleGizmos = handleGizmos !== undefined ? handleGizmos : {};
-	this.pickerGizmos = pickerGizmos !== undefined ? pickerGizmos : {};
+		this.handleGizmos = handleGizmos !== undefined ? handleGizmos : {};
+		this.pickerGizmos = pickerGizmos !== undefined ? pickerGizmos : {};
 
-	this.handles = new Object3D();
-	this.pickers = new Object3D();
-	this.planes = new Object3D();
+		this.handles = new Object3D();
+		this.pickers = new Object3D();
+		this.planes = new Object3D();
 
-	this.add(this.handles);
-	this.add(this.pickers);
-	this.add(this.planes);
+		this.add(this.handles);
+		this.add(this.pickers);
+		this.add(this.planes);
 
-	// Planes
-	var planeGeometry = new PlaneGeometry(50, 50, 2, 2);
-	var planeMaterial = new MeshBasicMaterial({visible: false, side: DoubleSide});
-	var planes =
+		// Planes
+		var planeGeometry = new PlaneGeometry(50, 50, 2, 2);
+		var planeMaterial = new MeshBasicMaterial({visible: false, side: DoubleSide});
+		var planes =
 	{
 		"XY": new Mesh(planeGeometry, planeMaterial),
 		"YZ": new Mesh(planeGeometry, planeMaterial),
@@ -35,176 +37,179 @@ class TransformGizmo extends Object3D {
 		"XYZE": new Mesh(planeGeometry, planeMaterial)
 	};
 
-	this.activePlane = planes["XYZE"];
+		this.activePlane = planes["XYZE"];
 
-	planes["YZ"].rotation.set(0, Math.PI / 2, 0);
-	planes["XZ"].rotation.set(-Math.PI / 2, 0, 0);
+		planes["YZ"].rotation.set(0, Math.PI / 2, 0);
+		planes["XZ"].rotation.set(-Math.PI / 2, 0, 0);
 
-	for (var i in planes)
-	{
-		planes[i].name = i;
-		this.planes.add(planes[i]);
-		this.planes[i] = planes[i];
-	}
-
-	// Handlers and pickers
-	function setupGizmos(gizmoMap, parent)
-	{
-		for (var name in gizmoMap)
+		for (var i in planes)
 		{
-			for (i = gizmoMap[name].length; i--;)
+			planes[i].name = i;
+			this.planes.add(planes[i]);
+			this.planes[i] = planes[i];
+		}
+
+		// Handlers and pickers
+		function setupGizmos(gizmoMap, parent)
+		{
+			for (var name in gizmoMap)
 			{
-				var object = gizmoMap[name][i][0];
-				var position = gizmoMap[name][i][1];
-				var rotation = gizmoMap[name][i][2];
-
-				object.name = name;
-
-				if (position)
+				for (i = gizmoMap[name].length; i--;)
 				{
-					object.position.set(position[0], position[1], position[2]);
-				}
+					var object = gizmoMap[name][i][0];
+					var position = gizmoMap[name][i][1];
+					var rotation = gizmoMap[name][i][2];
+
+					object.name = name;
+
+					if (position)
+					{
+						object.position.set(position[0], position[1], position[2]);
+					}
 				
-				if (rotation)
-				{
-					object.rotation.set(rotation[0], rotation[1], rotation[2]);
-				}
+					if (rotation)
+					{
+						object.rotation.set(rotation[0], rotation[1], rotation[2]);
+					}
 
-				parent.add(object);
+					parent.add(object);
+				}
 			}
 		}
-	}
 
-	setupGizmos(this.handleGizmos, this.handles);
-	setupGizmos(this.pickerGizmos, this.pickers);
+		setupGizmos(this.handleGizmos, this.handles);
+		setupGizmos(this.pickerGizmos, this.pickers);
 
-	// Reset transformations
-	this.traverse(function(child)
-	{
-		if (child.geometry !== undefined)
+		// Reset transformations
+		this.traverse(function(child)
 		{
-			child.updateMatrix();
+			if (child.geometry !== undefined)
+			{
+				child.updateMatrix();
 
-			// Move geometry to origin
-			var tempGeometry = child.geometry.clone();
-			tempGeometry.applyMatrix4(child.matrix);
-			child.geometry = tempGeometry;
+				// Move geometry to origin
+				var tempGeometry = child.geometry.clone();
+				tempGeometry.applyMatrix4(child.matrix);
+				child.geometry = tempGeometry;
 
-			// Reset pose
-			child.position.set(0, 0, 0);
-			child.rotation.set(0, 0, 0);
-			child.scale.set(1, 1, 1);
-		}
-	});
+				// Reset pose
+				child.position.set(0, 0, 0);
+				child.rotation.set(0, 0, 0);
+				child.scale.set(1, 1, 1);
+			}
+		});
 	}
 
-/**
- * Invisible material used for the picking regions.
- *
- * These regions are not shown to the user but are raycasted as normal drawable geometries.
- *
- * @static
- * @attribute pickerMaterial
- * @type {GizmoMaterial}
- */
+	/**
+	 * Invisible material used for the picking regions.
+	 *
+	 * These regions are not shown to the user but are raycasted as normal drawable geometries.
+	 *
+	 * @static
+	 * @attribute pickerMaterial
+	 * @type {GizmoMaterial}
+	 */
 
-/**
- * Set the currently active plane in the gizmo object.
- *
- * Planes are used for user interaction relative to the plane, and these can be toggled based on view direction.
- *
- * @method setActivePlane
- * @param {string} axis Axis stored as text. (e.g X, Y, XY, XZ).
- * @param {Matrix4} eye Eye view camera combined (projection and pose) matrix.
- */
+	/**
+	 * Set the currently active plane in the gizmo object.
+	 *
+	 * Planes are used for user interaction relative to the plane, and these can be toggled based on view direction.
+	 *
+	 * @method setActivePlane
+	 * @param {string} axis Axis stored as text. (e.g X, Y, XY, XZ).
+	 * @param {Matrix4} eye Eye view camera combined (projection and pose) matrix.
+	 */
 	setActivePlane(axis, eye) {}
 
-/**
- * Called when the controls button is released and there was object being edited.
- *
- * Changes made to the object should be applied to the editor action history here.
- *
- * @method onPointerUp
- * @param {TransformControls} controls Transform controls object that contain this gizmo.
- */
+	/**
+	 * Called when the controls button is released and there was object being edited.
+	 *
+	 * Changes made to the object should be applied to the editor action history here.
+	 *
+	 * @method onPointerUp
+	 * @param {TransformControls} controls Transform controls object that contain this gizmo.
+	 */
 	applyChanges(controls) {}
 
-/**
- * Called while the pointer is moving around the canvas.
- *
- * Used to contantly tranform the object. Final changes are not applied in this method.
- *
- * @method transformObject
- * @param {TransformControls} controls Transform controls object that contain this gizmo.
- */
+	/**
+	 * Called while the pointer is moving around the canvas.
+	 *
+	 * Used to contantly tranform the object. Final changes are not applied in this method.
+	 *
+	 * @method transformObject
+	 * @param {TransformControls} controls Transform controls object that contain this gizmo.
+	 */
 	transformObject(controls) {}
 
-/**
- * Called everytime that the controls button is pressed to start transforming the object.
- *
- * @method startTransform
- * @param {TransformControls} controls Transform controls object that contain this gizmo.
- */
+	/**
+	 * Called everytime that the controls button is pressed to start transforming the object.
+	 *
+	 * @method startTransform
+	 * @param {TransformControls} controls Transform controls object that contain this gizmo.
+	 */
 	startTransform(controls) {}
 
-/**
- * Update transform of the gizmo, called everytime on update to calculate size of the gizmo on screen.
- *
- * @method updatePose
- * @param {TransformControls} controls Transform controls object that contain this gizmo.
- */
-	updatePose(controls) {
-	if (controls.space === TransformControls.LOCAL)
+	/**
+	 * Update transform of the gizmo, called everytime on update to calculate size of the gizmo on screen.
+	 *
+	 * @method updatePose
+	 * @param {TransformControls} controls Transform controls object that contain this gizmo.
+	 */
+	updatePose(controls) 
 	{
-		controls.gizmo.update(controls.attributes[0].worldRotation, controls.eye);
-	}
-	else if (controls.space === TransformControls.WORLD)
-	{
-		controls.gizmo.update(new Euler(), controls.eye);
-	}
-
-	controls.gizmo.highlight(controls.axis);
-	}
-
-/**
- * Update the transformation of the gizmo from rotation and combined view matrix.
- *
- * @method update
- * @param {Eurler} rotation Euler rotation.
- * @param {Matrix4} eye Eye view camera combined (projection and pose) matrix.
- */
-	update(rotation, eye) {
-	var vec1 = new Vector3(0, 0, 0);
-	var vec2 = new Vector3(0, 1, 0);
-	var lookAtMatrix = new Matrix4();
-
-	this.traverse(function(child)
-	{
-		if (child.name.search("E") !== - 1)
+		if (controls.space === TransformControls.LOCAL)
 		{
-			child.quaternion.setFromRotationMatrix(lookAtMatrix.lookAt(eye, vec1, vec2));
+			controls.gizmo.update(controls.attributes[0].worldRotation, controls.eye);
 		}
-		else if (child.name.search("X") !== - 1 || child.name.search("Y") !== - 1 || child.name.search("Z") !== - 1)
+		else if (controls.space === TransformControls.WORLD)
 		{
-			child.quaternion.setFromEuler(rotation);
+			controls.gizmo.update(new Euler(), controls.eye);
 		}
-	});
+
+		controls.gizmo.highlight(controls.axis);
 	}
 
-/**
- * Hightlight axis in the gizmo object.
- *
- * @method highlight
- * @param {string} axis Exact name of the axis to be highlighted (assumes that the material uses the same name as the axis).
- */
-	highlight(axis) {
-	this.traverse(function(child)
+	/**
+	 * Update the transformation of the gizmo from rotation and combined view matrix.
+	 *
+	 * @method update
+	 * @param {Eurler} rotation Euler rotation.
+	 * @param {Matrix4} eye Eye view camera combined (projection and pose) matrix.
+	 */
+	update(rotation, eye) 
 	{
-		if (child.material && child.material.highlight)
+		var vec1 = new Vector3(0, 0, 0);
+		var vec2 = new Vector3(0, 1, 0);
+		var lookAtMatrix = new Matrix4();
+
+		this.traverse(function(child)
 		{
-			child.material.highlight(child.name === axis);
-		}
-	});
+			if (child.name.search("E") !== - 1)
+			{
+				child.quaternion.setFromRotationMatrix(lookAtMatrix.lookAt(eye, vec1, vec2));
+			}
+			else if (child.name.search("X") !== - 1 || child.name.search("Y") !== - 1 || child.name.search("Z") !== - 1)
+			{
+				child.quaternion.setFromEuler(rotation);
+			}
+		});
+	}
+
+	/**
+	 * Hightlight axis in the gizmo object.
+	 *
+	 * @method highlight
+	 * @param {string} axis Exact name of the axis to be highlighted (assumes that the material uses the same name as the axis).
+	 */
+	highlight(axis) 
+	{
+		this.traverse(function(child)
+		{
+			if (child.material && child.material.highlight)
+			{
+				child.material.highlight(child.name === axis);
+			}
+		});
 	}
 
 }

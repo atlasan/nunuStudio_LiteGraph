@@ -13,129 +13,134 @@ import {Component} from "../Component.js";
  * @class ImageChooser
  * @extends {Component}
  */
-class ImageChooser extends Component {
-	constructor(parent) {
-	super(parent, "div");
-
-	// Image
-	this.img = document.createElement("img");
-	this.img.style.visibility = "inherit";
-	this.img.style.position = "absolute";
-	this.img.style.borderStyle = "none";
-	this.img.style.left = "0px";
-	this.img.style.top = "0px";
-	this.img.style.width = "100%";
-	this.img.style.height = "100%";
-	this.img.style.objectFit = "contain";
-	this.img.style.backgroundImage = "url(\"" + Global.FILE_PATH + "alpha.png\")";
-	this.img.style.backgroundRepeat = "repeat";
-	this.img.style.backgroundSize = "120px 120px";
-	this.element.appendChild(this.img);
-
-	// Value
-	this.value = null;
-
-	var self = this;
-
-	this.element.ondragover = Component.preventDefault;
-	this.element.ondragstart = Component.preventDefault;
-
-	// On drop get file dropped
-	this.element.ondrop = function(event)
+class ImageChooser extends Component 
+{
+	constructor(parent) 
 	{
-		event.preventDefault();
+		super(parent, "div");
 
-		if (event.dataTransfer.files.length > 0)
+		// Image
+		this.img = document.createElement("img");
+		this.img.style.visibility = "inherit";
+		this.img.style.position = "absolute";
+		this.img.style.borderStyle = "none";
+		this.img.style.left = "0px";
+		this.img.style.top = "0px";
+		this.img.style.width = "100%";
+		this.img.style.height = "100%";
+		this.img.style.objectFit = "contain";
+		this.img.style.backgroundImage = "url(\"" + Global.FILE_PATH + "alpha.png\")";
+		this.img.style.backgroundRepeat = "repeat";
+		this.img.style.backgroundSize = "120px 120px";
+		this.element.appendChild(this.img);
+
+		// Value
+		this.value = null;
+
+		var self = this;
+
+		this.element.ondragover = Component.preventDefault;
+		this.element.ondragstart = Component.preventDefault;
+
+		// On drop get file dropped
+		this.element.ondrop = function(event)
 		{
-			var file = event.dataTransfer.files[0];
+			event.preventDefault();
 
-			if (Image.fileIsImage(file))
+			if (event.dataTransfer.files.length > 0)
 			{
-				readImageFile(file);
-			}
-		}
-		else
-		{
-			var uuid = event.dataTransfer.getData("uuid");
-			var value = DragBuffer.get(uuid);
+				var file = event.dataTransfer.files[0];
 
-			if (value instanceof Image)
-			{
-				self.setValue(value);
-				self.onChange(value);
+				if (Image.fileIsImage(file))
+				{
+					readImageFile(file);
+				}
 			}
 			else
 			{
-				Editor.alert("Only images accepted");
-			}
-		}
-	};
+				var uuid = event.dataTransfer.getData("uuid");
+				var value = DragBuffer.get(uuid);
 
-	// Onclick select image file
-	this.element.onclick = function()
-	{
-		if (self.onChange !== null)
-		{
-			FileSystem.chooseFile(function(files)
-			{
-				if (files.length > 0)
+				if (value instanceof Image)
 				{
-					readImageFile(files[0]);
+					self.setValue(value);
+					self.onChange(value);
 				}
-			}, "image/*, .tga");
-		}
-	};
-
-	var readImageFile = function(file)
-	{
-		var reader = new FileReader();
-		reader.onload = function()
-		{
-			self.setValue(new Image(reader.result));
-			self.onChange(self.value);
+				else
+				{
+					Editor.alert("Only images accepted");
+				}
+			}
 		};
-		reader.readAsDataURL(file);
-	};
+
+		// Onclick select image file
+		this.element.onclick = function()
+		{
+			if (self.onChange !== null)
+			{
+				FileSystem.chooseFile(function(files)
+				{
+					if (files.length > 0)
+					{
+						readImageFile(files[0]);
+					}
+				}, "image/*, .tga");
+			}
+		};
+
+		var readImageFile = function(file)
+		{
+			var reader = new FileReader();
+			reader.onload = function()
+			{
+				self.setValue(new Image(reader.result));
+				self.onChange(self.value);
+			};
+			reader.readAsDataURL(file);
+		};
+
+		/**
+		 * On change callback function.
+		 *
+		 * @property onChange
+		 * @type {Function}
+		 */
+		this.onChange = null;
+	}
 
 	/**
-	 * On change callback function.
+	 * Set onchange callback, called after changes.
 	 *
-	 * @property onChange
-	 * @type {Function}
+	 * @method setOnChange
+	 * @param {Function} onChange
 	 */
-	this.onChange = null;
+	setOnChange(onChange) 
+	{
+		this.onChange = onChange;
+		this.img.style.cursor = "pointer";
 	}
 
-/**
- * Set onchange callback, called after changes.
- *
- * @method setOnChange
- * @param {Function} onChange
- */
-	setOnChange(onChange) {
-	this.onChange = onChange;
-	this.img.style.cursor = "pointer";
+	/**
+	 * Set value stored in the input element.
+	 *
+	 * @method setValue
+	 * @param {Object} image
+	 */
+	setValue(image) 
+	{
+		this.value = image;
+		this.img.src = image.data;
 	}
 
-/**
- * Set value stored in the input element.
- *
- * @method setValue
- * @param {Object} image
- */
-	setValue(image) {
-	this.value = image;
-	this.img.src = image.data;
-	}
-
-/**
- * Get value stored in the input element.
- *
- * @method setValue
- * @return {Object} Image URL.
- */
-	getValue() {
-	return this.value;
+	/**
+	 * Get value stored in the input element.
+	 *
+	 * @method setValue
+	 * @return {Object} Image URL.
+	 */
+	getValue() 
+	{
+		return this.value;
 	}
 
 }

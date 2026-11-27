@@ -716,6 +716,4 @@ class ParticleGroup
 ParticleGroup.constructor = ParticleGroup;
 
 
-
-
 export {ParticleGroup};

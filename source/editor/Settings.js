@@ -12,45 +12,48 @@ import {FileSystem} from "../core/FileSystem.js";
  * @constructor
  * @class Settings
  */
-class Settings {
-	constructor() {
-	this.loadDefault();
+class Settings 
+{
+	constructor() 
+	{
+		this.loadDefault();
 	}
 
-/**
- * Path to the configuration file if running ouside of the browser.
- *
- * @static
- * @attribute CONFIG_FILE
- * @type {string}
- */
+	/**
+	 * Path to the configuration file if running ouside of the browser.
+	 *
+	 * @static
+	 * @attribute CONFIG_FILE
+	 * @type {string}
+	 */
 
-/**
- * Angle in radians, stores the radian symbol as used in the UnitConverter.
- *
- * @static
- * @attribute RADIAN
- * @type {string}
- */
+	/**
+	 * Angle in radians, stores the radian symbol as used in the UnitConverter.
+	 *
+	 * @static
+	 * @attribute RADIAN
+	 * @type {string}
+	 */
 
-/**
- * Angle in degrees, stores the degree symbol as used in the UnitConverter.
- *
- * @static
- * @attribute RADIAN
- * @type {string}
- */
+	/**
+	 * Angle in degrees, stores the degree symbol as used in the UnitConverter.
+	 *
+	 * @static
+	 * @attribute RADIAN
+	 * @type {string}
+	 */
 
-// Distance
+	// Distance
 
-// Navigation
+	// Navigation
 
-// Update channel
+	// Update channel
 
-// Load default settings
-	loadDefault() {
+	// Load default settings
+	loadDefault() 
+	{
 	// General
-	this.general =
+		this.general =
 	{		
 		autoUpdate: false,
 		theme: "dark",
@@ -63,8 +66,8 @@ class Settings {
 		ignorePixelRatio: false
 	};
 
-	// Units
-	this.units =
+		// Units
+		this.units =
 	{
 		/**
 		 * The units to use for angle in the editor, for most object the base units are radians. Use the UnitConvert to ensure the correct format.
@@ -79,8 +82,8 @@ class Settings {
 		distance: Settings.METER
 	};
 
-	// Editor
-	this.editor =
+		// Editor
+		this.editor =
 	{
 		snap: false,
 		snapAngle: 0.1,
@@ -107,12 +110,12 @@ class Settings {
 		cameraRotationCubeSize: 120
 	};
 
-	// Render
-	this.render = new RendererConfiguration();
-	this.render.followProject = true;
+		// Render
+		this.render = new RendererConfiguration();
+		this.render.followProject = true;
 
-	// Code
-	this.code =
+		// Code
+		this.code =
 	{
 		theme: "monokai",
 		keymap: "sublime",
@@ -131,8 +134,8 @@ class Settings {
 		matchBrackets: true
 	};
 
-	// JSLint
-	this.jslint =
+		// JSLint
+		this.jslint =
 	{
 		// Error
 		maxerr: 50, // {int} Maximum error before stopping
@@ -207,71 +210,73 @@ class Settings {
 	};
 	}
 
-/**
- * Store settings in the local storage.
- *
- * @method store
- */
-	store() {
-	var data = JSON.stringify(
-		{
-			general: this.general,
-			editor: this.editor,
-			units: this.units,
-			render: this.render,
-			code: this.code,
-			jslint: this.jslint
-		}, null, "\t");
+	/**
+	 * Store settings in the local storage.
+	 *
+	 * @method store
+	 */
+	store() 
+	{
+		var data = JSON.stringify(
+			{
+				general: this.general,
+				editor: this.editor,
+				units: this.units,
+				render: this.render,
+				code: this.code,
+				jslint: this.jslint
+			}, null, "\t");
 
-	// Make json file human readable
-	data.replace(/[\n\t]+([\d\.e\-\[\]]+)/g, "$1");
+		// Make json file human readable
+		data.replace(/[\n\t]+([\d\.e\-\[\]]+)/g, "$1");
 	
-	// Store file
-	if (Nunu.runningOnDesktop())
-	{
-		FileSystem.writeFile(Settings.CONFIG_FILE, data);
-	}
-	// Cookie
-	else
-	{
-		LocalStorage.set("config", data);
-	}
-	}
-
-/**
- * Load settings from the local storage.
- *
- * @method load
- */
-	load() {
-	try
-	{
+		// Store file
 		if (Nunu.runningOnDesktop())
 		{
-			var data = JSON.parse(FileSystem.readFile(Settings.CONFIG_FILE));
+			FileSystem.writeFile(Settings.CONFIG_FILE, data);
 		}
+		// Cookie
 		else
 		{
-			var data = LocalStorage.get("config");
-		}
-
-		for (var i in data)
-		{
-			if (this[i] === undefined)
-			{
-				this[i] = {};
-			}
-
-			for (var j in data[i])
-			{
-				this[i][j] = data[i][j];
-			}
+			LocalStorage.set("config", data);
 		}
 	}
-	catch (e)
+
+	/**
+	 * Load settings from the local storage.
+	 *
+	 * @method load
+	 */
+	load() 
 	{
-		console.warn("nunuStudio: Failed to load configuration file");
-	}
+		try
+		{
+			if (Nunu.runningOnDesktop())
+			{
+				var data = JSON.parse(FileSystem.readFile(Settings.CONFIG_FILE));
+			}
+			else
+			{
+				var data = LocalStorage.get("config");
+			}
+
+			for (var i in data)
+			{
+				if (this[i] === undefined)
+				{
+					this[i] = {};
+				}
+
+				for (var j in data[i])
+				{
+					this[i][j] = data[i][j];
+				}
+			}
+		}
+		catch (e)
+		{
+			console.warn("nunuStudio: Failed to load configuration file");
+		}
 	}
 
 }

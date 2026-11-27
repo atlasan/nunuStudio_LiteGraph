@@ -9,92 +9,99 @@ import {CodeEditor} from "./CodeEditor.js";
  * @class TextEditor
  * @extends {CodeEditor}
  */
-class TextEditor extends CodeEditor {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index);
-
-	var self = this;
-
-	// Change
-	this.code.on("change", function(cm)
+class TextEditor extends CodeEditor 
+{
+	constructor(parent, closeable, container, index) 
 	{
-		if (!cm.state.focused)
+		super(parent, closeable, container, index);
+
+		var self = this;
+
+		// Change
+		this.code.on("change", function(cm)
 		{
-			return;
-		}
-
-		self.updateCode();
-	});
-
-	// Key pressed event
-	this.code.on("keypress", function(cm, event)
-	{
-		var typed = String.fromCharCode(event.charCode);
-
-		if (/[\w\.]/.exec(typed))
-		{
-			// If there is no tern sugestion suggest known words
-			if (!cm.state.completionActive || !cm.state.completionActive.widget)
+			if (!cm.state.focused)
 			{
-				CodeMirror.commands.autocomplete(cm, null);
+				return;
 			}
+
+			self.updateCode();
+		});
+
+		// Key pressed event
+		this.code.on("keypress", function(cm, event)
+		{
+			var typed = String.fromCharCode(event.charCode);
+
+			if (/[\w\.]/.exec(typed))
+			{
+			// If there is no tern sugestion suggest known words
+				if (!cm.state.completionActive || !cm.state.completionActive.widget)
+				{
+					CodeMirror.commands.autocomplete(cm, null);
+				}
+			}
+		});
+
+		this.resource = null;
+	}
+
+	updateMetadata() 
+	{
+		this.setName(this.resource.name);
+
+		// If not found close tab
+		if (Editor.program.resources[this.resource.uuid] === undefined)
+		{
+			this.close();
 		}
-	});
-
-	this.resource = null;
 	}
 
-	updateMetadata() {
-	this.setName(this.resource.name);
-
-	// If not found close tab
-	if (Editor.program.resources[this.resource.uuid] === undefined)
+	activate() 
 	{
-		this.close();
-	}
-	}
+		super.activate();
 
-	activate() {
-	super.activate();
-
-	this.updateCode();
+		this.updateCode();
 	}
 
-	isAttached(resource) {
-	return this.resource === resource;
-	}
-
-	attach(resource) {
-	this.resource = resource;
-	this.setText(resource.data);
-
-	if (resource.encoding === "js")
+	isAttached(resource) 
 	{
-		this.setLanguage("javascript");
+		return this.resource === resource;
 	}
-	else if (resource.encoding === "html")
+
+	attach(resource) 
 	{
-		this.setLanguage("htmlmixed");
-	}
-	else if (resource.encoding === "css")
-	{
-		this.setLanguage("css");
-	}
-	else
-	{
-		this.setLanguage("");
-	}
+		this.resource = resource;
+		this.setText(resource.data);
+
+		if (resource.encoding === "js")
+		{
+			this.setLanguage("javascript");
+		}
+		else if (resource.encoding === "html")
+		{
+			this.setLanguage("htmlmixed");
+		}
+		else if (resource.encoding === "css")
+		{
+			this.setLanguage("css");
+		}
+		else
+		{
+			this.setLanguage("");
+		}
 	
-	this.updateMetadata();
-	this.updateSettings();
+		this.updateMetadata();
+		this.updateSettings();
 	}
 
-// Update attached script
-	updateCode() {
-	if (this.resource !== null)
+	// Update attached script
+	updateCode() 
 	{
-		this.resource.data = this.code.getValue();
-	}
+		if (this.resource !== null)
+		{
+			this.resource.data = this.code.getValue();
+		}
 	}
 
 }

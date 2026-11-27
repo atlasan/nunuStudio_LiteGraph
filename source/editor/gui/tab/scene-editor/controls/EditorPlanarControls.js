@@ -10,89 +10,94 @@ import {EditorOrbitControls} from "./EditorOrbitControls.js";
  * @extends {OrbitControls}
  * @param {number} mode Mode indicates the orientation to be locked.
  */
-class EditorPlanarControls extends EditorOrbitControls {
-	constructor(mode) {
-	super();
+class EditorPlanarControls extends EditorOrbitControls 
+{
+	constructor(mode) 
+	{
+		super();
 
-	this.setMode(mode !== undefined ? mode : Settings.PLANAR_LEFT);
+		this.setMode(mode !== undefined ? mode : Settings.PLANAR_LEFT);
 	}
 
 	setOrientation() {}
 
-	setMode(mode) {
-	this.mode = mode;
+	setMode(mode) 
+	{
+		this.mode = mode;
 
-	if (mode === Settings.PLANAR_FRONT)
-	{
-		this.orientation.set(Math.PI / 2, 0);
-	}
-	else if (mode === Settings.PLANAR_BACK)
-	{
-		this.orientation.set(-Math.PI / 2, 0);
-	}
-	else if (mode === Settings.PLANAR_LEFT)
-	{
-		this.orientation.set(0, 0);
-	}
-	else if (mode === Settings.PLANAR_RIGHT)
-	{
-		this.orientation.set(Math.PI, 0);
-	}
-	else if (mode === Settings.PLANAR_TOP)
-	{
-		this.orientation.set(Math.PI, 1.57);
-	}
-	else if (mode === Settings.PLANAR_BOTTOM)
-	{
-		this.orientation.set(Math.PI, -1.57);
-	}
-
-	this.updateControls();
-	}
-
-	reset() {
-	this.distance = 10;
-	this.center.set(0, 0, 0);
-	this.updateControls();
-	}
-
-	update(mouse) {
-	var needsUpdate = false;
-
-	if (mouse.buttonPressed(Mouse.RIGHT))
-	{
-		var direction = this.getWorldDirection(this.tempVector);
-		var up = direction.y > 0;
-		direction.y = 0;
-		direction.normalize();
-
-		if (this.mode === Settings.PLANAR_TOP || this.mode === Settings.PLANAR_BOTTOM)
+		if (mode === Settings.PLANAR_FRONT)
 		{
-			var y = mouse.delta.y * Editor.settings.editor.mouseLookSensitivity * this.distance;
-			this.center.x += up ? -direction.x * y : direction.x * y;
-			this.center.z += up ? -direction.z * y : direction.z * y;
+			this.orientation.set(Math.PI / 2, 0);
 		}
-		else
+		else if (mode === Settings.PLANAR_BACK)
 		{
-			this.center.y += mouse.delta.y * Editor.settings.editor.mouseLookSensitivity * this.distance;
+			this.orientation.set(-Math.PI / 2, 0);
+		}
+		else if (mode === Settings.PLANAR_LEFT)
+		{
+			this.orientation.set(0, 0);
+		}
+		else if (mode === Settings.PLANAR_RIGHT)
+		{
+			this.orientation.set(Math.PI, 0);
+		}
+		else if (mode === Settings.PLANAR_TOP)
+		{
+			this.orientation.set(Math.PI, 1.57);
+		}
+		else if (mode === Settings.PLANAR_BOTTOM)
+		{
+			this.orientation.set(Math.PI, -1.57);
 		}
 
-		direction.applyAxisAngle(EditorOrbitControls.UP, 1.57);
-
-		var x = mouse.delta.x * Editor.settings.editor.mouseLookSensitivity * this.distance;
-		this.center.x -= direction.x * x;
-		this.center.z -= direction.z * x;
-
-		needsUpdate = true;
+		this.updateControls();
 	}
 
-	if (mouse.wheel !== 0)
+	reset() 
 	{
-		this.distance += mouse.wheel * Editor.settings.editor.mouseWheelSensitivity * this.distance;
-		needsUpdate = true;
+		this.distance = 10;
+		this.center.set(0, 0, 0);
+		this.updateControls();
 	}
+
+	update(mouse) 
+	{
+		var needsUpdate = false;
+
+		if (mouse.buttonPressed(Mouse.RIGHT))
+		{
+			var direction = this.getWorldDirection(this.tempVector);
+			var up = direction.y > 0;
+			direction.y = 0;
+			direction.normalize();
+
+			if (this.mode === Settings.PLANAR_TOP || this.mode === Settings.PLANAR_BOTTOM)
+			{
+				var y = mouse.delta.y * Editor.settings.editor.mouseLookSensitivity * this.distance;
+				this.center.x += up ? -direction.x * y : direction.x * y;
+				this.center.z += up ? -direction.z * y : direction.z * y;
+			}
+			else
+			{
+				this.center.y += mouse.delta.y * Editor.settings.editor.mouseLookSensitivity * this.distance;
+			}
+
+			direction.applyAxisAngle(EditorOrbitControls.UP, 1.57);
+
+			var x = mouse.delta.x * Editor.settings.editor.mouseLookSensitivity * this.distance;
+			this.center.x -= direction.x * x;
+			this.center.z -= direction.z * x;
+
+			needsUpdate = true;
+		}
+
+		if (mouse.wheel !== 0)
+		{
+			this.distance += mouse.wheel * Editor.settings.editor.mouseWheelSensitivity * this.distance;
+			needsUpdate = true;
+		}
 	
-	/*
+		/*
 	// WASD movement
 	if(Editor.settings.editor.keyboardNavigation)
 	{
@@ -141,10 +146,10 @@ class EditorPlanarControls extends EditorOrbitControls {
 	}
 	*/
 
-	if (needsUpdate === true)
-	{
-		this.updateControls();
-	}
+		if (needsUpdate === true)
+		{
+			this.updateControls();
+		}
 	}
 
 }

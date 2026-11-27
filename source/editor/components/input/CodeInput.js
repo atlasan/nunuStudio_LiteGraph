@@ -10,194 +10,202 @@ import {Component} from "../Component.js";
  * @class CodeInput
  * @extends {Component}
  */
-class CodeInput extends Component {
-	constructor(parent) {
-	super(parent, "div");
+class CodeInput extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "div");
 
-	this.element.style.overflow = "auto";
+		this.element.style.overflow = "auto";
 
-	/**
-	 * CodeMirror editor instance should be used to access any codemirror functionality.
-	 * 
-	 * @property code
-	 * @type {CodeMirror}
-	 */
-	this.code = new CodeMirror(this.element,
-		{
-			value: "",
-			hintOptions:
+		/**
+		 * CodeMirror editor instance should be used to access any codemirror functionality.
+		 * 
+		 * @property code
+		 * @type {CodeMirror}
+		 */
+		this.code = new CodeMirror(this.element,
+			{
+				value: "",
+				hintOptions:
 		{
 			hint: CodeMirror.hint.anyword,
 			completeSingle: false
 		},
-			gutters: ["CodeMirror-lint-markers"]
-		});
+				gutters: ["CodeMirror-lint-markers"]
+			});
 	
-	this.code.setOption("theme", Editor.settings.code.theme);
-	this.code.setOption("indentWithTabs", Editor.settings.code.indentWithTabs);
-	this.code.setOption("tabSize", Editor.settings.code.tabSize);
-	this.code.setOption("indentUnit", Editor.settings.code.indentUnit);
-	this.code.setOption("autoCloseBrackets", Editor.settings.code.autoCloseBrackets);
+		this.code.setOption("theme", Editor.settings.code.theme);
+		this.code.setOption("indentWithTabs", Editor.settings.code.indentWithTabs);
+		this.code.setOption("tabSize", Editor.settings.code.tabSize);
+		this.code.setOption("indentUnit", Editor.settings.code.indentUnit);
+		this.code.setOption("autoCloseBrackets", Editor.settings.code.autoCloseBrackets);
 
-	var self = this;
+		var self = this;
 
-	this.element.oncontextmenu = function(event)
-	{
-		var context = new ContextMenu(DocumentBody);
-		context.size.set(130, 20);
-		context.position.set(event.clientX, event.clientY);
+		this.element.oncontextmenu = function(event)
+		{
+			var context = new ContextMenu(DocumentBody);
+			context.size.set(130, 20);
+			context.position.set(event.clientX, event.clientY);
 		
-		var refactor = context.addMenu(Locale.refactor);
-		refactor.addOption(Locale.rename, function()
-		{
-			self.server.rename(self.code);
-		});
-
-		refactor.addOption(Locale.select, function()
-		{
-			self.server.selectName(self.code);
-		});
-
-		context.addOption(Locale.search, function()
-		{
-			self.code.execCommand("find");
-		});
-
-		context.addOption(Locale.replace, function()
-		{
-			self.code.execCommand("replace");
-		});
-
-		context.addOption(Locale.replaceAll, function()
-		{
-			self.code.execCommand("replaceAll");
-		});
-
-		context.addOption(Locale.documentation, function()
-		{
-			self.server.jumpToDef(self.code);
-		});
-
-		context.addOption(Locale.copy, function()
-		{
-			var text = self.code.getSelection();
-			if (text !== "")
+			var refactor = context.addMenu(Locale.refactor);
+			refactor.addOption(Locale.rename, function()
 			{
-				Editor.clipboard.set(text, "text");
-			}
-		});
-		context.addOption(Locale.cut, function()
-		{
-			var text = self.code.getSelection();
-			if (text !== "")
+				self.server.rename(self.code);
+			});
+
+			refactor.addOption(Locale.select, function()
 			{
-				Editor.clipboard.set(text, "text");
-				self.code.replaceSelection("");
-			}
-		});
-		context.addOption(Locale.paste, function()
-		{
-			self.code.replaceSelection(Editor.clipboard.get("text"));
-		});
-		context.addOption(Locale.autoIndent, function()
-		{
-			self.code.execCommand("indentAuto");
-		});
-		context.addOption(Locale.selectAll, function()
-		{
-			self.code.execCommand("selectAll");
-		});
-		context.addOption(Locale.undo, function()
-		{
-			self.code.execCommand("undo");
-		});
-		context.addOption(Locale.redo, function()
-		{
-			self.code.execCommand("redo");
-		});
-		context.updateInterface();
-	};
+				self.server.selectName(self.code);
+			});
+
+			context.addOption(Locale.search, function()
+			{
+				self.code.execCommand("find");
+			});
+
+			context.addOption(Locale.replace, function()
+			{
+				self.code.execCommand("replace");
+			});
+
+			context.addOption(Locale.replaceAll, function()
+			{
+				self.code.execCommand("replaceAll");
+			});
+
+			context.addOption(Locale.documentation, function()
+			{
+				self.server.jumpToDef(self.code);
+			});
+
+			context.addOption(Locale.copy, function()
+			{
+				var text = self.code.getSelection();
+				if (text !== "")
+				{
+					Editor.clipboard.set(text, "text");
+				}
+			});
+			context.addOption(Locale.cut, function()
+			{
+				var text = self.code.getSelection();
+				if (text !== "")
+				{
+					Editor.clipboard.set(text, "text");
+					self.code.replaceSelection("");
+				}
+			});
+			context.addOption(Locale.paste, function()
+			{
+				self.code.replaceSelection(Editor.clipboard.get("text"));
+			});
+			context.addOption(Locale.autoIndent, function()
+			{
+				self.code.execCommand("indentAuto");
+			});
+			context.addOption(Locale.selectAll, function()
+			{
+				self.code.execCommand("selectAll");
+			});
+			context.addOption(Locale.undo, function()
+			{
+				self.code.execCommand("undo");
+			});
+			context.addOption(Locale.redo, function()
+			{
+				self.code.execCommand("redo");
+			});
+			context.updateInterface();
+		};
 	}
 
-/**
- * Set code editor font size.
- *
- * @method setFontSize
- * @param {number} size
- */
-	setFontSize(size) {
-	if (size < 5)
+	/**
+	 * Set code editor font size.
+	 *
+	 * @method setFontSize
+	 * @param {number} size
+	 */
+	setFontSize(size) 
 	{
-		size = 5;
+		if (size < 5)
+		{
+			size = 5;
+		}
+
+		Editor.settings.code.fontSize = size;
+		this.code.display.wrapper.style.fontSize = size + "px";
 	}
 
-	Editor.settings.code.fontSize = size;
-	this.code.display.wrapper.style.fontSize = size + "px";
+	/**
+	 * Set language mode (javascript, glsl, etc).
+	 *
+	 * @method setLanguage
+	 * @param {string} mode Language mode.
+	 */
+	setLanguage(mode) 
+	{
+		this.code.setOption("mode", mode);
 	}
 
-/**
- * Set language mode (javascript, glsl, etc).
- *
- * @method setLanguage
- * @param {string} mode Language mode.
- */
-	setLanguage(mode) {
-	this.code.setOption("mode", mode);
+	/**
+	 * Set the disabled state of the element.
+	 *
+	 * @method setDisabled
+	 * @param {boolean} disabled
+	 */
+	setDisabled(value) 
+	{
+		this.element.disabled = value;
 	}
 
-/**
- * Set the disabled state of the element.
- *
- * @method setDisabled
- * @param {boolean} disabled
- */
-	setDisabled(value) {
-	this.element.disabled = value;
+	/**
+	 * Set onchange callback, called after changes.
+	 *
+	 * @method setOnChange
+	 * @param {Function} onChange
+	 */
+	setOnChange(callback) 
+	{
+		this.code.on("change", callback);
 	}
 
-/**
- * Set onchange callback, called after changes.
- *
- * @method setOnChange
- * @param {Function} onChange
- */
-	setOnChange(callback) {
-	this.code.on("change", callback);
+	/**
+	 * Set value stored in the input element.
+	 *
+	 * @method setText
+	 * @param {Object} text
+	 */
+	setText(text) 
+	{
+		this.code.setValue(text);
 	}
 
-/**
- * Set value stored in the input element.
- *
- * @method setText
- * @param {Object} text
- */
-	setText(text) {
-	this.code.setValue(text);
+	/**
+	 * Get text stored in the input element.
+	 *
+	 * @method getText
+	 * @return {string} Text stored in the input element.
+	 */
+	getText() 
+	{
+		return this.code.getValue();
 	}
 
-/**
- * Get text stored in the input element.
- *
- * @method getText
- * @return {string} Text stored in the input element.
- */
-	getText() {
-	return this.code.getValue();
-	}
+	/**
+	 * Set value stored in the input element. Same as setText().
+	 *
+	 * @method setValue
+	 * @param {Object} text
+	 */
 
-/**
- * Set value stored in the input element. Same as setText().
- *
- * @method setValue
- * @param {Object} text
- */
-
-/**
- * Get text stored in the input element. Same as getText().
- *
- * @method getValue
- * @return {string} Text stored in the input element.
- */
+	/**
+	 * Get text stored in the input element. Same as getText().
+	 *
+	 * @method getValue
+	 * @return {string} Text stored in the input element.
+	 */
 
 }
 

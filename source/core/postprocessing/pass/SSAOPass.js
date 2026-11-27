@@ -16,140 +16,140 @@ import {Pass} from "../Pass.js";
  */
 class SSAOPass extends ShaderPass
 {
-constructor()
+	constructor()
+	{
+		super(SSAOShader);
+
+		this.type = "SSAO";
+
+		// Depth material
+		this.depthMaterial = new MeshDepthMaterial();
+		this.depthMaterial.depthPacking = RGBADepthPacking;
+		this.depthMaterial.blending = NoBlending;
+
+		// Depth render target
+		this.depthRenderTarget = new WebGLRenderTarget(2, 2, {minFilter: LinearFilter, magFilter: LinearFilter});
+
+		// Shader uniforms
+		this.uniforms["tDepth"].value = this.depthRenderTarget.texture;
+		this.uniforms["size"].value.set(2, 2);
+
+		// Setters and getters for uniforms
+		Object.defineProperties(this,
+			{
+				/**
+				 * Ambient occlusion shadow radius.
+				 *
+				 * @property radius
+				 * @type {number}
+				 */
+				radius:
 {
-super(SSAOShader);
-
-this.type = "SSAO";
-
-// Depth material
-this.depthMaterial = new MeshDepthMaterial();
-this.depthMaterial.depthPacking = RGBADepthPacking;
-this.depthMaterial.blending = NoBlending;
-
-// Depth render target
-this.depthRenderTarget = new WebGLRenderTarget(2, 2, {minFilter: LinearFilter, magFilter: LinearFilter});
-
-// Shader uniforms
-this.uniforms["tDepth"].value = this.depthRenderTarget.texture;
-this.uniforms["size"].value.set(2, 2);
-
-// Setters and getters for uniforms
-Object.defineProperties(this,
-{
-/**
- * Ambient occlusion shadow radius.
- *
- * @property radius
- * @type {number}
- */
-radius:
-{
-get: function() {return this.uniforms["radius"].value;},
-set: function(value) {this.uniforms["radius"].value = value;}
+	get: function() {return this.uniforms["radius"].value;},
+	set: function(value) {this.uniforms["radius"].value = value;}
 },
 
-/**
- * Display only ambient occlusion result.
- *
- * @property onlyAO
- * @type {boolean}
- */
-onlyAO:
+				/**
+				 * Display only ambient occlusion result.
+				 *
+				 * @property onlyAO
+				 * @type {boolean}
+				 */
+				onlyAO:
 {
-get: function() {return this.uniforms["onlyAO"].value;},
-set: function(value) {this.uniforms["onlyAO"].value = value;}
+	get: function() {return this.uniforms["onlyAO"].value;},
+	set: function(value) {this.uniforms["onlyAO"].value = value;}
 },
 
-/**
- * Ambient occlusion clamp.
- *
- * @property aoClamp
- * @type {number}
- */
-aoClamp:
+				/**
+				 * Ambient occlusion clamp.
+				 *
+				 * @property aoClamp
+				 * @type {number}
+				 */
+				aoClamp:
 {
-get: function() {return this.uniforms["aoClamp"].value;},
-set: function(value) {this.uniforms["aoClamp"].value = value;}
+	get: function() {return this.uniforms["aoClamp"].value;},
+	set: function(value) {this.uniforms["aoClamp"].value = value;}
 },
 
-/**
- * Pixel luminosity influence in AO calculation.
- *
- * @property lumInfluence
- * @type {number}
- */
-lumInfluence:
+				/**
+				 * Pixel luminosity influence in AO calculation.
+				 *
+				 * @property lumInfluence
+				 * @type {number}
+				 */
+				lumInfluence:
 {
-get: function() {return this.uniforms["lumInfluence"].value;},
-set: function(value) {this.uniforms["lumInfluence"].value = value;}
+	get: function() {return this.uniforms["lumInfluence"].value;},
+	set: function(value) {this.uniforms["lumInfluence"].value = value;}
 }
-});
+			});
 
-this.radius = 4;
-this.onlyAO = false;
-this.aoClamp = 0.25;
-this.lumInfluence = 0.7;
-}
+		this.radius = 4;
+		this.onlyAO = false;
+		this.aoClamp = 0.25;
+		this.lumInfluence = 0.7;
+	}
 
-/**
- * Render using this pass.
- *
- * @method render
- * @param {WebGLRenderer} renderer
- * @param {WebGLRenderTarget} writeBuffer Buffer to write output.
- * @param {WebGLRenderTarget} readBuffer Input buffer.
- * @param {number} delta Delta time in milliseconds.
- * @param {boolean} maskActive Not used in this pass.
- */
-render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
-{
-this.uniforms["cameraNear"].value = camera.near;
-this.uniforms["cameraFar"].value = camera.far;
+	/**
+	 * Render using this pass.
+	 *
+	 * @method render
+	 * @param {WebGLRenderer} renderer
+	 * @param {WebGLRenderTarget} writeBuffer Buffer to write output.
+	 * @param {WebGLRenderTarget} readBuffer Input buffer.
+	 * @param {number} delta Delta time in milliseconds.
+	 * @param {boolean} maskActive Not used in this pass.
+	 */
+	render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
+	{
+		this.uniforms["cameraNear"].value = camera.near;
+		this.uniforms["cameraFar"].value = camera.far;
 
-// Render depth
-scene.overrideMaterial = this.depthMaterial;
+		// Render depth
+		scene.overrideMaterial = this.depthMaterial;
 
-renderer.setRenderTarget(this.depthRenderTarget);
-renderer.clear(true, true, true);
-renderer.render(scene, camera);
+		renderer.setRenderTarget(this.depthRenderTarget);
+		renderer.clear(true, true, true);
+		renderer.render(scene, camera);
 
-// Render shader
-scene.overrideMaterial = null;
+		// Render shader
+		scene.overrideMaterial = null;
 
-super.render(renderer, writeBuffer, readBuffer, delta, maskActive);
-}
+		super.render(renderer, writeBuffer, readBuffer, delta, maskActive);
+	}
 
-/**
- * Set resolution of this render pass.
- *
- * @method setSize
- * @param {number} width
- * @param {number} height
- */
-setSize(width, height)
-{
-this.uniforms["size"].value.set(width, height);
-this.depthRenderTarget.setSize(width, height);
-}
+	/**
+	 * Set resolution of this render pass.
+	 *
+	 * @method setSize
+	 * @param {number} width
+	 * @param {number} height
+	 */
+	setSize(width, height)
+	{
+		this.uniforms["size"].value.set(width, height);
+		this.depthRenderTarget.setSize(width, height);
+	}
 
-/**
- * Serialize pass to json.
- *
- * @method toJSON
- * @param {Object} meta Metadata object.
- */
-toJSON(meta)
-{
-var data = Pass.prototype.toJSON.call(this, meta);
+	/**
+	 * Serialize pass to json.
+	 *
+	 * @method toJSON
+	 * @param {Object} meta Metadata object.
+	 */
+	toJSON(meta)
+	{
+		var data = Pass.prototype.toJSON.call(this, meta);
 
-data.onlyAO = this.onlyAO;
-data.radius = this.radius;
-data.aoClamp = this.aoClamp;
-data.lumInfluence = this.lumInfluence;
+		data.onlyAO = this.onlyAO;
+		data.radius = this.radius;
+		data.aoClamp = this.aoClamp;
+		data.lumInfluence = this.lumInfluence;
 
-return data;
-}
+		return data;
+	}
 }
 
 export {SSAOPass};

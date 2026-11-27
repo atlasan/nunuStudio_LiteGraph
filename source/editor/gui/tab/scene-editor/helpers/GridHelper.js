@@ -10,52 +10,57 @@ import {LineSegments, BufferGeometry, LineBasicMaterial, Float32BufferAttribute}
  * @param spacing {number} Spacing between lines.
  * @param color {number} Hex color of the grid lines.
  */
-class GridHelper extends LineSegments {
-	constructor(size, spacing, color) {
-	super(new BufferGeometry(), new LineBasicMaterial(
-		{
-			color: color !== undefined ? color : 0x888888,
-			depthWrite: false,
-			transparent: true,
-			opacity: 0.5
-		}));
-
-	this.size = size !== undefined ? size : 100;
-	this.spacing = spacing !== undefined ? spacing : 1;
-
-	this.update();
-	}
-
-	setSize(size) {
-	this.size = size;
-	}
-
-	setSpacing(spacing) {
-	this.spacing = spacing;
-	}
-
-/**
- * Update the geometry of the grid.
- *
- * @method update
- */
-	update() {
-	var geometry = this.geometry;
-	geometry.deleteAttribute("position");
-
-	var divisions = Math.round(this.size / this.spacing) * 2;
-	var center = divisions / 2;
-	var step = this.size * 2 / divisions;
-	var vertices = [];
-	var colors = [];
-
-	for (var i = 0, j = 0, k = -this.size; i <= divisions; i ++, k += step)
+class GridHelper extends LineSegments 
+{
+	constructor(size, spacing, color) 
 	{
-		vertices.push(-this.size, 0, k, this.size, 0, k);
-		vertices.push(k, 0, -this.size, k, 0, this.size);
+		super(new BufferGeometry(), new LineBasicMaterial(
+			{
+				color: color !== undefined ? color : 0x888888,
+				depthWrite: false,
+				transparent: true,
+				opacity: 0.5
+			}));
+
+		this.size = size !== undefined ? size : 100;
+		this.spacing = spacing !== undefined ? spacing : 1;
+
+		this.update();
 	}
 
-	geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+	setSize(size) 
+	{
+		this.size = size;
+	}
+
+	setSpacing(spacing) 
+	{
+		this.spacing = spacing;
+	}
+
+	/**
+	 * Update the geometry of the grid.
+	 *
+	 * @method update
+	 */
+	update() 
+	{
+		var geometry = this.geometry;
+		geometry.deleteAttribute("position");
+
+		var divisions = Math.round(this.size / this.spacing) * 2;
+		var center = divisions / 2;
+		var step = this.size * 2 / divisions;
+		var vertices = [];
+		var colors = [];
+
+		for (var i = 0, j = 0, k = -this.size; i <= divisions; i ++, k += step)
+		{
+			vertices.push(-this.size, 0, k, this.size, 0, k);
+			vertices.push(k, 0, -this.size, k, 0, this.size);
+		}
+
+		geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
 	}
 
 }

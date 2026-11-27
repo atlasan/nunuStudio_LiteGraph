@@ -12,17 +12,17 @@ import {ShaderPass} from "../../ShaderPass.js";
  */
 class FXAAPass extends ShaderPass
 {
-constructor()
-{
-super(FXAAShader);
+	constructor()
+	{
+		super(FXAAShader);
 
-this.type = "FXAA";
-}
+		this.type = "FXAA";
+	}
 
-setSize(width, height)
-{
-this.uniforms["resolution"].value.set(1.0 / width, 1.0 / height);
-}
+	setSize(width, height)
+	{
+		this.uniforms["resolution"].value.set(1.0 / width, 1.0 / height);
+	}
 }
 
 export {FXAAPass};

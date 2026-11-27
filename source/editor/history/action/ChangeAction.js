@@ -12,40 +12,44 @@ import {Action} from "./Action.js";
  * @param {Object} newValue New value for the object attribute.
  * @param {Object} oldValue Optionally we can pass the old value.
  */
-class ChangeAction extends Action {
-	constructor(object, attribute, newValue, oldValue) {
-	super();
-
-	this.object = object;
-	this.attribute = attribute;
-	this.newValue = newValue;
-	this.oldValue = oldValue !== undefined ? oldValue : ChangeAction.isVetorial(object[attribute]) ? object[attribute].clone() : object[attribute];
-	}
-
-	apply() {
-	if (ChangeAction.isVetorial(this.object[this.attribute]))
+class ChangeAction extends Action 
+{
+	constructor(object, attribute, newValue, oldValue) 
 	{
-		this.object[this.attribute].copy(this.newValue);
-	}
-	else
-	{
-		this.object[this.attribute] = this.newValue;
+		super();
+
+		this.object = object;
+		this.attribute = attribute;
+		this.newValue = newValue;
+		this.oldValue = oldValue !== undefined ? oldValue : ChangeAction.isVetorial(object[attribute]) ? object[attribute].clone() : object[attribute];
 	}
 
-	ChangeAction.updateGUI(this.object, this.attribute, this.newValue);
+	apply() 
+	{
+		if (ChangeAction.isVetorial(this.object[this.attribute]))
+		{
+			this.object[this.attribute].copy(this.newValue);
+		}
+		else
+		{
+			this.object[this.attribute] = this.newValue;
+		}
+
+		ChangeAction.updateGUI(this.object, this.attribute, this.newValue);
 	}
 
-	revert() {
-	if (ChangeAction.isVetorial(this.object[this.attribute]))
+	revert() 
 	{
-		this.object[this.attribute].copy(this.oldValue);
-	}
-	else
-	{
-		this.object[this.attribute] = this.oldValue;
-	}
+		if (ChangeAction.isVetorial(this.object[this.attribute]))
+		{
+			this.object[this.attribute].copy(this.oldValue);
+		}
+		else
+		{
+			this.object[this.attribute] = this.oldValue;
+		}
 
-	ChangeAction.updateGUI(this.object, this.attribute, this.oldValue);
+		ChangeAction.updateGUI(this.object, this.attribute, this.oldValue);
 	}
 
 }

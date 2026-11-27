@@ -9,51 +9,51 @@ import {Pass} from "./Pass.js";
  */
 class ShaderPass extends Pass
 {
-constructor(shader, textureID)
-{
-super();
+	constructor(shader, textureID)
+	{
+		super();
 
-this.type = "Shader";
-this.textureID = textureID !== undefined ? textureID : "tDiffuse";
+		this.type = "Shader";
+		this.textureID = textureID !== undefined ? textureID : "tDiffuse";
 
-if (shader instanceof ShaderMaterial)
-{
-this.uniforms = shader.uniforms;
-this.material = shader;
-}
-else if (shader)
-{
-this.uniforms = UniformsUtils.clone(shader.uniforms);
-this.material = new ShaderMaterial(
-{
-defines: Object.assign({}, shader.defines),
-uniforms: this.uniforms,
-vertexShader: shader.vertexShader,
-fragmentShader: shader.fragmentShader
-});
-}
+		if (shader instanceof ShaderMaterial)
+		{
+			this.uniforms = shader.uniforms;
+			this.material = shader;
+		}
+		else if (shader)
+		{
+			this.uniforms = UniformsUtils.clone(shader.uniforms);
+			this.material = new ShaderMaterial(
+				{
+					defines: Object.assign({}, shader.defines),
+					uniforms: this.uniforms,
+					vertexShader: shader.vertexShader,
+					fragmentShader: shader.fragmentShader
+				});
+		}
 
-this.createQuadScene();
-}
+		this.createQuadScene();
+	}
 
-render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
-{
-if (this.uniforms[this.textureID])
-{
-this.uniforms[this.textureID].value = readBuffer.texture;
-}
+	render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
+	{
+		if (this.uniforms[this.textureID])
+		{
+			this.uniforms[this.textureID].value = readBuffer.texture;
+		}
 
-this.quad.material = this.material;
+		this.quad.material = this.material;
 
-renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
+		renderer.setRenderTarget(this.renderToScreen ? null : writeBuffer);
 
-if (this.clear)
-{
-renderer.clear();
-}
+		if (this.clear)
+		{
+			renderer.clear();
+		}
 
-renderer.render(this.scene, this.camera);
-}
+		renderer.render(this.scene, this.camera);
+	}
 }
 
 export {ShaderPass};

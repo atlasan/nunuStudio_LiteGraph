@@ -5,30 +5,33 @@ import {Editor} from "../../../../Editor.js";
 import {DropdownList} from "../../../../components/input/DropdownList.js";
 import {ObjectInspector} from "./ObjectInspector.js";
 
-class ScriptInspector extends ObjectInspector {
-	constructor(parent, object) {
-	super(parent, object);
-
-	var self = this;
-
-	this.form.addText(Locale.libraryMode);
-	this.mode = new DropdownList(this.form);
-	this.mode.size.set(100, 18);
-	this.mode.setOnChange(function()
+class ScriptInspector extends ObjectInspector 
+{
+	constructor(parent, object) 
 	{
-		Editor.addAction(new ChangeAction(self.object, "mode", self.mode.getValue()));
-	});
-	this.mode.addValue(Locale.evaluate, Script.EVALUATE);
-	this.mode.addValue(Locale.append, Script.APPEND);
-	this.mode.addValue(Locale.include, Script.INCLUDE);
-	this.form.add(this.mode);
-	this.form.nextRow();
+		super(parent, object);
+
+		var self = this;
+
+		this.form.addText(Locale.libraryMode);
+		this.mode = new DropdownList(this.form);
+		this.mode.size.set(100, 18);
+		this.mode.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.object, "mode", self.mode.getValue()));
+		});
+		this.mode.addValue(Locale.evaluate, Script.EVALUATE);
+		this.mode.addValue(Locale.append, Script.APPEND);
+		this.mode.addValue(Locale.include, Script.INCLUDE);
+		this.form.add(this.mode);
+		this.form.nextRow();
 	}
 
-	updateInspector() {
-	super.updateInspector();
+	updateInspector() 
+	{
+		super.updateInspector();
 	
-	this.mode.setValue(this.object.mode);
+		this.mode.setValue(this.object.mode);
 	}
 
 }

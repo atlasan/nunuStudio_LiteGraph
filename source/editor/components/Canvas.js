@@ -8,31 +8,35 @@ import {Component} from "./Component.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class Canvas extends Component {
-	constructor(parent) {
-	super(parent, "canvas");
+class Canvas extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "canvas");
 
-	this.preventDragEvents();
+		this.preventDragEvents();
 	}
 
-/**
- * Get a context from this canvas.
- * 
- * @method getContext
- * @param {string} type Type of context to get "2d", "webgl", etc
- * @return {Object} Context obtained from the canvas.
- */
-	getContext(type) {
-	return this.element.getContext(type);
+	/**
+	 * Get a context from this canvas.
+	 * 
+	 * @method getContext
+	 * @param {string} type Type of context to get "2d", "webgl", etc
+	 * @return {Object} Context obtained from the canvas.
+	 */
+	getContext(type) 
+	{
+		return this.element.getContext(type);
 	}
 
-	updateSize() {
-	super.updateSize();
+	updateSize() 
+	{
+		super.updateSize();
 
-	var pixelRatio = Editor.getPixelRatio();
+		var pixelRatio = Editor.getPixelRatio();
 	
-	this.element.width = this.size.x * pixelRatio;
-	this.element.height = this.size.y * pixelRatio;
+		this.element.width = this.size.x * pixelRatio;
+		this.element.height = this.size.y * pixelRatio;
 	}
 
 }

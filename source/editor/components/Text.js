@@ -8,231 +8,245 @@ import {Component} from "./Component.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class Text extends Component {
-	constructor(parent) {
-	super(parent, "div");
+class Text extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "div");
 
-	this.element.style.pointerEvents = "none";
-	this.element.style.display = "flex";
+		this.element.style.pointerEvents = "none";
+		this.element.style.display = "flex";
 
-	/** 
-	 * Span DOM element used to represent the text.
-	 *
-	 * @attribute span
-	 * @type {Element}
-	 */
-	this.span = document.createElement("span");
-	this.span.style.overflow = "hidden";
-	this.element.appendChild(this.span);
+		/** 
+		 * Span DOM element used to represent the text.
+		 *
+		 * @attribute span
+		 * @type {Element}
+		 */
+		this.span = document.createElement("span");
+		this.span.style.overflow = "hidden";
+		this.element.appendChild(this.span);
+
+		/**
+		 * Text DOM node where the text is stored.
+		 *
+		 * @attribute text
+		 * @type {Element}
+		 */
+		this.text = document.createTextNode("");
+		this.span.appendChild(this.text);
+
+		/**
+		 * If set to true the text container will automatically fit the text size.
+		 *
+		 * @attribute fitContent
+		 * @type {boolean}
+		 */
+		this.fitContent = false;
+
+		this.allowWordBreak(false);
+		this.setVerticalAlignment(Text.CENTER);
+		this.setAlignment(Text.CENTER);
+	}
+
 
 	/**
-	 * Text DOM node where the text is stored.
-	 *
-	 * @attribute text
-	 * @type {Element}
+	 * Set font to use for the text.
+	 * 
+	 * @method setFont
+	 * @param {string} fontFamily Font family.
+	 * @param {number} fontWeight Font weigth, sets how thick or thin characters in text should be displayed.
+	 * @param {string} fontStyle Font style, specifies the font style for a text.
 	 */
-	this.text = document.createTextNode("");
-	this.span.appendChild(this.text);
+	setFont(fontFamily, fontWeight, fontStyle) 
+	{
+		this.span.style.fontFamily = fontFamily;
+
+		if (fontWeight !== undefined)
+		{
+			this.span.style.fontWeight = fontWeight;
+		}
+
+		if (fontStyle !== undefined)
+		{
+			this.span.style.fontStyle = fontStyle;
+		}
+	}
 
 	/**
-	 * If set to true the text container will automatically fit the text size.
+	 * Enable of disable word breaking.
 	 *
-	 * @attribute fitContent
-	 * @type {boolean}
+	 * @method allowWordBreak
+	 * @param {boolean} line If true words can be breaked.
 	 */
-	this.fitContent = false;
-
-	this.allowWordBreak(false);
-	this.setVerticalAlignment(Text.CENTER);
-	this.setAlignment(Text.CENTER);
-	}
-
-
-
-/**
- * Set font to use for the text.
- * 
- * @method setFont
- * @param {string} fontFamily Font family.
- * @param {number} fontWeight Font weigth, sets how thick or thin characters in text should be displayed.
- * @param {string} fontStyle Font style, specifies the font style for a text.
- */
-	setFont(fontFamily, fontWeight, fontStyle) {
-	this.span.style.fontFamily = fontFamily;
-
-	if (fontWeight !== undefined)
+	allowWordBreak(value) 
 	{
-		this.span.style.fontWeight = fontWeight;
+		if (value === true)
+		{
+			this.span.style.whiteSpace = "normal";
+			this.span.style.wordBreak = "break-word";
+		}
+		else
+		{
+			this.span.style.whiteSpace = "pre";
+			this.span.style.wordBreak = "normal";
+		}
 	}
 
-	if (fontStyle !== undefined)
+	/**
+	 * Set text displayed in the component.
+	 *
+	 * @method setText
+	 * @param {string} text Text. 
+	 */
+	setText(text) 
 	{
-		this.span.style.fontStyle = fontStyle;
-	}
+		this.text.data = text;
 	}
 
-/**
- * Enable of disable word breaking.
- *
- * @method allowWordBreak
- * @param {boolean} line If true words can be breaked.
- */
-	allowWordBreak(value) {
-	if (value === true)
+	/**
+	 * Set text border size in px. The border is set as a solid centered shadow with a defined color.
+	 *
+	 * @method setTextBorder
+	 * @param {number} size Border size in pixels.
+	 * @param {string} color CSS Color. 
+	 */
+	setTextBorder(size, color) 
 	{
-		this.span.style.whiteSpace = "normal";
-		this.span.style.wordBreak = "break-word";
-	}
-	else
-	{
-		this.span.style.whiteSpace = "pre";
-		this.span.style.wordBreak = "normal";
-	}
+		this.span.style.textShadow = "-" + size + "px 0 " + color + ", 0 " + size + "px " + color + ", " + size + "px 0 " + color + ", 0 -" + size + "px " + color;
 	}
 
-/**
- * Set text displayed in the component.
- *
- * @method setText
- * @param {string} text Text. 
- */
-	setText(text) {
-	this.text.data = text;
+	/**
+	 * Set Text size, in pixels.
+	 * 
+	 * @method setTextSize
+	 * @param {number} size Size in pixel for this text element.
+	 */
+	setTextSize(size) 
+	{
+		this.element.style.fontSize = size + "px";
 	}
 
-/**
- * Set text border size in px. The border is set as a solid centered shadow with a defined color.
- *
- * @method setTextBorder
- * @param {number} size Border size in pixels.
- * @param {string} color CSS Color. 
- */
-	setTextBorder(size, color) {
-	this.span.style.textShadow = "-" + size + "px 0 " + color + ", 0 " + size + "px " + color + ", " + size + "px 0 " + color + ", 0 -" + size + "px " + color;
+	/**
+	 * Set text color.
+	 * 
+	 * @method setTextColor
+	 * @param {string} color Color code.
+	 */
+	setTextColor(color) 
+	{
+		this.span.style.color = color;
 	}
 
-/**
- * Set Text size, in pixels.
- * 
- * @method setTextSize
- * @param {number} size Size in pixel for this text element.
- */
-	setTextSize(size) {
-	this.element.style.fontSize = size + "px";
+	/**
+	 * Set text overflow handling
+	 *
+	 * @method setOverflow
+	 * @param {number} overflow
+	 */
+	setOverflow(overflow) 
+	{
+		if (overflow === Text.ELLIPSIS)
+		{
+			this.span.style.whiteSpace = "nowrap";
+			this.span.style.textOverflow = "ellipsis";
+		}
+		else
+		{
+			this.span.style.whiteSpace = "pre";
+			this.span.style.textOverflow = "clip";
+		}
 	}
 
-/**
- * Set text color.
- * 
- * @method setTextColor
- * @param {string} color Color code.
- */
-	setTextColor(color) {
-	this.span.style.color = color;
+	/**
+	 * Set text horizontal alignment.
+	 *  - Text.CENTER
+	 *  - Text.LEFT
+	 *  - Text.RIGHT
+	 * 
+	 * @method setAlignment
+	 * @param {number} align Alingment mode.
+	 */
+	setAlignment(align) 
+	{
+		if (align === Text.CENTER)
+		{
+			this.element.style.justifyContent = "center";
+			this.element.style.textAlign = "center";
+		}
+		else if (align === Text.LEFT)
+		{
+			this.element.style.justifyContent = "flex-start";
+			this.element.style.textAlign = "left";
+		}
+		else if (align === Text.RIGHT)
+		{
+			this.element.style.justifyContent = "flex-end";
+			this.element.style.textAlign = "right";
+		}
 	}
 
-/**
- * Set text overflow handling
- *
- * @method setOverflow
- * @param {number} overflow
- */
-	setOverflow(overflow) {
-	if (overflow === Text.ELLIPSIS)
+	/**
+	 * Set text vertical alignment.
+	 *  - Text.CENTER
+	 *  - Text.TOP
+	 *  - Text.BOTTOM
+	 * 
+	 * @method setVerticalAlignment
+	 * @param {number} align Alingment mode.
+	 */
+	setVerticalAlignment(align) 
 	{
-		this.span.style.whiteSpace = "nowrap";
-		this.span.style.textOverflow = "ellipsis";
-	}
-	else
-	{
-		this.span.style.whiteSpace = "pre";
-		this.span.style.textOverflow = "clip";
-	}
-	}
-
-/**
- * Set text horizontal alignment.
- *  - Text.CENTER
- *  - Text.LEFT
- *  - Text.RIGHT
- * 
- * @method setAlignment
- * @param {number} align Alingment mode.
- */
-	setAlignment(align) {
-	if (align === Text.CENTER)
-	{
-		this.element.style.justifyContent = "center";
-		this.element.style.textAlign = "center";
-	}
-	else if (align === Text.LEFT)
-	{
-		this.element.style.justifyContent = "flex-start";
-		this.element.style.textAlign = "left";
-	}
-	else if (align === Text.RIGHT)
-	{
-		this.element.style.justifyContent = "flex-end";
-		this.element.style.textAlign = "right";
-	}
-	}
-
-/**
- * Set text vertical alignment.
- *  - Text.CENTER
- *  - Text.TOP
- *  - Text.BOTTOM
- * 
- * @method setVerticalAlignment
- * @param {number} align Alingment mode.
- */
-	setVerticalAlignment(align) {
-	if (align === Text.CENTER)
-	{
-		this.element.style.alignItems = "center";
-	}
-	else if (align === Text.TOP)
-	{
+		if (align === Text.CENTER)
+		{
+			this.element.style.alignItems = "center";
+		}
+		else if (align === Text.TOP)
+		{
  		this.element.style.alignItems = "flex-start";
-	}
-	else if (align === Text.BOTTOM)
-	{
-		this.element.style.alignItems = "flex-end";
-	}
+		}
+		else if (align === Text.BOTTOM)
+		{
+			this.element.style.alignItems = "flex-end";
+		}
 	}
 
-/**
- * Get size of the text inside of this component in px.
- * 
- * @method measure
- * @return {Vector2} A vector with the size of the text. 
- */
-	measure() {
+	/**
+	 * Get size of the text inside of this component in px.
+	 * 
+	 * @method measure
+	 * @return {Vector2} A vector with the size of the text. 
+	 */
+	measure() 
+	{
  	return new Vector2(this.span.offsetWidth, this.span.offsetHeight);
 	}
 
-/**
- * Set text internal margin in pixels.
- * 
- * @method setMargin
- * @param {number} margin Margin size in pixels.
- */
-	setMargin(margin) {
-	this.span.style.margin = margin + "px";
-	}
-
-	updateVisibility() {
-	this.element.style.visibility = this.visible ? "visible" : "hidden";
-	}
-
-	updateSize() {
-	if (this.fitContent)
+	/**
+	 * Set text internal margin in pixels.
+	 * 
+	 * @method setMargin
+	 * @param {number} margin Margin size in pixels.
+	 */
+	setMargin(margin) 
 	{
-		this.size.x = this.span.clientWidth;
-		this.size.y = this.span.clientHeight;
+		this.span.style.margin = margin + "px";
 	}
+
+	updateVisibility() 
+	{
+		this.element.style.visibility = this.visible ? "visible" : "hidden";
+	}
+
+	updateSize() 
+	{
+		if (this.fitContent)
+		{
+			this.size.x = this.span.clientWidth;
+			this.size.y = this.span.clientHeight;
+		}
 	
-	super.updateSize();
+		super.updateSize();
 	}
 
 }

@@ -9,22 +9,26 @@ import {Action} from "./Action.js";
  * @param {Action} action Base action.
  * @param {Function} callback Callback function.
  */
-class CallbackAction extends Action {
-	constructor(action, callback) {
-	super();
+class CallbackAction extends Action 
+{
+	constructor(action, callback) 
+	{
+		super();
 
-	this.action = action;
-	this.callback = callback;
+		this.action = action;
+		this.callback = callback;
 	}
 
-	apply() {
-	this.action.apply();
-	this.callback();
+	apply() 
+	{
+		this.action.apply();
+		this.callback();
 	}
 
-	revert() {
-	this.action.revert();
-	this.callback();
+	revert() 
+	{
+		this.action.revert();
+		this.callback();
 	}
 
 }

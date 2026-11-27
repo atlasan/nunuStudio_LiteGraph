@@ -12,96 +12,99 @@ import {Component} from "../../../components/Component.js";
  * @class AnimationClipMenuBar
  * @extends {Component}
  */
-class AnimationClipMenuBar extends Component {
-	constructor(parent, editor, animation) {
-	super(parent, "div");
-
-	this.element.style.backgroundColor = "var(--bar-color)";
-	this.element.style.position = "relative";
-	this.element.style.width = "100%";
-	this.element.style.height = "30px";
-
-	this.editor = editor;
-	this.animation = animation;
-
-	var self = this;
-
-	var text = new Text(this);
-	text.position.set(5, 5);
-	text.size.set(50, 20);
-	text.setText(Locale.enabled);
-	text.updateInterface();
-
-	this.enabled = new CheckBox(this);
-	this.enabled.position.set(55, 5);
-	this.enabled.size.set(18, 18);
-	this.enabled.updateInterface();
-	this.enabled.setOnChange(function()
+class AnimationClipMenuBar extends Component 
+{
+	constructor(parent, editor, animation) 
 	{
-		self.animation.enabled = self.enabled.getValue();
-		self.editor.createAnimationMixer(true);
-	});
+		super(parent, "div");
 
-	var text = new Text(this);
-	text.position.set(70, 5);
-	text.size.set(100, 20);
-	text.setText(Locale.duration);
-	text.updateInterface();
+		this.element.style.backgroundColor = "var(--bar-color)";
+		this.element.style.position = "relative";
+		this.element.style.width = "100%";
+		this.element.style.height = "30px";
 
-	this.duration = new NumberBox(this);
-	this.duration.position.set(150, 5);
-	this.duration.size.set(60, 18);
-	this.duration.updateInterface();
-	this.duration.setOnChange(function()
-	{
-		self.animation.duration = self.duration.getValue();
-		self.editor.createTimeline();
-		self.editor.createAnimationMixer();
-	});
+		this.editor = editor;
+		this.animation = animation;
 
-	var text = new Text(this);
-	text.position.set(190, 5);
-	text.size.set(100, 20);
-	text.setText(Locale.loop);
-	text.updateInterface();
+		var self = this;
 
-	this.loop = new DropdownList(this);
-	this.loop.position.set(260, 5);
-	this.loop.size.set(90, 18);
-	this.loop.addValue("Once", LoopOnce);
-	this.loop.addValue(Locale.repeat, LoopRepeat);
-	this.loop.addValue("PingPong", LoopPingPong);
-	this.loop.updateInterface();
-	this.loop.setOnChange(function()
-	{
-		self.animation.loop = self.loop.getValue();
-		self.editor.createAnimationMixer(true);
-	});
+		var text = new Text(this);
+		text.position.set(5, 5);
+		text.size.set(50, 20);
+		text.setText(Locale.enabled);
+		text.updateInterface();
 
-	var text = new Text(this);
-	text.position.set(335, 5);
-	text.size.set(100, 20);
-	text.setText(Locale.speed);
-	text.updateInterface();
+		this.enabled = new CheckBox(this);
+		this.enabled.position.set(55, 5);
+		this.enabled.size.set(18, 18);
+		this.enabled.updateInterface();
+		this.enabled.setOnChange(function()
+		{
+			self.animation.enabled = self.enabled.getValue();
+			self.editor.createAnimationMixer(true);
+		});
 
-	this.timeScale = new NumberBox(this);
-	this.timeScale.position.set(410, 5);
-	this.timeScale.size.set(60, 18);
-	this.timeScale.updateInterface();
-	this.timeScale.setOnChange(function()
-	{
-		self.animation.timeScale = self.timeScale.getValue();
-		self.editor.createAnimationMixer(true);
-	});
+		var text = new Text(this);
+		text.position.set(70, 5);
+		text.size.set(100, 20);
+		text.setText(Locale.duration);
+		text.updateInterface();
 
-	this.updateAnimation();
+		this.duration = new NumberBox(this);
+		this.duration.position.set(150, 5);
+		this.duration.size.set(60, 18);
+		this.duration.updateInterface();
+		this.duration.setOnChange(function()
+		{
+			self.animation.duration = self.duration.getValue();
+			self.editor.createTimeline();
+			self.editor.createAnimationMixer();
+		});
+
+		var text = new Text(this);
+		text.position.set(190, 5);
+		text.size.set(100, 20);
+		text.setText(Locale.loop);
+		text.updateInterface();
+
+		this.loop = new DropdownList(this);
+		this.loop.position.set(260, 5);
+		this.loop.size.set(90, 18);
+		this.loop.addValue("Once", LoopOnce);
+		this.loop.addValue(Locale.repeat, LoopRepeat);
+		this.loop.addValue("PingPong", LoopPingPong);
+		this.loop.updateInterface();
+		this.loop.setOnChange(function()
+		{
+			self.animation.loop = self.loop.getValue();
+			self.editor.createAnimationMixer(true);
+		});
+
+		var text = new Text(this);
+		text.position.set(335, 5);
+		text.size.set(100, 20);
+		text.setText(Locale.speed);
+		text.updateInterface();
+
+		this.timeScale = new NumberBox(this);
+		this.timeScale.position.set(410, 5);
+		this.timeScale.size.set(60, 18);
+		this.timeScale.updateInterface();
+		this.timeScale.setOnChange(function()
+		{
+			self.animation.timeScale = self.timeScale.getValue();
+			self.editor.createAnimationMixer(true);
+		});
+
+		this.updateAnimation();
 	}
 
-	updateAnimation() {
-	this.loop.setValue(this.animation.loop);
-	this.timeScale.setValue(this.animation.timeScale);
-	this.duration.setValue(this.animation.duration);
-	this.enabled.setValue(this.animation.enabled);
+	updateAnimation() 
+	{
+		this.loop.setValue(this.animation.loop);
+		this.timeScale.setValue(this.animation.timeScale);
+		this.duration.setValue(this.animation.duration);
+		this.enabled.setValue(this.animation.enabled);
 	}
 
 	updateInterface() {}

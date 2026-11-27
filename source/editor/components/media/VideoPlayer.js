@@ -8,15 +8,17 @@ import {Media} from "./Media.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class VideoPlayer extends Media {
-	constructor(parent) {
-	super(parent, "video");
+class VideoPlayer extends Media 
+{
+	constructor(parent) 
+	{
+		super(parent, "video");
 
-	this.media.playbackRate = 1.0;
-	this.media.loop = true;
-	this.media.volume = 0.0;
-	this.media.autoplay = true;
-}
+		this.media.playbackRate = 1.0;
+		this.media.loop = true;
+		this.media.volume = 0.0;
+		this.media.autoplay = true;
+	}
 }
 
 export {VideoPlayer};

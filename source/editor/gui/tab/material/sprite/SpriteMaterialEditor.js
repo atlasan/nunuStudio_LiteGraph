@@ -9,80 +9,83 @@ import {NumberBox} from "../../../../components/input/NumberBox.js";
 import {ColorChooser} from "../../../../components/input/ColorChooser.js";
 import {CheckBox} from "../../../../components/input/CheckBox.js";
 
-class SpriteMaterialEditor extends MaterialEditor {
-	constructor(parent, closeable, container, index) {
-	super(parent, closeable, container, index);
+class SpriteMaterialEditor extends MaterialEditor 
+{
+	constructor(parent, closeable, container, index) 
+	{
+		super(parent, closeable, container, index);
 
-	var self = this;
+		var self = this;
 
-	// Preview scene
-	this.sky = new Sky();
-	this.sky.visible = false;
-	this.scene.add(this.sky);
+		// Preview scene
+		this.sky = new Sky();
+		this.sky.visible = false;
+		this.scene.add(this.sky);
 
-	this.camera.position.set(0, 0, 1.5);
+		this.camera.position.set(0, 0, 1.5);
 	
-	this.sprite = new Sprite(null);
-	this.interactive.add(this.sprite);
+		this.sprite = new Sprite(null);
+		this.interactive.add(this.sprite);
 
-	// Sky
-	this.previewForm.addText(Locale.sky);
-	this.skyEnabled = new CheckBox(this.previewForm);
-	this.skyEnabled.size.set(18, 18);
-	this.skyEnabled.setValue(this.sky.visible);
-	this.skyEnabled.setOnChange(function()
-	{
-		self.sky.visible = self.skyEnabled.getValue();
-	});
-	this.previewForm.add(this.skyEnabled);
-	this.previewForm.nextRow();
+		// Sky
+		this.previewForm.addText(Locale.sky);
+		this.skyEnabled = new CheckBox(this.previewForm);
+		this.skyEnabled.size.set(18, 18);
+		this.skyEnabled.setValue(this.sky.visible);
+		this.skyEnabled.setOnChange(function()
+		{
+			self.sky.visible = self.skyEnabled.getValue();
+		});
+		this.previewForm.add(this.skyEnabled);
+		this.previewForm.nextRow();
 	
-	// Color
-	this.form.addText(Locale.color);
-	this.color = new ColorChooser(this.form);
-	this.color.size.set(100, 18);
-	this.color.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.material, "color", new Color(self.color.getValueHex())));
-		self.material.needsUpdate = true;
-	});
-	this.form.add(this.color);
-	this.form.nextRow();
+		// Color
+		this.form.addText(Locale.color);
+		this.color = new ColorChooser(this.form);
+		this.color.size.set(100, 18);
+		this.color.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.material, "color", new Color(self.color.getValueHex())));
+			self.material.needsUpdate = true;
+		});
+		this.form.add(this.color);
+		this.form.nextRow();
 
-	// Rotation
-	this.form.addText(Locale.rotation);
-	this.rotation = new NumberBox(this.form);
-	this.rotation.size.set(60, 18);
-	this.rotation.setStep(0.01);
-	this.rotation.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.material, "rotation", self.rotation.getValue()));
-		self.material.needsUpdate = true;
-	});
-	this.form.add(this.rotation);
-	this.form.nextRow();
+		// Rotation
+		this.form.addText(Locale.rotation);
+		this.rotation = new NumberBox(this.form);
+		this.rotation.size.set(60, 18);
+		this.rotation.setStep(0.01);
+		this.rotation.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.material, "rotation", self.rotation.getValue()));
+			self.material.needsUpdate = true;
+		});
+		this.form.add(this.rotation);
+		this.form.nextRow();
 
-	// Texture map
-	this.form.addText(Locale.textureMap);
-	this.map = new TextureForm(this.form);
-	this.map.size.set(100, 100);
-	this.map.setOnChange(function()
-	{
-		Editor.addAction(new ChangeAction(self.material, "map", self.map.getValue()));
-		self.material.needsUpdate = true;
-	});
-	this.form.add(this.map);
-	this.form.nextRow();
+		// Texture map
+		this.form.addText(Locale.textureMap);
+		this.map = new TextureForm(this.form);
+		this.map.size.set(100, 100);
+		this.map.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.material, "map", self.map.getValue()));
+			self.material.needsUpdate = true;
+		});
+		this.form.add(this.map);
+		this.form.nextRow();
 	}
 
-	attach(material, asset) {
-	super.attach(material, asset);
+	attach(material, asset) 
+	{
+		super.attach(material, asset);
 
-	this.sprite.material = material;
+		this.sprite.material = material;
 
-	this.color.setValue(material.color.r, material.color.g, material.color.b);
-	this.rotation.setValue(material.rotation);
-	this.map.setValue(material.map);
+		this.color.setValue(material.color.r, material.color.g, material.color.b);
+		this.rotation.setValue(material.rotation);
+		this.map.setValue(material.map);
 	}
 
 }

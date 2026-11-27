@@ -9,12 +9,12 @@ import {ShaderPass} from "../ShaderPass.js";
  */
 class TechnicolorPass extends ShaderPass
 {
-constructor()
-{
-super(TechnicolorShader);
+	constructor()
+	{
+		super(TechnicolorShader);
 
-this.type = "Technicolor";
-}
+		this.type = "Technicolor";
+	}
 }
 
 export {TechnicolorPass};

@@ -10,17 +10,17 @@ import {ShaderPass} from "../ShaderPass.js";
  */
 class SobelPass extends ShaderPass
 {
-constructor()
-{
-super(SobelOperatorShader);
+	constructor()
+	{
+		super(SobelOperatorShader);
 
-this.type = "Sobel";
-}
+		this.type = "Sobel";
+	}
 
-setSize(width, height)
-{
-this.uniforms.resolution.value.set(width, height);
-}
+	setSize(width, height)
+	{
+		this.uniforms.resolution.value.set(width, height);
+	}
 }
 
 export {SobelPass};

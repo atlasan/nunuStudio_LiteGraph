@@ -8,188 +8,196 @@ import {Component} from "../Component.js";
  * @extends {Component}
  * @param {Component} parent Parent element.
  */
-class ColorGradientChooser extends Component {
-	constructor(parent) {
-	super(parent, "div");
+class ColorGradientChooser extends Component 
+{
+	constructor(parent) 
+	{
+		super(parent, "div");
 
-	/**
-	 * On change callback function.
-	 *
-	 * @property onChange
-	 * @type {Function}
-	 */
-	this.onChange = null;
+		/**
+		 * On change callback function.
+		 *
+		 * @property onChange
+		 * @type {Function}
+		 */
+		this.onChange = null;
 
-	/**
-	 * Color values of the gradient.
-	 *
-	 * @property values
-	 * @type {Array}
-	 */
-	this.values = [];
+		/**
+		 * Color values of the gradient.
+		 *
+		 * @property values
+		 * @type {Array}
+		 */
+		this.values = [];
 
-	/**
-	 * Buttons DOM element. Buttons have a onchange, color and index properties attached to them.
-	 *
-	 * @property buttons
-	 * @type {Array}
-	 */
-	this.buttons = [];
+		/**
+		 * Buttons DOM element. Buttons have a onchange, color and index properties attached to them.
+		 *
+		 * @property buttons
+		 * @type {Array}
+		 */
+		this.buttons = [];
 
-	this.element.style.overflow = "hidden";
-	this.element.style.backgroundColor = "var(--panel-color)";
-	this.element.style.borderStyle = "none";
-	this.element.style.boxSizing = "border-box";
-	this.element.style.borderRadius = "4px";
-	this.element.style.zIndex = "2000";
+		this.element.style.overflow = "hidden";
+		this.element.style.backgroundColor = "var(--panel-color)";
+		this.element.style.borderStyle = "none";
+		this.element.style.boxSizing = "border-box";
+		this.element.style.borderRadius = "4px";
+		this.element.style.zIndex = "2000";
 
-	/**
-	 * Canvas DOM element used to draw the gradient.
-	 *
-	 * @property canvas
-	 * @type {Component}
-	 */
-	this.canvas = document.createElement("canvas");
-	this.canvas.style.position = "absolute";
-	this.canvas.style.top = "0px";
-	this.canvas.style.left = "0px";
-	this.canvas.style.width = "100%";
-	this.canvas.style.height = "100%";
-	this.element.appendChild(this.canvas);
+		/**
+		 * Canvas DOM element used to draw the gradient.
+		 *
+		 * @property canvas
+		 * @type {Component}
+		 */
+		this.canvas = document.createElement("canvas");
+		this.canvas.style.position = "absolute";
+		this.canvas.style.top = "0px";
+		this.canvas.style.left = "0px";
+		this.canvas.style.width = "100%";
+		this.canvas.style.height = "100%";
+		this.element.appendChild(this.canvas);
 	}
 
-/**
- * Update the buttos to match new values.
- *
- * @method updateButtons
- */
-	updateButtons() {
-	var self = this;
-
-	// Color change method called in the context of the DOM input
-	function buttonOnChange()
+	/**
+	 * Update the buttos to match new values.
+	 *
+	 * @method updateButtons
+	 */
+	updateButtons() 
 	{
-		var color = new Color(this.value);
+		var self = this;
 
-		self.values[this.index].setRGB(color.r, color.g, color.b);
-		self.updateValues();
-
-		if (self.onChange !== null)
+		// Color change method called in the context of the DOM input
+		function buttonOnChange()
 		{
-			self.onChange(self.values[this.index], this.index);
+			var color = new Color(this.value);
+
+			self.values[this.index].setRGB(color.r, color.g, color.b);
+			self.updateValues();
+
+			if (self.onChange !== null)
+			{
+				self.onChange(self.values[this.index], this.index);
+			}
+		}
+
+		while (this.buttons.length > this.values.length)
+		{
+			this.element.removeChild(this.buttons.shift());
+		}
+
+		while (this.buttons.length < this.values.length)
+		{
+			var button = document.createElement("input");
+			button.type = "color";
+			button.style.display = "block";
+			button.style.position = "absolute";
+			button.style.top = "0px";
+			button.style.width = "15px";
+			button.style.height = "100%";
+			button.style.cursor = "pointer";
+			button.style.outline = "none";
+			button.style.borderStyle = "none";
+			button.style.boxSizing = "border-box";
+			button.style.borderRadius = "2px";
+			button.onchange = buttonOnChange;
+			button.index = -1;
+			this.element.appendChild(button);
+
+			this.buttons.push(button);
+		}
+
+		for (var i = 0; i < this.buttons.length; i++)
+		{
+			this.buttons[i].index = i;
 		}
 	}
 
-	while (this.buttons.length > this.values.length)
+	/**
+	 * Update the representation of the gradient.
+	 *
+	 * @method updateValues
+	 */
+	updateValues() 
 	{
-		this.element.removeChild(this.buttons.shift());
+		var context = this.canvas.getContext("2d");
+		var gradient = context.createLinearGradient(0, 0, this.canvas.width, 0);
+
+		var colorStep = 1 / (this.values.length - 1);
+		var colorPercentage = 0;
+
+		var buttonSpacing = (this.size.x - 15) / (this.buttons.length - 1);
+		var buttonPosition = 0;
+
+		for (var i = 0; i < this.values.length; i++)
+		{
+			gradient.addColorStop(colorPercentage, this.values[i].getStyle());
+
+			var c = new Color(this.values[i].r, this.values[i].g, this.values[i].b);
+			this.buttons[i].value = "#" + c.getHexString();
+			this.buttons[i].style.left = buttonPosition + "px";
+
+			colorPercentage += colorStep;
+			buttonPosition += buttonSpacing;
+		}
+
+		context.fillStyle = gradient;
+		context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
-	while (this.buttons.length < this.values.length)
+	/**
+	 * Set onChange callback that receives (value, index) as arguments.
+	 *
+	 * @method setOnChange
+	 * @param {Function} onChange OnChange callback receives value and index as arguments.
+	 */
+	setOnChange(onChange) 
 	{
-		var button = document.createElement("input");
-		button.type = "color";
-		button.style.display = "block";
-		button.style.position = "absolute";
-		button.style.top = "0px";
-		button.style.width = "15px";
-		button.style.height = "100%";
-		button.style.cursor = "pointer";
-		button.style.outline = "none";
-		button.style.borderStyle = "none";
-		button.style.boxSizing = "border-box";
-		button.style.borderRadius = "2px";
-		button.onchange = buttonOnChange;
-		button.index = -1;
-		this.element.appendChild(button);
-
-		this.buttons.push(button);
+		this.onChange = onChange;
 	}
 
-	for (var i = 0; i < this.buttons.length; i++)
+	/**
+	 * Set an array of color values to be displayed on this gradient.
+	 *
+	 * @method setValue
+	 * @param {Array} values
+	 */
+	setValue(values) 
 	{
-		this.buttons[i].index = i;
+		this.values = [];
+
+		for (var i = 0; i < values.length; i++)
+		{
+			var color = new Color();
+			color.copy(values[i]);
+			this.values.push(color);
+		}
+
+		this.updateButtons();
+		this.updateValues();
 	}
-	}
 
-/**
- * Update the representation of the gradient.
- *
- * @method updateValues
- */
-	updateValues() {
-	var context = this.canvas.getContext("2d");
-	var gradient = context.createLinearGradient(0, 0, this.canvas.width, 0);
-
-	var colorStep = 1 / (this.values.length - 1);
-	var colorPercentage = 0;
-
-	var buttonSpacing = (this.size.x - 15) / (this.buttons.length - 1);
-	var buttonPosition = 0;
-
-	for (var i = 0; i < this.values.length; i++)
+	/**
+	 * Get the values stored in this element.
+	 *
+	 * @method getValue
+	 * @return {Array} Values of the gradient.
+	 */
+	getValue() 
 	{
-		gradient.addColorStop(colorPercentage, this.values[i].getStyle());
-
-		var c = new Color(this.values[i].r, this.values[i].g, this.values[i].b);
-		this.buttons[i].value = "#" + c.getHexString();
-		this.buttons[i].style.left = buttonPosition + "px";
-
-		colorPercentage += colorStep;
-		buttonPosition += buttonSpacing;
+		return this.values;
 	}
 
-	context.fillStyle = gradient;
-	context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-	}
-
-/**
- * Set onChange callback that receives (value, index) as arguments.
- *
- * @method setOnChange
- * @param {Function} onChange OnChange callback receives value and index as arguments.
- */
-	setOnChange(onChange) {
-	this.onChange = onChange;
-	}
-
-/**
- * Set an array of color values to be displayed on this gradient.
- *
- * @method setValue
- * @param {Array} values
- */
-	setValue(values) {
-	this.values = [];
-
-	for (var i = 0; i < values.length; i++)
+	updateSize() 
 	{
-		var color = new Color();
-		color.copy(values[i]);
-		this.values.push(color);
-	}
-
-	this.updateButtons();
-	this.updateValues();
-	}
-
-/**
- * Get the values stored in this element.
- *
- * @method getValue
- * @return {Array} Values of the gradient.
- */
-	getValue() {
-	return this.values;
-	}
-
-	updateSize() {
-	super.updateSize();
+		super.updateSize();
 	
-	this.canvas.width = this.size.x;
-	this.canvas.height = this.size.y;
+		this.canvas.width = this.size.x;
+		this.canvas.height = this.size.y;
 
-	this.updateValues();
+		this.updateValues();
 	}
 
 }

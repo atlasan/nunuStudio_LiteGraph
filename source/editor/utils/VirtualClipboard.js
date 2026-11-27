@@ -5,36 +5,40 @@
  *
  * @class VirtualClipboard
  */
-class VirtualClipboard {
-	constructor() {
+class VirtualClipboard 
+{
+	constructor() 
+	{
 	/**
 	 * Values stored in the virtual clipboard.
 	 *
 	 * @attribute values
 	 * @type {Array}
 	 */
-	this.values = [];
+		this.values = [];
 	}
 
-/**
- * Set data to clipboard
- * 
- * @param {Object} data Data to insert into the clipboard
- * @param {string} id Entry id.
- */
-	set(data, id) {
-	this.values[id] = data;
-	VirtualClipboard.copy(data);
+	/**
+	 * Set data to clipboard
+	 * 
+	 * @param {Object} data Data to insert into the clipboard
+	 * @param {string} id Entry id.
+	 */
+	set(data, id) 
+	{
+		this.values[id] = data;
+		VirtualClipboard.copy(data);
 	}
 
-/**
- * Get data from clipboard
- * 
- * @param {string} id Entry id.
- * @return {Object} Data stored in the clipboard
- */
-	get(id) {
-	return this.values[id];
+	/**
+	 * Get data from clipboard
+	 * 
+	 * @param {string} id Entry id.
+	 * @return {Object} Data stored in the clipboard
+	 */
+	get(id) 
+	{
+		return this.values[id];
 	}
 
 }

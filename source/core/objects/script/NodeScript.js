@@ -12,93 +12,93 @@ import {NodeGraph} from "escher.js/build/escher.module.js";
  */
 class NodeScript extends Group
 {
-constructor()
-{
-super();
+	constructor()
+	{
+		super();
 
-this.type = "NodeScript";
-this.name = "script";
+		this.type = "NodeScript";
+		this.name = "script";
 
-/**
- * Node graph that composes this script.
- *
- * @attribute graph
- * @type {NodeGraph}
- */
-this.graph = new NodeGraph();
-}
+		/**
+		 * Node graph that composes this script.
+		 *
+		 * @attribute graph
+		 * @type {NodeGraph}
+		 */
+		this.graph = new NodeGraph();
+	}
 
-/**
- * Add a node the graph, these nodes can be connected with other already existing nodes in the graph.
- *
- * @method addNode
- * @param {Node} node Node to be added into the graph.
- */
-addNode(node)
-{
-this.graph.addNode(node);
-}
+	/**
+	 * Add a node the graph, these nodes can be connected with other already existing nodes in the graph.
+	 *
+	 * @method addNode
+	 * @param {Node} node Node to be added into the graph.
+	 */
+	addNode(node)
+	{
+		this.graph.addNode(node);
+	}
 
-/**
- * Initialize script, automatically called by the runtime.
- *
- * Compiles the script code and calls the script initialize method if it exists after the code is compiled.
- *
- * @method initialize
- */
-initialize()
-{
-Object3D.prototype.initialize.call(this);
+	/**
+	 * Initialize script, automatically called by the runtime.
+	 *
+	 * Compiles the script code and calls the script initialize method if it exists after the code is compiled.
+	 *
+	 * @method initialize
+	 */
+	initialize()
+	{
+		Object3D.prototype.initialize.call(this);
 
-// TODO <ADD CODE HERE>
-}
+		// TODO <ADD CODE HERE>
+	}
 
-/**
- * Update node script state runs the update methods from the node graph.
- *
- * @method update
- */
-update(delta)
-{
-// TODO <ADD CODE HERE>
+	/**
+	 * Update node script state runs the update methods from the node graph.
+	 *
+	 * @method update
+	 */
+	update(delta)
+	{
+		// TODO <ADD CODE HERE>
 
-Object3D.prototype.update.call(this, delta);
-}
+		Object3D.prototype.update.call(this, delta);
+	}
 
-/**
- * Disposes the script, can be used to clear resources when the program exits.
- *
- * Calls the script dispose method if it exists.
- *
- * @method dispose
- */
-dispose()
-{
-// TODO <ADD CODE HERE>
+	/**
+	 * Disposes the script, can be used to clear resources when the program exits.
+	 *
+	 * Calls the script dispose method if it exists.
+	 *
+	 * @method dispose
+	 */
+	dispose()
+	{
+		// TODO <ADD CODE HERE>
 
-Object3D.prototype.dispose.call(this);
-}
+		Object3D.prototype.dispose.call(this);
+	}
 
-/**
- * Call resize method if available.
- *
- * The resize method receives width and height as arguments.
- *
- * @method resize
- */
-resize(x, y)
-{
-// TODO <ADD CODE HERE>
-}
+	/**
+	 * Call resize method if available.
+	 *
+	 * The resize method receives width and height as arguments.
+	 *
+	 * @method resize
+	 */
+	resize(x, y)
+	{
+		// TODO <ADD CODE HERE>
+	}
 
-toJSON(meta)
-{
-var data = Object3D.prototype.toJSON.call(this, meta);
+	toJSON(meta)
+	{
+		var data = Object3D.prototype.toJSON.call(this, meta);
 
-data.object.graph = this.graph.serialize();
+		data.object.graph = this.graph.serialize();
 
-return data;
-}
+		return data;
+	}
 }
 
 export {NodeScript};

@@ -5,28 +5,30 @@
  * 
  * @class Action
  */
-class Action {
-	constructor() {
-	this.id = Action._id++;
+class Action 
+{
+	constructor() 
+	{
+		this.id = Action._id++;
 	}
 
 
-/** 
- * Apply the action.
- *
- * Change objects, update the editor and send data to server.
- *
- * @method apply
- */
+	/** 
+	 * Apply the action.
+	 *
+	 * Change objects, update the editor and send data to server.
+	 *
+	 * @method apply
+	 */
 	apply() {}
 
-/** 
- * Revert the action.
- *
- * Change objects, update the editor and send data to server.
- *
- * @method revert
- */
+	/** 
+	 * Revert the action.
+	 *
+	 * Change objects, update the editor and send data to server.
+	 *
+	 * @method revert
+	 */
 	revert() {}
 
 }

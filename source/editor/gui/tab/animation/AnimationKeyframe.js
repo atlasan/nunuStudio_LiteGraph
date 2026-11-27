@@ -12,96 +12,98 @@ import {Component} from "../../../components/Component.js";
  * @class AnimationKeyframe
  * @extends {Component}
  */
-class AnimationKeyframe extends Component {
-	constructor(parent, editor, trackEditor, track, index) {
-	super(parent, "div");
-
-	this.element.style.overflow = "visible";
-	this.element.style.cursor = "pointer";
-	this.element.style.backgroundColor = track.color;
-
-	this.trackEditor = trackEditor;
-	this.editor = editor;
-	this.track = track;
-	this.index = index;
-
-	var self = this;
-
-	this.element.ondblclick = function()
+class AnimationKeyframe extends Component 
+{
+	constructor(parent, editor, trackEditor, track, index) 
 	{
-		var time = self.track.times[self.index];
-		self.editor.mixer.setTime(time);
-	};
+		super(parent, "div");
 
-	// this.elementframe context menu
-	this.element.oncontextmenu = function(event)
-	{
-		var context = new ContextMenu(DocumentBody);
-		context.size.set(150, 20);
-		context.position.set(event.clientX, event.clientY);
+		this.element.style.overflow = "visible";
+		this.element.style.cursor = "pointer";
+		this.element.style.backgroundColor = track.color;
+
+		this.trackEditor = trackEditor;
+		this.editor = editor;
+		this.track = track;
+		this.index = index;
+
+		var self = this;
+
+		this.element.ondblclick = function()
+		{
+			var time = self.track.times[self.index];
+			self.editor.mixer.setTime(time);
+		};
+
+		// this.elementframe context menu
+		this.element.oncontextmenu = function(event)
+		{
+			var context = new ContextMenu(DocumentBody);
+			context.size.set(150, 20);
+			context.position.set(event.clientX, event.clientY);
 		
-		context.addOption(Locale.delete, function()
-		{
-			if (!Editor.confirm("Delete keyframe?"))
+			context.addOption(Locale.delete, function()
 			{
-				return;
-			}
+				if (!Editor.confirm("Delete keyframe?"))
+				{
+					return;
+				}
 
-			if (self.track.times.length === 1)
-			{
-				Editor.alert("Track needs to have at least one keyframe!");
-				return;
-			}
+				if (self.track.times.length === 1)
+				{
+					Editor.alert("Track needs to have at least one keyframe!");
+					return;
+				}
 			
-			var times = [];
-			for (var i = 0; i < self.track.times.length; i++)
-			{
-				if (i !== self.index)
+				var times = [];
+				for (var i = 0; i < self.track.times.length; i++)
 				{
-					times.push(self.track.times[i]);
+					if (i !== self.index)
+					{
+						times.push(self.track.times[i]);
+					}
 				}
-			}
 
-			var values = [];
-			var valueSize = self.track.getValueSize();
-			var min = self.index * valueSize;
-			var max = min + valueSize - 1;
+				var values = [];
+				var valueSize = self.track.getValueSize();
+				var min = self.index * valueSize;
+				var max = min + valueSize - 1;
 
-			for (var i = 0; i < self.track.values.length; i++)
-			{
-				if (i < min || i > max)
+				for (var i = 0; i < self.track.values.length; i++)
 				{
-					values.push(self.track.values[i]);
+					if (i < min || i > max)
+					{
+						values.push(self.track.values[i]);
+					}
 				}
-			}
 
-			self.track.times = new Float32Array(times);
-			self.track.values = new Float32Array(values);
+				self.track.times = new Float32Array(times);
+				self.track.values = new Float32Array(values);
 
-			self.trackEditor.updateKeyframes();
-			self.editor.createAnimationMixer();
-		});
+				self.trackEditor.updateKeyframes();
+				self.editor.createAnimationMixer();
+			});
 
-		context.addOption(Locale.move, function()
-		{
-			var time = Number.parseFloat(Editor.prompt("Keyframe time"));
-
-			if (isNaN(time))
+			context.addOption(Locale.move, function()
 			{
-				Editor.alert("Invalid time value!");
-				return;
-			}
+				var time = Number.parseFloat(Editor.prompt("Keyframe time"));
 
-			self.track.times[self.index] = time;
-			self.track.sort();
+				if (isNaN(time))
+				{
+					Editor.alert("Invalid time value!");
+					return;
+				}
 
-			self.trackEditor.updateKeyframes();
-			self.editor.createAnimationMixer();
-		});
+				self.track.times[self.index] = time;
+				self.track.sort();
 
-		context.updateInterface();
-	};
-}
+				self.trackEditor.updateKeyframes();
+				self.editor.createAnimationMixer();
+			});
+
+			context.updateInterface();
+		};
+	}
 }
 
 export {AnimationKeyframe};

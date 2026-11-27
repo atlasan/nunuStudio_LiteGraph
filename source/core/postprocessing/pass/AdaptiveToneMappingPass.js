@@ -20,87 +20,87 @@ class AdaptiveToneMappingPass extends Pass
 {
 	constructor(adaptive, resolution)
 	{
-	super();
-	var self = this;
+		super();
+		var self = this;
 	
-	this.type = "AdaptiveToneMapping";
-	this.needsInit = true;
+		this.type = "AdaptiveToneMapping";
+		this.needsInit = true;
 
-	this.resolution = resolution !== undefined ? resolution : 256;
-	this._adaptive = adaptive !== undefined ? adaptive : true;
+		this.resolution = resolution !== undefined ? resolution : 256;
+		this._adaptive = adaptive !== undefined ? adaptive : true;
 
-	this.luminanceRT = null;
-	this.previousLuminanceRT = null;
-	this.currentLuminanceRT = null;
+		this.luminanceRT = null;
+		this.previousLuminanceRT = null;
+		this.currentLuminanceRT = null;
 
-	this.copyUniforms = UniformsUtils.clone(CopyShader.uniforms);
-	this.materialCopy = new ShaderMaterial(
+		this.copyUniforms = UniformsUtils.clone(CopyShader.uniforms);
+		this.materialCopy = new ShaderMaterial(
+			{
+				uniforms: this.copyUniforms,
+				vertexShader: CopyShader.vertexShader,
+				fragmentShader: CopyShader.fragmentShader,
+				blending: NoBlending,
+				depthTest: false
+			});
+
+		this.materialLuminance = new ShaderMaterial(
+			{
+				uniforms: UniformsUtils.clone(LuminosityShader.uniforms),
+				vertexShader: LuminosityShader.vertexShader,
+				fragmentShader: LuminosityShader.fragmentShader,
+				blending: NoBlending
+			});
+
+		this.createShader();
+
+		if (ToneMapShader === undefined)
 		{
-			uniforms: this.copyUniforms,
-			vertexShader: CopyShader.vertexShader,
-			fragmentShader: CopyShader.fragmentShader,
-			blending: NoBlending,
-			depthTest: false
-		});
+			console.error("nunuStudio: AdaptiveToneMappingPass relies on ToneMapShader");
+		}
 
-	this.materialLuminance = new ShaderMaterial(
-		{
-			uniforms: UniformsUtils.clone(LuminosityShader.uniforms),
-			vertexShader: LuminosityShader.vertexShader,
-			fragmentShader: LuminosityShader.fragmentShader,
-			blending: NoBlending
-		});
+		this.materialToneMap = new ShaderMaterial(
+			{
+				uniforms: UniformsUtils.clone(ToneMapShader.uniforms),
+				vertexShader: ToneMapShader.vertexShader,
+				fragmentShader: ToneMapShader.fragmentShader,
+				blending: NoBlending
+			});
 
-	this.createShader();
+		this.createQuadScene();
 
-	if (ToneMapShader === undefined)
-	{
-		console.error("nunuStudio: AdaptiveToneMappingPass relies on ToneMapShader");
-	}
-
-	this.materialToneMap = new ShaderMaterial(
-		{
-			uniforms: UniformsUtils.clone(ToneMapShader.uniforms),
-			vertexShader: ToneMapShader.vertexShader,
-			fragmentShader: ToneMapShader.fragmentShader,
-			blending: NoBlending
-		});
-
-	this.createQuadScene();
-
-	Object.defineProperties(this,
-		{
-		/**
-		 * Minimum luminance.
-		 *
-		 * @property minLuminance
-		 * @type {number}
-		 */
-			minLuminance:
+		Object.defineProperties(this,
+			{
+				/**
+				 * Minimum luminance.
+				 *
+				 * @property minLuminance
+				 * @type {number}
+				 */
+				minLuminance:
 		{
 			get: function() {return self.adaptLuminanceShader.uniforms["minLuminance"].value;},
 			set: function(value) {self.adaptLuminanceShader.uniforms["minLuminance"].value = value;}
 		},
 
-			/**
-			 * Rate of luminance variation (adaptation rate).
-			 *
-			 * @property tau
-			 * @type {number}
-			 */
-			tau:
+				/**
+				 * Rate of luminance variation (adaptation rate).
+				 *
+				 * @property tau
+				 * @type {number}
+				 */
+				tau:
 		{
 			get: function() {return self.adaptLuminanceShader.uniforms["tau"].value;},
 			set: function(value) {self.adaptLuminanceShader.uniforms["tau"].value = value;}
 		},
 
-			/**
-			 * Rate of luminance variation (adaptation rate).
-			 *
-			 * @property tau
-			 * @type {number}
-			 */
-			adaptive:
+				/**
+				 * Rate of luminance variation (adaptation rate).
+				 *
+				 * @property tau
+				 * @type {number}
+				 */
+				adaptive:
 		{
 			get: function() {return self._adaptive;},
 			set: function(adaptive)
@@ -121,7 +121,7 @@ class AdaptiveToneMappingPass extends Pass
 				this.materialToneMap.needsUpdate = true;
 			}
 		}
-		});
+			});
 	}
 
 	render(renderer, writeBuffer, readBuffer, delta, maskActive)
@@ -322,7 +322,6 @@ class AdaptiveToneMappingPass extends Pass
 		return data;
 	}
 }
-
 
 
 export {AdaptiveToneMappingPass};

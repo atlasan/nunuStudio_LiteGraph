@@ -6,39 +6,42 @@ import {MeshBasicMaterial, FrontSide} from "three";
  * @class GizmoMaterial
  * @extends {MeshBasicMaterial}
  */
-class GizmoMaterial extends MeshBasicMaterial {
-	constructor(parameters) {
-	super();
-
-	this.depthTest = false;
-	this.depthWrite = false;
-	this.side = FrontSide;
-	this.transparent = true;
-
-	this.setValues(parameters);
-
-	this.baseColor = this.color.clone();
-	this.baseOpacity = this.opacity;
-	}
-
-
-/**
- * Toggle the highlight state of a gizmo material.
- *
- * @method highlight
- * @param {boolean} highlighted
- */
-	highlight(highlighted) {
-	if (highlighted)
+class GizmoMaterial extends MeshBasicMaterial 
+{
+	constructor(parameters) 
 	{
-		this.color.setRGB(1.0, 1.0, 0);
-		this.opacity = 1.0;
+		super();
+
+		this.depthTest = false;
+		this.depthWrite = false;
+		this.side = FrontSide;
+		this.transparent = true;
+
+		this.setValues(parameters);
+
+		this.baseColor = this.color.clone();
+		this.baseOpacity = this.opacity;
 	}
-	else
+
+
+	/**
+	 * Toggle the highlight state of a gizmo material.
+	 *
+	 * @method highlight
+	 * @param {boolean} highlighted
+	 */
+	highlight(highlighted) 
 	{
-		this.color.copy(this.baseColor);
-		this.opacity = this.baseOpacity;
-	}
+		if (highlighted)
+		{
+			this.color.setRGB(1.0, 1.0, 0);
+			this.opacity = 1.0;
+		}
+		else
+		{
+			this.color.copy(this.baseColor);
+			this.opacity = this.baseOpacity;
+		}
 	}
 
 }

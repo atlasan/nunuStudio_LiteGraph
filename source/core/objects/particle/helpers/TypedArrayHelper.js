@@ -329,5 +329,4 @@ class TypedArrayHelper
 TypedArrayHelper.constructor = TypedArrayHelper;
 
 
-
 export {TypedArrayHelper};

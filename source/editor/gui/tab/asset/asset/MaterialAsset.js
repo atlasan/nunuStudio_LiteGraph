@@ -26,252 +26,258 @@ import {ContextMenu} from "../../../../components/dropdown/ContextMenu.js";
 import {DocumentBody} from "../../../../components/DocumentBody.js";
 import {Asset} from "./Asset.js";
 
-class MaterialAsset extends Asset {
-	constructor(parent) {
-	super(parent);
+class MaterialAsset extends Asset 
+{
+	constructor(parent) 
+	{
+		super(parent);
 
-	this.setIcon(Global.FILE_PATH + "icons/misc/material.png");
+		this.setIcon(Global.FILE_PATH + "icons/misc/material.png");
 	
-	var self = this;
+		var self = this;
 
-	// Use to store original material color on highlight
-	this.materialColor = new Color(0, 0, 0);
-	this.materialHighlighted = false;
+		// Use to store original material color on highlight
+		this.materialColor = new Color(0, 0, 0);
+		this.materialHighlighted = false;
 
-	// Material Preview
-        this.image = document.createElement("img");
-        this.image.draggable = false;
-	this.image.style.position = "absolute";
-	this.image.style.top = "5%";
-	this.image.style.left = "17%";
-	this.image.style.width = "66%";
-	this.image.style.height = "66%";
-	this.element.appendChild(this.image);
+		// Material Preview
+		this.image = document.createElement("img");
+		this.image.draggable = false;
+		this.image.style.position = "absolute";
+		this.image.style.top = "5%";
+		this.image.style.left = "17%";
+		this.image.style.width = "66%";
+		this.image.style.height = "66%";
+		this.element.appendChild(this.image);
 
-	// Mouse over event
-	this.element.onmouseenter = function()
-	{
-		this.style.backgroundColor = "var(--button-over-color)";
-		self.highlightMaterial();
-	};
-
-	// Mouse leave event
-	this.element.onmouseleave = function()
-	{
-		if (!Editor.isSelected(self.asset))
+		// Mouse over event
+		this.element.onmouseenter = function()
 		{
-			this.style.backgroundColor = null;
-		}
-		self.restoreMaterial();
-	};
+			this.style.backgroundColor = "var(--button-over-color)";
+			self.highlightMaterial();
+		};
 
-	// Double click
-	this.element.ondblclick = function()
-	{
-		if (self.asset instanceof Material)
+		// Mouse leave event
+		this.element.onmouseleave = function()
 		{
-			var tab = Editor.gui.tab.getTab(MaterialEditor, self.asset);
-
-			if (tab === null)
+			if (!Editor.isSelected(self.asset))
 			{
-				self.restoreMaterial();
-
-				if (self.asset instanceof MeshPhongMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshPhongMaterialEditor, true);
-				}
-				else if (self.asset instanceof MeshToonMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshToonMaterialEditor, true);
-				}
-				else if (self.asset instanceof MeshLambertMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshLambertMaterialEditor, true);
-				}
-				else if (self.asset instanceof MeshMatcapMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshMatcapMaterialEditor, true);
-				}
-				else if (self.asset instanceof MeshBasicMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshBasicMaterialEditor, true);
-				}
-				else if (self.asset instanceof MeshPhysicalMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshPhysicalMaterialEditor, true);
-				}
-				else if (self.asset instanceof MeshStandardMaterial)
-				{
-					tab = Editor.gui.tab.addTab(MeshStandardMaterialEditor, true);
-				}
-				else if (self.asset instanceof SpriteMaterial)
-				{
-					tab = Editor.gui.tab.addTab(SpriteMaterialEditor, true);
-				}
-				else if (self.asset instanceof ShaderMaterial)
-				{
-					tab = Editor.gui.tab.addTab(ShaderMaterialEditor, true);
-				}
-				else if (self.asset instanceof LineDashedMaterial)
-				{
-					tab = Editor.gui.tab.addTab(LineDashedMaterialEditor, true);
-				}
-				else if (self.asset instanceof LineBasicMaterial)
-				{
-					tab = Editor.gui.tab.addTab(LineBasicMaterialEditor, true);
-				}
-				else if (self.asset instanceof PointsMaterial)
-				{
-					tab = Editor.gui.tab.addTab(PointsMaterialEditor, true);
-				}
-				else
-				{
-					tab = Editor.gui.tab.addTab(MeshMaterialEditor, true);
-				}
-
-				tab.attach(self.asset, self);
+				this.style.backgroundColor = null;
 			}
+			self.restoreMaterial();
+		};
 
-			tab.select();
-		}
-	};
-
-	// Context menu event
-	this.element.oncontextmenu = function(event)
-	{
-		var context = new ContextMenu(DocumentBody);
-		context.size.set(130, 20);
-		context.position.set(event.clientX, event.clientY);
-		
-		context.addOption(Locale.rename, function()
+		// Double click
+		this.element.ondblclick = function()
 		{
-			Editor.addAction(new ChangeAction(self.asset, "name", Editor.prompt(Locale.renameMaterial, self.asset.name)));
-		});
-		
-		context.addOption(Locale.selectObjects, function()
-		{	
-			Editor.clearSelection();
-			Editor.program.traverse(function(child)
+			if (self.asset instanceof Material)
 			{
-				if (child.material === self.asset)
+				var tab = Editor.gui.tab.getTab(MaterialEditor, self.asset);
+
+				if (tab === null)
 				{
-					Editor.addToSelection(child);
+					self.restoreMaterial();
+
+					if (self.asset instanceof MeshPhongMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshPhongMaterialEditor, true);
+					}
+					else if (self.asset instanceof MeshToonMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshToonMaterialEditor, true);
+					}
+					else if (self.asset instanceof MeshLambertMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshLambertMaterialEditor, true);
+					}
+					else if (self.asset instanceof MeshMatcapMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshMatcapMaterialEditor, true);
+					}
+					else if (self.asset instanceof MeshBasicMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshBasicMaterialEditor, true);
+					}
+					else if (self.asset instanceof MeshPhysicalMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshPhysicalMaterialEditor, true);
+					}
+					else if (self.asset instanceof MeshStandardMaterial)
+					{
+						tab = Editor.gui.tab.addTab(MeshStandardMaterialEditor, true);
+					}
+					else if (self.asset instanceof SpriteMaterial)
+					{
+						tab = Editor.gui.tab.addTab(SpriteMaterialEditor, true);
+					}
+					else if (self.asset instanceof ShaderMaterial)
+					{
+						tab = Editor.gui.tab.addTab(ShaderMaterialEditor, true);
+					}
+					else if (self.asset instanceof LineDashedMaterial)
+					{
+						tab = Editor.gui.tab.addTab(LineDashedMaterialEditor, true);
+					}
+					else if (self.asset instanceof LineBasicMaterial)
+					{
+						tab = Editor.gui.tab.addTab(LineBasicMaterialEditor, true);
+					}
+					else if (self.asset instanceof PointsMaterial)
+					{
+						tab = Editor.gui.tab.addTab(PointsMaterialEditor, true);
+					}
+					else
+					{
+						tab = Editor.gui.tab.addTab(MeshMaterialEditor, true);
+					}
+
+					tab.attach(self.asset, self);
+				}
+
+				tab.select();
+			}
+		};
+
+		// Context menu event
+		this.element.oncontextmenu = function(event)
+		{
+			var context = new ContextMenu(DocumentBody);
+			context.size.set(130, 20);
+			context.position.set(event.clientX, event.clientY);
+		
+			context.addOption(Locale.rename, function()
+			{
+				Editor.addAction(new ChangeAction(self.asset, "name", Editor.prompt(Locale.renameMaterial, self.asset.name)));
+			});
+		
+			context.addOption(Locale.selectObjects, function()
+			{	
+				Editor.clearSelection();
+				Editor.program.traverse(function(child)
+				{
+					if (child.material === self.asset)
+					{
+						Editor.addToSelection(child);
+					}
+				});
+
+				Editor.updateSelectionGUI();
+			});
+
+			context.addOption(Locale.delete, function()
+			{
+				if (Editor.confirm(Locale.deleteMaterial))
+				{
+					Editor.addAction(new RemoveResourceAction(self.asset, Editor.program, "materials"));
 				}
 			});
 
-			Editor.updateSelectionGUI();
-		});
-
-		context.addOption(Locale.delete, function()
-		{
-			if (Editor.confirm(Locale.deleteMaterial))
+			context.addOption(Locale.copy, function()
 			{
+				Editor.clipboard.set(JSON.stringify(self.asset.toJSON()), "text");
+			});
+
+			context.addOption(Locale.cut, function()
+			{
+				Editor.clipboard.set(JSON.stringify(self.asset.toJSON()), "text");
 				Editor.addAction(new RemoveResourceAction(self.asset, Editor.program, "materials"));
-			}
-		});
+			});
 
-		context.addOption(Locale.copy, function()
-		{
-			Editor.clipboard.set(JSON.stringify(self.asset.toJSON()), "text");
-		});
-
-		context.addOption(Locale.cut, function()
-		{
-			Editor.clipboard.set(JSON.stringify(self.asset.toJSON()), "text");
-			Editor.addAction(new RemoveResourceAction(self.asset, Editor.program, "materials"));
-		});
-
-		context.addOption(Locale.duplicate, function()
-		{
-			try
+			context.addOption(Locale.duplicate, function()
 			{
+				try
+				{
 				// Serialize
-				var json = self.asset.toJSON();
+					var json = self.asset.toJSON();
 
-				// Loader
-				var loader = new MaterialLoader();
-				loader.setTextures(Editor.program.textures);
+					// Loader
+					var loader = new MaterialLoader();
+					loader.setTextures(Editor.program.textures);
 
-				// Load
-				var material = loader.parse(json); 
-				material.uuid = MathUtils.generateUUID();
-				material.name += "*";
+					// Load
+					var material = loader.parse(json); 
+					material.uuid = MathUtils.generateUUID();
+					material.name += "*";
 				
-				Editor.addAction(new AddResourceAction(material, Editor.program, "materials"));
-			}
-			catch (e)
-			{
-				Editor.alert("Material duplication failed.\n" + e.stack);
-			}
-		});
+					Editor.addAction(new AddResourceAction(material, Editor.program, "materials"));
+				}
+				catch (e)
+				{
+					Editor.alert("Material duplication failed.\n" + e.stack);
+				}
+			});
 
-		context.updateInterface();
-	};
+			context.updateInterface();
+		};
 
-	// Drag start
-	this.element.ondragstart = function(event)
-	{
-		// Restore material color
-		self.restoreMaterial();
-
-		// Insert material into drag buffer
-		if (self.asset !== null)
+		// Drag start
+		this.element.ondragstart = function(event)
 		{
-			event.dataTransfer.setData("uuid", self.asset.uuid);
-			DragBuffer.push(self.asset);
-		}
-	};
+		// Restore material color
+			self.restoreMaterial();
 
-	// Drag end (called after of ondrop)
-	this.element.ondragend = function()
+			// Insert material into drag buffer
+			if (self.asset !== null)
+			{
+				event.dataTransfer.setData("uuid", self.asset.uuid);
+				DragBuffer.push(self.asset);
+			}
+		};
+
+		// Drag end (called after of ondrop)
+		this.element.ondragend = function()
+		{
+			DragBuffer.pop(self.asset.uuid);
+		};
+	}
+
+	// Super prototypes
+
+	// Destroy material file
+	destroy() 
 	{
-		DragBuffer.pop(self.asset.uuid);
-	};
+		super.destroy();
+
+		this.restoreMaterial();
 	}
 
-// Super prototypes
-
-// Destroy material file
-	destroy() {
-	super.destroy();
-
-	this.restoreMaterial();
-	}
-
-// Highlight material
-	highlightMaterial() {
-	if (this.asset instanceof Material && this.asset.color !== undefined)
-	{
-		this.materialColor.copy(this.asset.color);
-		this.asset.color.setRGB(1, 1, 0);
-		this.materialHighlighted = true;
-	}
-	}
-
-// Restore material to normal color
-	restoreMaterial() {
-	if (this.materialHighlighted)
+	// Highlight material
+	highlightMaterial() 
 	{
 		if (this.asset instanceof Material && this.asset.color !== undefined)
 		{
-			this.asset.color.copy(this.materialColor);
-			this.materialHighlighted = false;
+			this.materialColor.copy(this.asset.color);
+			this.asset.color.setRGB(1, 1, 0);
+			this.materialHighlighted = true;
 		}
 	}
+
+	// Restore material to normal color
+	restoreMaterial() 
+	{
+		if (this.materialHighlighted)
+		{
+			if (this.asset instanceof Material && this.asset.color !== undefined)
+			{
+				this.asset.color.copy(this.materialColor);
+				this.materialHighlighted = false;
+			}
+		}
 	}
 
-	updateMetadata() {
-	if (this.asset !== null)
+	updateMetadata() 
 	{
-		var image = this.image;
-		
-		MaterialRenderer.render(this.asset, function(url)
+		if (this.asset !== null)
 		{
-			image.src = url;
-		});
+			var image = this.image;
 		
-		this.setText(this.asset.name);
-	}
+			MaterialRenderer.render(this.asset, function(url)
+			{
+				image.src = url;
+			});
+		
+			this.setText(this.asset.name);
+		}
 	}
 
 }

@@ -7,48 +7,51 @@ import {Object3D, Sprite, Texture, SpriteMaterial} from "three";
  * @param {Object3D} object
  * @param {String) icon Icon URL.
  */
-class ObjectIconHelper extends Sprite {
-	constructor(object, icon) {
-	super(ObjectIconHelper.getMaterial(icon));
+class ObjectIconHelper extends Sprite 
+{
+	constructor(object, icon) 
+	{
+		super(ObjectIconHelper.getMaterial(icon));
 
-	/**
-	 * Object attached to the helper
-	 *
-	 * @attribute object
-	 * @type {Object3D}
-	 */
-	this.object = object;
+		/**
+		 * Object attached to the helper
+		 *
+		 * @attribute object
+		 * @type {Object3D}
+		 */
+		this.object = object;
 
-	/**
-	 * Size of the helper.
-	 *
-	 * @attribute size
-	 * @type {number}
-	 */
-	this.size = 0.1;
+		/**
+		 * Size of the helper.
+		 *
+		 * @attribute size
+		 * @type {number}
+		 */
+		this.size = 0.1;
 	
-	this.matrixAutoUpdate = false;
+		this.matrixAutoUpdate = false;
 	}
 
-/**
- * Cache of icon helper materials.
- *
- * @static
- * @attribute MATERIALS
- * @type {Map}
- */
+	/**
+	 * Cache of icon helper materials.
+	 *
+	 * @static
+	 * @attribute MATERIALS
+	 * @type {Map}
+	 */
 
 
-	update() {
+	update() 
+	{
 	// Position
-	this.matrix.elements[12] = this.object.matrixWorld.elements[12];
-	this.matrix.elements[13] = this.object.matrixWorld.elements[13];
-	this.matrix.elements[14] = this.object.matrixWorld.elements[14];
+		this.matrix.elements[12] = this.object.matrixWorld.elements[12];
+		this.matrix.elements[13] = this.object.matrixWorld.elements[13];
+		this.matrix.elements[14] = this.object.matrixWorld.elements[14];
 
-	// Scale
-	this.matrix.elements[0] = this.size;
-	this.matrix.elements[5] = this.size / this.material.ratio;
-	this.matrix.elements[10] = this.size;
+		// Scale
+		this.matrix.elements[0] = this.size;
+		this.matrix.elements[5] = this.size / this.material.ratio;
+		this.matrix.elements[10] = this.size;
 
 	}
 
