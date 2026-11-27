@@ -1,4 +1,4 @@
-import {Object3D, PlaneGeometry, MeshBasicMaterial, DoubleSide, Mesh, Matrix4, Euler, Eurler, Vector3} from "three";
+import {Object3D, PlaneGeometry, MeshBasicMaterial, DoubleSide, Mesh, Matrix4, Euler, Vector3} from "three";
 import {TransformControls} from "../TransformControls.js";
 import {GizmoMaterial} from "../GizmoMaterial.js";
 

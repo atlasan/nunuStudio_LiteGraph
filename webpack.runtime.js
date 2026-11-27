@@ -20,6 +20,10 @@ const config = {
 		new Webpack.ProvidePlugin({
 			THREE: "three",
 			"window.THREE": "three"
+		}),
+		// Used by the core when serializing (e.g. Object3D.toJSON), the editor build defines its own
+		new Webpack.DefinePlugin({
+			"VERSION": JSON.stringify(require("./package.json").version)
 		})
 	],
 	module: {

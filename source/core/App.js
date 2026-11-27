@@ -246,7 +246,10 @@ App.prototype.loadProgramAsync = function(fname, onLoad, onProgress)
 		}, function(event)
 		{
 			var progress = event.lengthComputable ? event.loaded / event.total * 100 : 0;
-			onProgress(progress, event);
+			if (onProgress !== undefined)
+			{
+				onProgress(progress, event);
+			}
 		});
 	}
 	// Binary project
@@ -265,7 +268,10 @@ App.prototype.loadProgramAsync = function(fname, onLoad, onProgress)
 		}, function(event)
 		{
 			var progress = event.lengthComputable ? event.loaded / event.total * 100 : 0;
-			onProgress(progress, event);
+			if (onProgress !== undefined)
+			{
+				onProgress(progress, event);
+			}
 		});
 	}
 };

@@ -4,6 +4,7 @@ import {RoundedBoxBufferGeometry} from "../geometries/RoundedBoxBufferGeometry.j
 import {CapsuleBufferGeometry} from "../geometries/CapsuleBufferGeometry.js";
 import {ParametricBufferGeometry} from "../geometries/ParametricBufferGeometry.js";
 import {LegacyGeometryLoader} from "./LegacyGeometryLoader.js";
+import {Compatibility} from "../three/Compatibility.js";
 
 /**
  * Geometry loader can be used to load geometry files.
@@ -101,11 +102,18 @@ GeometryLoader.prototype.parse = function(data)
 	{
 		try
 		{
-			var geometries = ObjectLoader.prototype.parseGeometries([data], this.shapes);
+			// Geometry types renamed by three.js (e.g. SphereBufferGeometry is now SphereGeometry)
+			var json = Object.assign({}, data, {type: Compatibility.getTypeName(data.type)});
+			var geometries = ObjectLoader.prototype.parseGeometries([json], this.shapes);
 			for (var i in geometries)
 			{
 				geometry = geometries[i];
 				break;
+			}
+
+			if (geometry === null || geometry === undefined)
+			{
+				throw new Error("Unsupported geometry type " + data.type);
 			}
 		}
 		catch (e)

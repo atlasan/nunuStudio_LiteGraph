@@ -42,10 +42,11 @@ THREE.KeyframeTrack.toJSON = function(track)
 	return data;
 };
 
-THREE.KeyframeTrack._parse = THREE.KeyframeTrack.parse;
+// three.js has no KeyframeTrack.parse anymore, AnimationClip.parse calls the parse method of the track subclass when there is one.
+// This method is inherited by every track type, so build the track like three.js does by default (this is the track class).
 THREE.KeyframeTrack.parse = function(json)
 {
-	var track = THREE.KeyframeTrack._parse.call(this, json);
+	var track = new this(json.name, json.times, json.values, json.interpolation);
 
 	if (json.color !== undefined)
 	{

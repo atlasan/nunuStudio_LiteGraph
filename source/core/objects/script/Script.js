@@ -5,6 +5,7 @@ import * as CANNON from "cannon-es";
 import {Scene} from "../Scene.js";
 import {Program} from "../Program.js";
 import {FileSystem} from "../../FileSystem.js";
+import {Compatibility} from "../../three/Compatibility.js";
 
 /**
  * Script objects are used to control other objects present in the scene.
@@ -405,6 +406,7 @@ var context = {};
 
 Object.assign(context, CANNON);
 Object.assign(context, THREE);
+Object.assign(context, Compatibility.aliases);
 Object.assign(context, Script.library);
 
 var mathProps = ["E", "LN2", "LN10", "LOG2E", "LOG10E", "PI", "SQRT1_2", "SQRT2", "abs", "acos", "acosh", "asin", "asinh", "atan", "atan2", "atanh", "cbrt", "ceil", "clz32", "cos", "cosh", "exp", "expm1", "floor", "fround", "hypot", "imul", "log", "log1p", "log2", "log10", "max", "min", "pow", "random", "round", "sign", "sin", "sinh", "sqrt", "tan", "tanh", "trunc"];
@@ -420,7 +422,7 @@ Object.assign(context,
 self: this,
 program: this.program,
 scene: this.scene,
-THREE: THREE,
+THREE: Object.assign({}, Compatibility.aliases, THREE),
 CANNON: CANNON,
 Math: math,
 Keyboard: this.program.keyboard,
