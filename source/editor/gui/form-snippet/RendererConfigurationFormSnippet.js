@@ -1,4 +1,4 @@
-import {BasicShadowMap, PCFShadowMap, PCFSoftShadowMap, VSMShadowMap, NoToneMapping, LinearToneMapping, ReinhardToneMapping, CustomToneMapping, CineonToneMapping, ACESFilmicToneMapping} from "three";
+import {BasicShadowMap, PCFShadowMap, VSMShadowMap, NoToneMapping, LinearToneMapping, ReinhardToneMapping, CustomToneMapping, CineonToneMapping, ACESFilmicToneMapping} from "three";
 import {Locale} from "../../locale/LocaleManager.js";
 import {RendererConfiguration} from "../../../core/renderer/RendererConfiguration.js";
 import {ChangeAction} from "../../history/action/ChangeAction.js";
@@ -197,7 +197,6 @@ class RendererConfigurationFormSnippet extends FormSnippet
 		this.shadowsType.size.set(150, 18);
 		this.shadowsType.addValue("Basic", BasicShadowMap);
 		this.shadowsType.addValue("PCF", PCFShadowMap);
-		this.shadowsType.addValue("PCF Soft", PCFSoftShadowMap);
 		this.shadowsType.addValue("VSM", VSMShadowMap);
 		this.shadowsType.setOnChange(function()
 		{

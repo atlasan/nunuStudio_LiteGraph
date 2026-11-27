@@ -43,6 +43,7 @@ import {Text} from "../../../../components/Text.js";
 import {Component} from "../../../../components/Component.js";
 import {ButtonDrawer} from "../../../../components/buttons/ButtonDrawer.js";
 import {PythonScript} from "../../../../../core/objects/script/PythonScript.js";
+import {LightConverter} from "../../../../../core/utils/LightConverter.js";
 
 /**
  * Side bar is presented in the editor to add more objects to the scene.
@@ -420,31 +421,31 @@ return target.set(x, y, z);`;
 		// Point Light
 		lights.addOption(Global.FILE_PATH + "icons/lights/point.png", function()
 		{
-			Editor.addObject(new PointLight(0x444444), self.editor.scene);
+			Editor.addObject(LightConverter.fromLegacy(new PointLight(0x444444)), self.editor.scene);
 		}, Locale.pointLight);
 
 		// Ambient Light
 		lights.addOption(Global.FILE_PATH + "icons/lights/ambient.png", function()
 		{
-			Editor.addObject(new AmbientLight(0x444444), self.editor.scene);
+			Editor.addObject(LightConverter.fromLegacy(new AmbientLight(0x444444)), self.editor.scene);
 		}, Locale.ambientLight);
 
 		// Spot Light
 		lights.addOption(Global.FILE_PATH + "icons/lights/spot.png", function()
 		{
-			Editor.addObject(new SpotLight(0x444444), self.editor.scene);
+			Editor.addObject(LightConverter.fromLegacy(new SpotLight(0x444444)), self.editor.scene);
 		}, Locale.spotLight);
 
 		// Directional Light
 		lights.addOption(Global.FILE_PATH + "icons/lights/directional.png", function()
 		{
-			Editor.addObject(new DirectionalLight(0x444444), self.editor.scene);
+			Editor.addObject(LightConverter.fromLegacy(new DirectionalLight(0x444444)), self.editor.scene);
 		}, Locale.directionalLight);
 
 		// Hemisphere Light
 		lights.addOption(Global.FILE_PATH + "icons/lights/hemisphere.png", function()
 		{
-			Editor.addObject(new HemisphereLight(0x444444), self.editor.scene);
+			Editor.addObject(LightConverter.fromLegacy(new HemisphereLight(0x444444)), self.editor.scene);
 		}, Locale.hemisphereLight);
 
 		// RectArea Light

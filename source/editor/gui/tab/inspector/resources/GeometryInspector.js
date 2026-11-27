@@ -6,6 +6,7 @@ import {Mouse} from "../../../../../core/input/Mouse.js";
 import {EditorOrbitControls} from "../../scene-editor/controls/EditorOrbitControls.js";
 import {RendererCanvas} from "../../../../components/RendererCanvas.js";
 import {ResourceInspector} from "./ResourceInspector.js";
+import {LightConverter} from "../../../../../core/utils/LightConverter.js";
 
 class GeometryInspector extends ResourceInspector 
 {
@@ -37,10 +38,10 @@ class GeometryInspector extends ResourceInspector
 		// Grid
 		this.grid = null;
 
-		var directional = new DirectionalLight(0x777777, 1.0);
+		var directional = LightConverter.fromLegacy(new DirectionalLight(0x777777, 1.0));
 		directional.position.set(3e3, 1e4, 4e2);
 		this.scene.add(directional);
-		this.scene.add(new AmbientLight(0x888888));
+		this.scene.add(LightConverter.fromLegacy(new AmbientLight(0x888888)));
 
 		// Camera
 		this.camera = new PerspectiveCamera(90, this.preview.size.x / this.preview.size.y);

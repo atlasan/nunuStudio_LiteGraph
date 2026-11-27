@@ -1,4 +1,4 @@
-import {PCFSoftShadowMap, NoToneMapping, WebGLRenderer, ColorManagement, LinearSRGBColorSpace} from "three";
+import {PCFShadowMap, PCFSoftShadowMap, NoToneMapping, WebGLRenderer, ColorManagement, LinearSRGBColorSpace} from "three";
 
 // Keep the pre r152 color pipeline (no automatic sRGB conversion) so existing projects render as before.
 ColorManagement.enabled = false;
@@ -99,9 +99,9 @@ class RendererConfiguration
 		 *
 		 * @property shadowsType
 		 * @type {number}
-		 * @default PCFSoftShadowMap
+		 * @default PCFShadowMap
 		 */
-		this.shadowsType = PCFSoftShadowMap;
+		this.shadowsType = PCFShadowMap;
 
 		/**
 		 * Enables automatic updates to the shadows in the scene.
@@ -199,12 +199,14 @@ class RendererConfiguration
 		this.logarithmicDepthBuffer = false;
 
 		/**
-		 * Whether to use physically correct lighting mode.
+		 * Indicates if the program lights use physical values.
+		 *
+		 * three.js only supports physical lighting now, programs saved with legacy lighting (false) are converted when loaded, see LightConverter.
 		 *
 		 * @property physicallyCorrectLights
 		 * @type {boolean}
 		 */
-		this.physicallyCorrectLights = false;
+		this.physicallyCorrectLights = true;
 
 		/**
 		 * Defines whether material shader programs are checked for errors during compilation and linkage process.
@@ -298,7 +300,8 @@ class RendererConfiguration
 		renderer.autoClearStencil = this.autoClearStencil;
 
 		renderer.shadowMap.enabled = this.shadows;
-		renderer.shadowMap.type = this.shadowsType;
+		// PCFSoftShadowMap was removed from three.js (saved in older projects), PCFShadowMap replaces it
+		renderer.shadowMap.type = this.shadowsType === PCFSoftShadowMap ? PCFShadowMap : this.shadowsType;
 		renderer.shadowMap.autoUpdate = this.shadowsAutoUpdate;
 		renderer.shadowMap.needsUpdate = true;
 
@@ -308,9 +311,8 @@ class RendererConfiguration
 		renderer.debug.checkShaderErrors = this.checkShaderErrors;
 		renderer.sortObjects = this.sortObjects;
 
-		// three.js r152+ removed gamma factor and r155 made physically correct lights the default, keep the previous behavior unless requested.
+		// three.js r152+ removed gamma factor, keep the previous output (lights are converted by LightConverter when loading)
 		renderer.outputColorSpace = LinearSRGBColorSpace;
-		renderer.useLegacyLights = !this.physicallyCorrectLights;
 
 		renderer.maxMorphTargets = this.maxMorphTargets;
 		renderer.maxMorphNormals = this.maxMorphNormals;

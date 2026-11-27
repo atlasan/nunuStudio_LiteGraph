@@ -148,6 +148,7 @@ export {AnimationTimer} from "./utils/timer/AnimationTimer.js";
 export {LocalStorage} from "./utils/LocalStorage.js";
 export {EventManager} from "./utils/EventManager.js";
 export {MathUtils} from "./utils/MathUtils.js";
+export {LightConverter} from "./utils/LightConverter.js";
 export {ObjectUtils} from "./utils/ObjectUtils.js";
 export {PhysicsGenerator} from "./utils/PhysicsGenerator.js";
 export {UnitConverter} from "./utils/UnitConverter.js";

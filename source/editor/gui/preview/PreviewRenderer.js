@@ -19,8 +19,7 @@ class PreviewRenderer
 		this.renderer = new WebGLRenderer({alpha: true});
 		this.renderer.setSize(128, 128);
 		this.renderer.outputColorSpace = LinearSRGBColorSpace;
-		this.renderer.useLegacyLights = true;
-	
+		
 		/**
 		 * DOM canvas where the result is rendered to.
 		 *

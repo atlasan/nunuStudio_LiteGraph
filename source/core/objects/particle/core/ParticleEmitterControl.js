@@ -830,8 +830,8 @@ class ParticleEmitterControl
 			  array[index + 1] = 0.0;
 			}
 
-			attr.updateRange.offset = 0;
-			attr.updateRange.count = -1;
+			// No update ranges, the whole buffer is uploaded
+			attr.clearUpdateRanges();
 			attr.needsUpdate = true;
 		}
 

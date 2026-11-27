@@ -1,4 +1,4 @@
-import {Points, Clock, Vector4, Vector3, AdditiveBlending, Object3D, Vector2, Color} from "three";
+import {Points, Timer as TTimer, Vector4, Vector3, AdditiveBlending, Object3D, Vector2, Color} from "three";
 import {Texture} from "../../texture/Texture.js";
 import {ObjectLoader} from "../../loaders/ObjectLoader.js";
 import {ParticleGroup} from "./core/ParticleGroup.js";
@@ -55,7 +55,7 @@ class ParticleEmitter extends Points
 		 */
 		this.dynamicEmitter = false;
 
-		this.clock = new Clock();
+		this.clock = new TTimer();
 		this.temp = new Vector4();
 
 		/**
@@ -128,7 +128,7 @@ class ParticleEmitter extends Points
 	onBeforeRender(renderer, scene, camera, renderTarget)
 	{
 		this.group.uniforms.scale.value = renderer.getCurrentViewport(this.temp).w;
-		this.group.tick(this.clock.getDelta());
+		this.group.tick(this.clock.update().getDelta());
 
 		if (this.dynamicEmitter === true)
 		{

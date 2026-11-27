@@ -1,4 +1,5 @@
 import {DefaultLoadingManager, MaterialLoader as TMaterialLoader} from "three";
+import {LightConverter} from "../utils/LightConverter.js";
 
 /**
  * MaterialLoader can be used to load external materials.
@@ -58,6 +59,11 @@ class MaterialLoader
 		const loader = new TMaterialLoader();
 		loader.setTextures(this.textures);
 		var material = loader.parse(json);
+
+		if (json.legacyEnvMapLighting === true)
+		{
+			LightConverter.setLegacyEnvMap(material, true);
+		}
 
 		// Legacy multi-material
 		if (json.materials !== undefined)

@@ -8,6 +8,8 @@ const config = {
 	context: source,
 	entry: source + "/core/Main.js",
 	target: "web",
+	// URL imports are not left as externals, so the CDN import of opentype.js can be replaced by the local package
+	externalsPresets: {web: false},
 	devtool: false,
 	// Force a single three.js instance, some dependencies (spine-threejs) ship their own copy
 	resolve: {alias: {three$: Path.resolve(__dirname, "node_modules/three/build/three.module.js")}},
@@ -17,6 +19,8 @@ const config = {
 		hints: false,
 	},
 	plugins: [
+		// three.js TTFLoader imports opentype.js from a CDN, bundle the local package instead (works offline)
+		new Webpack.NormalModuleReplacementPlugin(/^https:\/\/cdn\.jsdelivr\.net\/npm\/opentype\.js@[^/]+\/\+esm$/, "opentype.js"),
 		new Webpack.ProvidePlugin({
 			THREE: "three",
 			"window.THREE": "three"

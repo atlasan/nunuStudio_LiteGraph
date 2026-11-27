@@ -168,7 +168,7 @@ class LensFlare extends Mesh
 			if (validArea.containsPoint(screenPositionPixels))
 			{
 				// Save current RGB to temp texture
-				renderer.copyFramebufferToTexture(screenPositionPixels, tempMap);
+				renderer.copyFramebufferToTexture(tempMap, screenPositionPixels);
 
 				// Render pink quad
 				var uniforms = material1a.uniforms;
@@ -178,7 +178,7 @@ class LensFlare extends Mesh
 				renderer.renderBufferDirect(camera, null, geometry, material1a, mesh1, null);
 
 				// Copy result to occlusionMap
-				renderer.copyFramebufferToTexture(screenPositionPixels, occlusionMap);
+				renderer.copyFramebufferToTexture(occlusionMap, screenPositionPixels);
 
 				// Restore graphics
 				var uniforms = material1b.uniforms;

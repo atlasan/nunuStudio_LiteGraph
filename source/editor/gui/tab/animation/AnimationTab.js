@@ -1,4 +1,4 @@
-import {Clock, VectorKeyframeTrack, AnimationClip, InterpolateLinear, QuaternionKeyframeTrack, BooleanKeyframeTrack, InterpolateDiscrete, ColorKeyframeTrack, NumberKeyframeTrack} from "three";
+import {Timer as TTimer, VectorKeyframeTrack, AnimationClip, InterpolateLinear, QuaternionKeyframeTrack, BooleanKeyframeTrack, InterpolateDiscrete, ColorKeyframeTrack, NumberKeyframeTrack} from "three";
 import {Locale} from "../../../locale/LocaleManager.js";
 import {EventManager} from "../../../../core/utils/EventManager.js";
 import {AnimationMixer} from "../../../../core/animation/AnimationMixer.js";
@@ -33,7 +33,7 @@ class AnimationTab extends TabComponent
 
 		this.mixer = null;
 		this.object = null;
-		this.clock = new Clock();
+		this.clock = new TTimer();
 	
 		this.zoom = 120.0; // Pixels/sec
 		this.animations = [];
@@ -367,7 +367,7 @@ class AnimationTab extends TabComponent
 				this.animations[i].seek.style.left = this.mixer._actions[i].time * this.zoom + "px";
 			}
 
-			this.mixer.update(this.clock.getDelta());
+			this.mixer.update(this.clock.update().getDelta());
 
 			// Update object panel when playing
 			if (this.mixer.playing)

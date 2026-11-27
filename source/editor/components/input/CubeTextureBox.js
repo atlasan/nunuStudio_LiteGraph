@@ -1,4 +1,4 @@
-import {Texture, CubeReflectionMapping, CubeRefractionMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping, CubeUVReflectionMapping} from "three";
+import {Texture, CubeReflectionMapping, CubeRefractionMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping} from "three";
 import {Locale} from "../../locale/LocaleManager.js";
 import {CubeTexture} from "../../../core/texture/CubeTexture.js";
 import {CompressedTexture} from "../../../core/texture/CompressedTexture.js";
@@ -110,7 +110,6 @@ class CubeTextureBox extends Component
 		this.mapping.addValue(Locale.cubeRefraction, CubeRefractionMapping);
 		this.mapping.addValue(Locale.equirectangularReflection, EquirectangularReflectionMapping);
 		this.mapping.addValue(Locale.equirectangularRefraction, EquirectangularRefractionMapping);
-		this.mapping.addValue(Locale.cubeUvReflection, CubeUVReflectionMapping);
 		this.form.add(this.mapping);
 		this.form.nextRow();
 

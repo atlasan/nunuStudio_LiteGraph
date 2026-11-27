@@ -8,6 +8,7 @@ import {NumberBox} from "../../../../components/input/NumberBox.js";
 import {DropdownList} from "../../../../components/input/DropdownList.js";
 import {ColorChooser} from "../../../../components/input/ColorChooser.js";
 import {CheckBox} from "../../../../components/input/CheckBox.js";
+import {LightConverter} from "../../../../../core/utils/LightConverter.js";
 
 class MeshMaterialEditor extends MaterialEditor 
 {
@@ -125,11 +126,11 @@ class MeshMaterialEditor extends MaterialEditor
 		this.sky = new Sky();
 		this.scene.add(this.sky);
 
-		this.pointLight = new PointLight(0x666666);
+		this.pointLight = LightConverter.fromLegacy(new PointLight(0x666666));
 		this.pointLight.position.set(-1, 0, 3);
 		this.scene.add(this.pointLight);
 	
-		this.ambientLight = new AmbientLight(0x555555);
+		this.ambientLight = LightConverter.fromLegacy(new AmbientLight(0x555555));
 		this.ambientLight.visible = false;
 		this.scene.add(this.ambientLight);
 

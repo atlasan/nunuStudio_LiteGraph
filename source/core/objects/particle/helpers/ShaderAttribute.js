@@ -45,9 +45,8 @@ class ShaderAttribute
 	 */
 	flagUpdate()
 	{
-		var range = this.bufferAttribute.updateRange;
-		range.offset = this.updateMin;
-		range.count = Math.min(this.updateMax - this.updateMin + this.componentSize, this.typedArray.array.length);
+		this.bufferAttribute.clearUpdateRanges();
+		this.bufferAttribute.addUpdateRange(this.updateMin, Math.min(this.updateMax - this.updateMin + this.componentSize, this.typedArray.array.length));
 
 		this.bufferAttribute.needsUpdate = true;
 	}
@@ -86,8 +85,8 @@ class ShaderAttribute
 	forceUpdateAll()
 	{
 		this.bufferAttribute.array = this.typedArray.array;
-		this.bufferAttribute.updateRange.offset = 0;
-		this.bufferAttribute.updateRange.count = -1;
+		// No update ranges, the whole buffer is uploaded
+		this.bufferAttribute.clearUpdateRanges();
 		this.bufferAttribute.usage = StaticDrawUsage;
 		this.bufferAttribute.needsUpdate = true;
 	}

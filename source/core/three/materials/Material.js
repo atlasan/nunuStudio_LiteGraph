@@ -1,4 +1,5 @@
 import {NormalBlending, FrontSide} from "three";
+import {LightConverter} from "../../utils/LightConverter.js";
 
 /**
  * Materials describe the appearance of objects. They are defined in a (mostly) renderer-independent way, so you don"t have to rewrite materials if you decide to use a different renderer.
@@ -286,6 +287,11 @@ THREE.Material.prototype.toJSON = function(meta)
 	}
 
 	data.flatShading = this.flatShading;
+
+	if (LightConverter.usesLegacyEnvMap(this))
+	{
+		data.legacyEnvMapLighting = true;
+	}
 
 	// Opacity
 	if (this.opacity < 1)

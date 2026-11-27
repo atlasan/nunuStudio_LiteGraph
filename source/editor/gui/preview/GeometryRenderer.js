@@ -1,6 +1,7 @@
 import {DirectionalLight, AmbientLight, Mesh, MeshPhongMaterial, Vector3, BufferGeometry} from "three";
 import {OrthographicCamera} from "../../../core/objects/cameras/OrthographicCamera.js";
 import {PreviewRenderer} from "./PreviewRenderer.js";
+import {LightConverter} from "../../../core/utils/LightConverter.js";
 
 /** 
  * The geometry renderer is used to generate preview thumbnails.
@@ -18,10 +19,10 @@ class GeometryRenderer extends PreviewRenderer
 	
 		this.camera = new OrthographicCamera(3, 1);
 
-		var directional = new DirectionalLight(0x777777, 1.0);
+		var directional = LightConverter.fromLegacy(new DirectionalLight(0x777777, 1.0));
 		directional.position.set(3000, 10000, 400);
 		this.scene.add(directional);
-		this.scene.add(new AmbientLight(0x888888));
+		this.scene.add(LightConverter.fromLegacy(new AmbientLight(0x888888)));
 
 		this.mesh = new Mesh(new BufferGeometry(), new MeshPhongMaterial({color: 0xFFFFFF}));
 		this.scene.add(this.mesh);

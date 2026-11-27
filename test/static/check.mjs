@@ -50,7 +50,8 @@ for (const file of files)
 }
 
 // Class names known to be ES6 classes: project classes and three.js classes
-const three = await import(require.resolve("three"));
+// Resolve through the package "import" condition, like the bundler (the CommonJS entry hides the exports)
+const three = await import("three");
 const threeExports = new Set(Object.keys(three));
 const classNames = new Set(Object.keys(three).filter((k) => typeof three[k] === "function" && /^class\b/.test(Function.prototype.toString.call(three[k]))));
 for (const ast of asts.values())

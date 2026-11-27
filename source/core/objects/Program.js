@@ -1,4 +1,4 @@
-import {Scene, Camera, Clock, Object3D} from "three";
+import {Scene, Camera, Timer as TTimer, Object3D} from "three";
 import {EventManager} from "../utils/EventManager.js";
 import {ResourceManager} from "../resources/ResourceManager.js";
 import {ResourceContainer} from "../resources/ResourceContainer.js";
@@ -222,14 +222,14 @@ class Program extends ResourceManager
 		this.manager = new EventManager();
 
 		/**
-		 * Clock object used to measure times between frames.
+		 * Timer (three.js) used to measure times between frames.
 		 *
 		 * The time measured is passed down to the scene and its children elements.
 		 *
 		 * @property clock
-		 * @type {Clock}
+		 * @type {Timer}
 		 */
-		this.clock = new Clock();
+		this.clock = new TTimer();
 
 		/**
 		 * WebX runtime control, true when the app is running in an XR environment.
@@ -298,7 +298,7 @@ class Program extends ResourceManager
 			this.mouse.setLock(true);
 		}
 
-		this.clock.start();
+		this.clock.reset();
 	}
 
 	/**
@@ -363,7 +363,7 @@ class Program extends ResourceManager
 	 */
 	update()
 	{
-		var delta = this.clock.getDelta();
+		var delta = this.clock.update().getDelta();
 
 		this.mouse.update();
 		this.keyboard.update();

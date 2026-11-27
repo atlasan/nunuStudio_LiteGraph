@@ -1,6 +1,7 @@
 import {SphereGeometry, Mesh, Points, Line, Sprite, AmbientLight, PointLight, Material, SpriteMaterial, LineBasicMaterial, PointsMaterial} from "three";
 import {OrthographicCamera} from "../../../core/objects/cameras/OrthographicCamera.js";
 import {PreviewRenderer} from "./PreviewRenderer.js";
+import {LightConverter} from "../../../core/utils/LightConverter.js";
 
 /** 
  * The material renderer is used to generate preview thumbnails.
@@ -38,11 +39,11 @@ class MaterialRenderer extends PreviewRenderer
 		this.scene.add(this.sprite);
 
 		// Ambient light
-		var ambient = new AmbientLight(0x999999);
+		var ambient = LightConverter.fromLegacy(new AmbientLight(0x999999));
 		this.scene.add(ambient);
 
 		// Point light
-		var point = new PointLight(0x999999);
+		var point = LightConverter.fromLegacy(new PointLight(0x999999));
 		point.position.set(-0.5, 1, 1.5);
 		this.scene.add(point);
 	}

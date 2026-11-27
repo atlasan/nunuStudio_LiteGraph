@@ -21,6 +21,7 @@ import {PhysicsObject} from "../objects/physics/PhysicsObject.js";
 import {PointLight} from "../objects/lights/PointLight.js";
 import {PositionalAudio} from "../objects/audio/PositionalAudio.js";
 import {Program} from "../objects/Program.js";
+import {LightConverter} from "../utils/LightConverter.js";
 import {RectAreaLight} from "../objects/lights/RectAreaLight.js";
 import {ResourceContainer} from "../resources/ResourceContainer.js";
 import {Scene} from "../objects/Scene.js";
@@ -118,6 +119,12 @@ class ObjectLoader extends ResourceContainer
 		{
 			this.parseSkeletons(json.skeletons, object);
 			this.bindSkeletons(object);
+		}
+
+		// Programs saved with the legacy lighting of three.js r154 and older are converted to physical lighting
+		if (object instanceof Program)
+		{
+			LightConverter.convertProgram(object);
 		}
 
 		// Load images and process callback
@@ -514,6 +521,8 @@ class ObjectLoader extends ResourceContainer
 					object.rendererConfig.shadowsType = data.shadowsType;
 					object.rendererConfig.toneMapping = data.toneMapping;
 					object.rendererConfig.toneMappingExposure = data.toneMappingExposure;
+					// Older format, always saved with legacy lighting
+					object.rendererConfig.physicallyCorrectLights = false;
 				}
 
 				if (data.lockPointer !== undefined)

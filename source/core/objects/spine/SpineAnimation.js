@@ -1,4 +1,4 @@
-import {Clock, Object3D} from "three";
+import {Timer as TTimer, Object3D} from "three";
 import {AtlasAttachmentLoader, SkeletonJson, SkeletonMesh, TextureAtlas} from "@esotericsoftware/spine-threejs";
 import {Texture} from "../../texture/Texture.js";
 import {Image} from "../../resources/Image.js";
@@ -141,7 +141,7 @@ class SpineAnimation extends SkeletonMesh
 		 */
 		this.loop = true;
 
-		this.clock = new Clock();
+		this.clock = new TTimer();
 
 		this.play();
 	}
@@ -159,7 +159,7 @@ class SpineAnimation extends SkeletonMesh
 	 */
 	onBeforeRender()
 	{
-		this.state.update(this.clock.getDelta());
+		this.state.update(this.clock.update().getDelta());
 		this.state.apply(this.skeleton);
 		this.skeleton.updateWorldTransform();
 		this.updateGeometry();

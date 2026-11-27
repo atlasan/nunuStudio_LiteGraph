@@ -326,6 +326,7 @@ Font.fileIsFont = function(file)
 	return false;
 };
 
-Font.isFont = true;
+// Instance flag, TextMesh checks font.isFont
+Font.prototype.isFont = true;
 
 export {Font};

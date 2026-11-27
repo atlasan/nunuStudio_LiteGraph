@@ -1,4 +1,5 @@
 import "./three/Compatibility.js";
+import "./utils/LightConverter.js";
 import "./three/animation/AnimationClip.js";
 import "./three/animation/KeyframeTrack.js";
 import "./three/cameras/Camera.js";

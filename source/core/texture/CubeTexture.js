@@ -114,6 +114,8 @@ class CubeTexture extends Texture
 
 		if (this.mode === CubeTexture.CUBE)
 		{
+			var loaded = 0;
+
 			for (var i = 0; i < this.images.length; i++)
 			{
 				if (typeof this.images[i] === "string")
@@ -133,7 +135,11 @@ class CubeTexture extends Texture
 					var context = self.image[this.index].getContext("2d");
 					context.drawImage(this, 0, 0, self.size, self.size);
 
-					self.needsUpdate = true;
+					loaded++;
+					if (loaded === self.images.length)
+					{
+						self.facesReady();
+					}
 				};
 			}
 		}
@@ -159,7 +165,7 @@ class CubeTexture extends Texture
 				self.image[CubeTexture.TOP].getContext("2d").drawImage(this, x, 0, x, y, 0, 0, self.size, self.size);
 				self.image[CubeTexture.BOTTOM].getContext("2d").drawImage(this, x, y * 2, x, y, 0, 0, self.size, self.size);
 
-				self.needsUpdate = true;
+				self.facesReady();
 			};
 		}
 		else if (this.mode === CubeTexture.EQUIRECTANGULAR)
@@ -188,9 +194,24 @@ class CubeTexture extends Texture
 					self.image[i].getContext("2d").putImageData(out, 0, 0);
 				}
 				
-				self.needsUpdate = true;
+				self.facesReady();
 			};
 		}
+	}
+
+	/**
+	 * Called when all the cube faces are drawn.
+	 *
+	 * The face canvases exist before their images load, so three.js may already have created the GPU texture and the
+	 * prefiltered environment map (PMREM) from blank faces, and it never rebuilds that map for a regular texture.
+	 * The dispose event drops the GPU data, it is created again from the loaded faces when the texture is next used.
+	 *
+	 * @method facesReady
+	 */
+	facesReady()
+	{
+		this.dispatchEvent({type: "dispose"});
+		this.needsUpdate = true;
 	}
 
 	/**

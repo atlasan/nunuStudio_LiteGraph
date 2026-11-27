@@ -16,6 +16,7 @@ import {CheckBox} from "../../../components/input/CheckBox.js";
 import {DualDivision} from "../../../components/containers/DualDivision.js";
 import {DualContainer} from "../../../components/containers/DualContainer.js";
 import {MaterialEditor} from "./MaterialEditor.js";
+import {LightConverter} from "../../../../core/utils/LightConverter.js";
 
 class ShaderMaterialEditor extends MaterialEditor 
 {
@@ -87,12 +88,12 @@ class ShaderMaterialEditor extends MaterialEditor
 		self.sky.visible = false;
 		self.scene.add(self.sky);
 
-		self.pointLight = new PointLight(0x777777);
+		self.pointLight = LightConverter.fromLegacy(new PointLight(0x777777));
 		self.pointLight.position.set(-3, 0, 3);
 		self.pointLight.visible = false;
 		self.scene.add(self.pointLight);
 	
-		self.ambientLight = new AmbientLight(0x555555);
+		self.ambientLight = LightConverter.fromLegacy(new AmbientLight(0x555555));
 		self.ambientLight.visible = false;
 		self.scene.add(self.ambientLight);
 

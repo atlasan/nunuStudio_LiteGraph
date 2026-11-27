@@ -1,5 +1,6 @@
 import {Group, Color, HemisphereLight, SphereGeometry, ShaderMaterial, BackSide, Mesh, Object3D} from "three";
 import {MathUtils} from "../../utils/MathUtils.js";
+import {LightConverter} from "../../utils/LightConverter.js";
 import {DirectionalLight} from "../lights/DirectionalLight.js";
 import SkyFragmentShader from "./sky_fragment.glsl";
 import SkyVertexShader from "./sky_vertex.glsl";
@@ -57,6 +58,8 @@ class Sky extends Group
 		/**
 		 * Sun color intensity.
 		 *
+		 * Kept in the legacy lighting units of older projects, the sun light gets it multiplied by LightConverter.LEGACY_SCALE.
+		 *
 		 * @property intensity
 		 * @type {number}
 		 */
@@ -77,7 +80,7 @@ class Sky extends Group
 		 * @property hemisphere
 		 * @type {HemisphereLight}
 		 */
-		this.hemisphere = new HemisphereLight(0x3284ff, 0xffcc7f, 0.5);
+		this.hemisphere = new HemisphereLight(0x3284ff, 0xffcc7f, 0.5 * LightConverter.LEGACY_SCALE);
 		this.hemisphere.name = "hemisphere";
 		this.hemisphere.locked = true;
 		this.hemisphere.matrixAutoUpdate = false;
@@ -89,7 +92,7 @@ class Sky extends Group
 		 * @property sun
 		 * @type {DirectionalLight}
 		 */
-		this.sun = new DirectionalLight(this.sunColor, this.intensity);
+		this.sun = new DirectionalLight(this.sunColor, this.intensity * LightConverter.LEGACY_SCALE);
 		this.sun.castShadow = true;
 		this.sun.locked = true;
 		this.add(this.sun);
@@ -274,7 +277,7 @@ class Sky extends Group
 		// Sun / moon color
 		if (time < 0.20)
 		{
-			this.sun.intensity = this.intensity;
+			this.sun.intensity = this.intensity * LightConverter.LEGACY_SCALE;
 			this.sun.color.setHex(this.moonColor);
 		}
 		else if (time < 0.30)
@@ -285,19 +288,19 @@ class Sky extends Group
 			if (t < 0.5)
 			{
 				var f = 2 - t*2;
-				this.sun.intensity = f * this.intensity;
+				this.sun.intensity = f * this.intensity * LightConverter.LEGACY_SCALE;
 				this.sun.color.setHex(this.moonColor);
 			}
 			else
 			{
 				t = t*2;
-				this.sun.intensity = t * this.intensity;
+				this.sun.intensity = t * this.intensity * LightConverter.LEGACY_SCALE;
 				this.sun.color.setHex(this.sunColor);
 			}
 		}
 		else if (time < 0.70)
 		{
-			this.sun.intensity = this.intensity;
+			this.sun.intensity = this.intensity * LightConverter.LEGACY_SCALE;
 			this.sun.color.setHex(this.sunColor);
 		}
 		else if (time < 0.80)
@@ -307,19 +310,19 @@ class Sky extends Group
 			if (t < 0.5)
 			{
 				var f = 2 - t*2;
-				this.sun.intensity = f * this.intensity;
+				this.sun.intensity = f * this.intensity * LightConverter.LEGACY_SCALE;
 				this.sun.color.setHex(this.sunColor);
 			}
 			else
 			{
 				t = t*2;
-				this.sun.intensity = t * this.intensity;
+				this.sun.intensity = t * this.intensity * LightConverter.LEGACY_SCALE;
 				this.sun.color.setHex(this.moonColor);
 			}
 		}
 		else
 		{
-			this.sun.intensity = this.intensity;
+			this.sun.intensity = this.intensity * LightConverter.LEGACY_SCALE;
 			this.sun.color.setHex(this.moonColor);
 		}
 

@@ -21,9 +21,7 @@ const randomEngine = "uses three.js random helpers or particles, which draw from
 const quirks = {
 	camera: {random: randomEngine, baseline: false},
 	paint: {random: randomEngine, baseline: false},
-	flappy: {fails: "the \"text\" label is not rendered (regression), pipe heights also come from the engine random stream"},
-	nunu: {fails: "rock and log meshes use the legacy Geometry JSON format and load as empty geometry, lens flare is missing (regressions)"},
-	pbr: {fails: "scene background and environment map render black (regression)"},
+	nunu: {fails: "rock and log meshes use the legacy Geometry JSON format and load as empty geometry, the lens flare is much brighter and the rain is not visible (regressions)"},
 	rollercoaster: {fails: "the example script extends a three.js class with BufferGeometry.call(this), it needs updating to ES6 classes"},
 	spine: {fails: "the Spine object does not load (atlas textures), already broken with the old runtime", baseline: false}
 };
