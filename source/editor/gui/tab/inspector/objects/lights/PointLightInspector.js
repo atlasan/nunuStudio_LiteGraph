@@ -3,6 +3,7 @@ import {Locale} from "../../../../../locale/LocaleManager.js";
 import {ChangeAction} from "../../../../../history/action/ChangeAction.js";
 import {ObjectInspector} from "../ObjectInspector.js";
 import {LightShadowFormSnippet} from "../../../../form-snippet/LightShadowFormSnippet.js";
+import {LightFalloffFormSnippet} from "../../../../form-snippet/LightFalloffFormSnippet.js";
 import {Editor} from "../../../../../Editor.js";
 import {Slider} from "../../../../../components/input/Slider.js";
 import {NumberBox} from "../../../../../components/input/NumberBox.js";
@@ -41,12 +42,16 @@ class PointLightInspector extends ObjectInspector
 		this.form.add(this.distance);
 		this.form.nextRow();
 
+		// Decay and legacy falloff
+		this.falloff = new LightFalloffFormSnippet(this.form, object);
+
 		// Intensity
 		this.form.addText(Locale.intensity);
 		this.intensity = new Slider(this.form);
 		this.intensity.size.set(160, 18);
 		this.intensity.setStep(0.1);
-		this.intensity.setRange(0, 10);
+		// Converted legacy intensities are multiplied by PI, keep the previous range
+		this.intensity.setRange(0, 32);
 		this.intensity.setOnChange(function()
 		{
 			Editor.addAction(new ChangeAction(self.object, "intensity", self.intensity.getValue()));
@@ -83,6 +88,7 @@ class PointLightInspector extends ObjectInspector
 		this.color.setValue(this.object.color.r, this.object.color.g, this.object.color.b);
 		this.distance.setValue(this.object.distance);
 		this.intensity.setValue(this.object.intensity);
+		this.falloff.attach(this.object);
 		this.castShadow.setValue(this.object.castShadow);
 
 		this.shadow.attach(this.object);

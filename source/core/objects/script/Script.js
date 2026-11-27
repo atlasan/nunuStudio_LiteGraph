@@ -404,10 +404,11 @@ new Function(text.data).call(this);\
 	{
 		var context = {};
 
-		Object.assign(context, CANNON);
-		Object.assign(context, THREE);
-		Object.assign(context, Compatibility.aliases);
-		Object.assign(context, Script.library);
+		// Classes can also be called without new, for old scripts that extend them with Parent.call(this)
+		Object.assign(context, Compatibility.callables(CANNON));
+		Object.assign(context, Compatibility.callables(THREE));
+		Object.assign(context, Compatibility.callables(Compatibility.aliases));
+		Object.assign(context, Compatibility.callables(Script.library));
 
 		var mathProps = ["E", "LN2", "LN10", "LOG2E", "LOG10E", "PI", "SQRT1_2", "SQRT2", "abs", "acos", "acosh", "asin", "asinh", "atan", "atan2", "atanh", "cbrt", "ceil", "clz32", "cos", "cosh", "exp", "expm1", "floor", "fround", "hypot", "imul", "log", "log1p", "log2", "log10", "max", "min", "pow", "random", "round", "sign", "sin", "sinh", "sqrt", "tan", "tanh", "trunc"];
 		var math = {};
@@ -422,8 +423,8 @@ new Function(text.data).call(this);\
 				self: this,
 				program: this.program,
 				scene: this.scene,
-				THREE: Object.assign({}, Compatibility.aliases, THREE),
-				CANNON: CANNON,
+				THREE: Compatibility.callables(Object.assign({}, Compatibility.aliases, THREE)),
+				CANNON: Compatibility.callables(CANNON),
 				Math: math,
 				Keyboard: this.program.keyboard,
 				Mouse: this.program.mouse

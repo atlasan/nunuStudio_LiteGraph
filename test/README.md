@@ -42,5 +42,4 @@ Exceptions are data in the `quirks` table of `examples.spec.mjs`:
 | --- | --- |
 | `skip: reason` | not run |
 | `fails: reason` | known issue, expected to fail, Playwright reports it when it starts passing (remove the entry then) |
-| `random: reason` | frame depends on the engine random stream, compared with a render of this branch (`<name>-self.png`) |
-| `baseline: false` | not rendered with the old runtime |
+| `self: reason` | compared with a render of this branch (`<name>-self.png`) instead of the old runtime, e.g. frames that depend on the engine random stream |

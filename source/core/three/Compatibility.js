@@ -65,7 +65,11 @@ Compatibility.methods = [
 	[THREE.Object3D, "applyMatrix", function(matrix) { return this.applyMatrix4(matrix); }],
 	[THREE.BufferGeometry, "applyMatrix", function(matrix) { return this.applyMatrix4(matrix); }],
 	[THREE.Matrix4, "getInverse", function(matrix) { return this.copy(matrix).invert(); }],
-	[THREE.Matrix3, "getInverse", function(matrix) { return this.copy(matrix).invert(); }]
+	[THREE.Matrix3, "getInverse", function(matrix) { return this.copy(matrix).invert(); }],
+	[THREE.Quaternion, "inverse", function() { return this.invert(); }],
+	[THREE.BufferGeometry, "addAttribute", function(name, attribute) { return this.setAttribute(name, attribute); }],
+	[THREE.BufferGeometry, "removeAttribute", function(name) { return this.deleteAttribute(name); }],
+	[THREE.BufferAttribute, "setDynamic", function(dynamic) { return this.setUsage(dynamic ? THREE.DynamicDrawUsage : THREE.StaticDrawUsage); }]
 ];
 
 Compatibility.methods.forEach(function(entry)
@@ -85,5 +89,104 @@ Compatibility.methods.forEach(function(entry)
 		};
 	}
 });
+
+// updateRange {offset, count} was replaced by addUpdateRange() and clearUpdateRanges(), still used by libraries built for
+// older versions (spine-threejs) and scripts. Setting offset or count sets the equivalent update range (count -1 is the whole buffer).
+[THREE.BufferAttribute, THREE.InterleavedBuffer].forEach(function(Class)
+{
+	if ("updateRange" in Class.prototype)
+	{
+		return;
+	}
+
+	Object.defineProperty(Class.prototype, "updateRange", {
+		configurable: true,
+		get: function()
+		{
+			if (this._updateRange === undefined)
+			{
+				var attribute = this, offset = 0, count = -1;
+				var apply = function()
+				{
+					attribute.clearUpdateRanges();
+					if (count !== -1)
+					{
+						attribute.addUpdateRange(offset, count);
+					}
+				};
+
+				Object.defineProperty(this, "_updateRange", {value: {
+					get offset() { return offset; },
+					set offset(value) { offset = value; apply(); },
+					get count() { return count; },
+					set count(value) { count = value; apply(); }
+				}});
+			}
+
+			return this._updateRange;
+		}
+	});
+});
+
+var callables = new WeakMap();
+
+/**
+ * Get a version of a class that can also be called without new, like the ES5 constructor functions of older versions.
+ *
+ * Old scripts extend classes with Parent.call(this) and Object.create(Parent.prototype), ES6 classes throw when called.
+ * With new (or extends) the class is constructed normally, called as a function the instance properties of a new
+ * object are defined on this. The prototype and static members are shared, instanceof works as before.
+ *
+ * @static
+ * @method callable
+ * @param {Function} Class ES6 class.
+ * @return {Function} Constructor that can be called with or without new.
+ */
+Compatibility.callable = function(Class)
+{
+	if (typeof Class !== "function" || !/^class\b/.test(Function.prototype.toString.call(Class)))
+	{
+		return Class;
+	}
+
+	var Callable = callables.get(Class);
+	if (Callable === undefined)
+	{
+		Callable = function()
+		{
+			if (new.target !== undefined)
+			{
+				return Reflect.construct(Class, arguments, new.target);
+			}
+
+			Object.defineProperties(this, Object.getOwnPropertyDescriptors(Reflect.construct(Class, arguments)));
+			return this;
+		};
+		Callable.prototype = Class.prototype;
+		Object.setPrototypeOf(Callable, Class);
+		Object.defineProperty(Callable, "name", {value: Class.name});
+		callables.set(Class, Callable);
+	}
+
+	return Callable;
+};
+
+/**
+ * Copy an object replacing its classes with callable versions (see callable), used for the script context.
+ *
+ * @static
+ * @method callables
+ * @param {Object} object Object with classes (e.g. a module namespace).
+ * @return {Object} New object with the callable classes.
+ */
+Compatibility.callables = function(object)
+{
+	var result = {};
+	for (var key in object)
+	{
+		result[key] = Compatibility.callable(object[key]);
+	}
+	return result;
+};
 
 export {Compatibility};

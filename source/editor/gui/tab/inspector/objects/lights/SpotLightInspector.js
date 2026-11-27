@@ -3,8 +3,10 @@ import {Locale} from "../../../../../locale/LocaleManager.js";
 import {ChangeAction} from "../../../../../history/action/ChangeAction.js";
 import {ObjectInspector} from "../ObjectInspector.js";
 import {LightShadowFormSnippet} from "../../../../form-snippet/LightShadowFormSnippet.js";
+import {LightFalloffFormSnippet} from "../../../../form-snippet/LightFalloffFormSnippet.js";
 import {Editor} from "../../../../../Editor.js";
 import {Slider} from "../../../../../components/input/Slider.js";
+import {NumberBox} from "../../../../../components/input/NumberBox.js";
 import {ColorChooser} from "../../../../../components/input/ColorChooser.js";
 import {CheckBox} from "../../../../../components/input/CheckBox.js";
 
@@ -55,6 +57,22 @@ class SpotLightInspector extends ObjectInspector
 		this.form.add(this.angle);
 		this.form.nextRow();
 
+		// Distance
+		this.form.addText(Locale.distance);
+		this.distance = new NumberBox(this.form);
+		this.distance.size.set(60, 18);
+		this.distance.setStep(0.1);
+		this.distance.setRange(0, Number.MAX_SAFE_INTEGER);
+		this.distance.setOnChange(function()
+		{
+			Editor.addAction(new ChangeAction(self.object, "distance", self.distance.getValue()));
+		});
+		this.form.add(this.distance);
+		this.form.nextRow();
+
+		// Decay and legacy falloff
+		this.falloff = new LightFalloffFormSnippet(this.form, object);
+
 		// Shadow map
 		this.form.addText(Locale.shadows);
 		this.form.nextRow();
@@ -83,6 +101,8 @@ class SpotLightInspector extends ObjectInspector
 		this.color.setValue(this.object.color.r, this.object.color.g, this.object.color.b);
 		this.angle.setValue(this.object.angle);
 		this.penumbra.setValue(this.object.penumbra);
+		this.distance.setValue(this.object.distance);
+		this.falloff.attach(this.object);
 		this.castShadow.setValue(this.object.castShadow);
 
 		this.shadow.attach(this.object);

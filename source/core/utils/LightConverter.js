@@ -267,7 +267,7 @@ if (ShaderChunk.lights_pars_begin.indexOf(attenuation) !== -1 && ShaderChunk.lig
 	// nunuStudio legacy falloff, see LightConverter
 	if ( decayExponent < 0.0 ) {
 
-		return pow( saturate( - lightDistance / cutoffDistance + 1.0 ), - decayExponent );
+		return cutoffDistance > 0.0 ? pow( saturate( - lightDistance / cutoffDistance + 1.0 ), - decayExponent ) : 1.0;
 
 	}
 `);

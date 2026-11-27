@@ -3,6 +3,7 @@ import {AtlasAttachmentLoader, SkeletonJson, SkeletonMesh, TextureAtlas} from "@
 import {Texture} from "../../texture/Texture.js";
 import {Image} from "../../resources/Image.js";
 import {SpineTexture} from "./SpineTexture.js";
+import {SpineJson} from "./SpineJson.js";
 
 /**
  * Spine animation object, to used with animation produced inside Esoteric spine. These animations are created using the Spine animation studio software.
@@ -28,7 +29,8 @@ class SpineAnimation extends SkeletonMesh
 			textures = [];
 		}
 
-		var textureAtlas = new TextureAtlas(atlas, function(file)
+		// Texture for an atlas page, reused from the textures list or loaded from the path
+		function loadTexture(file)
 		{
 			for (var i = 0; i < textures.length; i++)
 			{
@@ -71,10 +73,18 @@ class SpineAnimation extends SkeletonMesh
 			}
 
 			return texture;
-		});
+		}
+
+		// spine-core 4 parses the atlas text only, page textures are set afterwards (the loader callback was removed)
+		var textureAtlas = new TextureAtlas(atlas);
+		for (var p = 0; p < textureAtlas.pages.length; p++)
+		{
+			textureAtlas.pages[p].setTexture(loadTexture(textureAtlas.pages[p].name));
+		}
 
 		var loader = new AtlasAttachmentLoader(textureAtlas);
-		var skeleton = new SkeletonJson(loader).readSkeletonData(json);
+		// Skeletons exported for the 3.8 runtimes are upgraded to the format of the bundled 4.0 runtime
+		var skeleton = new SkeletonJson(loader).readSkeletonData(SpineJson.upgrade(json));
 
 		super(skeleton);
 

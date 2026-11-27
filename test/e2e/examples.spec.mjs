@@ -15,15 +15,12 @@ const examples = fs.readdirSync("docs/examples").filter((f) => f.endsWith(".nsp"
 // Per project exceptions, plain data:
 //  skip: reason       not run at all
 //  fails: reason      known issue, runs as an expected failure (Playwright reports it when it starts passing, remove the entry then)
-//  random: reason     frames depend on the engine random stream, compared with a render of this branch (name.self.png) instead of the old runtime
-//  baseline: false    not rendered with the old runtime
+//  self: reason       compared with a render of this branch (name.self.png) instead of the old runtime, not rendered with the old runtime
 const randomEngine = "uses three.js random helpers or particles, which draw from the engine random stream, frames cannot match the old runtime";
 const quirks = {
-	camera: {random: randomEngine, baseline: false},
-	paint: {random: randomEngine, baseline: false},
-	nunu: {fails: "rock and log meshes use the legacy Geometry JSON format and load as empty geometry, the lens flare is much brighter and the rain is not visible (regressions)"},
-	rollercoaster: {fails: "the example script extends a three.js class with BufferGeometry.call(this), it needs updating to ES6 classes"},
-	spine: {fails: "the Spine object does not load (atlas textures), already broken with the old runtime", baseline: false}
+	camera: {self: randomEngine},
+	paint: {self: randomEngine},
+	spine: {self: "the old runtime cannot load it (Spine 3.8 data with the 4.0 runtime, upgraded by SpineJson now)"}
 };
 
 const current = "/nunu.min.js";
@@ -31,20 +28,20 @@ const start = new Date("2024-01-01T00:00:00Z").getTime();
 
 for (const name of examples)
 {
-	test(`example ${name}`, {tag: quirks[name]?.random !== undefined ? "@self" : []}, async ({page, runtime}) =>
+	test(`example ${name}`, {tag: quirks[name]?.self !== undefined ? "@self" : []}, async ({page, runtime}) =>
 	{
 		const quirk = quirks[name] || {};
 		test.skip(quirk.skip !== undefined, quirk.skip);
-		test.skip(runtime !== current && (quirk.baseline === false || quirk.random !== undefined), "not rendered with the old runtime");
+		test.skip(runtime !== current && quirk.self !== undefined, "not rendered with the old runtime");
 		test.fail(runtime === current && quirk.fails !== undefined, quirk.fails);
 
+		// Time is paused while the project loads (loading uses network and image events, not timers),
+		// then exactly two seconds of animation frames are run, no time jump the engine could handle differently
 		await seedRandom(page);
 		await page.clock.install({time: start});
+		await page.clock.pauseAt(start + 1000);
 		await page.goto(`/harness/runtime.html?project=/examples/${name}.nsp&runtime=${runtime}`);
-		await page.waitForFunction(() => window.loaded === true, null, {timeout: 45000});
-
-		// Deterministic frames: freeze time, then advance two seconds of animation frames
-		await page.clock.pauseAt(start + 60000);
+		await expect.poll(() => page.evaluate(() => window.loaded === true), {timeout: 45000, intervals: [100]}).toBe(true);
 		await page.clock.runFor(2000);
 
 		if (runtime === current)
@@ -65,6 +62,6 @@ for (const name of examples)
 			window.app.update();
 			return window.app.canvas.toDataURL("image/png").split(",")[1];
 		});
-		expect(Buffer.from(png, "base64")).toMatchSnapshot(quirk.random !== undefined ? `${name}.self.png` : `${name}.png`, quirk.maxDiffPixelRatio ? {maxDiffPixelRatio: quirk.maxDiffPixelRatio} : {});
+		expect(Buffer.from(png, "base64")).toMatchSnapshot(quirk.self !== undefined ? `${name}.self.png` : `${name}.png`, quirk.maxDiffPixelRatio ? {maxDiffPixelRatio: quirk.maxDiffPixelRatio} : {});
 	});
 }

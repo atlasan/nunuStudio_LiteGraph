@@ -20,18 +20,24 @@
 				console.error("WebGL context lost");
 			});
 
+			// Scripts get their own seeded random stream (their Math object), independent of how many random numbers the
+			// engine draws (e.g. for UUIDs), which differs between versions
+			if (window.seededRandom !== undefined)
+			{
+				var scriptRandom = window.seededRandom(2);
+				var createContext = Nunu.Script.prototype.createContextObject;
+				Nunu.Script.prototype.createContextObject = function()
+				{
+					var context = createContext.apply(this, arguments);
+					context.Math.random = scriptRandom;
+					return context;
+				};
+			}
+
 			var app = new Nunu.App(canvas);
 			app.loadProgramAsync(params.get("project"), function()
 			{
-				// Scripts capture Math.random when they start, give them their own seeded stream so they get
-				// the same numbers no matter how many the engine draws (e.g. for UUIDs), which differs between versions
-				var engineRandom = Math.random;
-				if (window.seededRandom !== undefined)
-				{
-					Math.random = window.seededRandom(2);
-				}
 				app.run();
-				Math.random = engineRandom;
 				window.app = app;
 				window.loaded = true;
 			}, function() {});

@@ -172,6 +172,8 @@ var LocaleEN = {
 	penumbra: "Penumbra",
 	angle: "Angle",
 	distance: "Distance",
+	decay: "Decay",
+	legacyFalloff: "Legacy Falloff",
 	zoomSpeed: "Zoom Speed",
 	limitDown: "Limit Down",
 	limitUp: "Limit Up",
