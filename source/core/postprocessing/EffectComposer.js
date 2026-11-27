@@ -30,55 +30,306 @@ import {AdaptiveToneMappingPass} from "./pass/AdaptiveToneMappingPass.js";
  * @class EffectComposer
  * @module Postprocessing
  */
-function EffectComposer()
+class EffectComposer
 {
-	this.uuid = TMath.generateUUID();
-	this.width = 1;
-	this.height = 1;
+	constructor()
+	{
+		this.uuid = TMath.generateUUID();
+		this.width = 1;
+		this.height = 1;
+
+		/**
+		 * Passes attached to this effect composer.
+		 *
+		 * The passes are rendered in order.
+		 *
+		 * @property passes
+		 * @type {Array}
+		 */
+		this.passes = [];
+
+		/**
+		 * Input buffer passed to the render pass.
+		 *
+		 * @property writeBuffer
+		 * @type {WebGLRenderTarget}
+		 */
+		this.writeBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
+
+		/**
+		 * Input buffer passed to the render pass.
+		 *
+		 * @property readBuffer
+		 * @type {WebGLRenderTarget}
+		 */
+		this.readBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
+
+		/**
+		 * Copy shader used to copy data between the read and write buffer or to copy the writeBuffer to screen when necessary.
+		 *
+		 * @property copyPass
+		 * @type {ShaderPass}
+		 */
+		this.copyPass = new ShaderPass(CopyShader);
+
+		/**
+		 * Renderer state configuration, stored the clear configuration of the renderer.
+		 *
+		 * Used to store and restore states.
+		 *
+		 * @property rendererState
+		 * @type {RendererState}
+		 */
+		this.rendererState = new RendererState();
+	}
 
 	/**
-	 * Passes attached to this effect composer.
+	 * Swap rendering buffers.
 	 *
-	 * The passes are rendered in order.
+	 * Used to make the output buffer of a render pass the input of the next one.
 	 *
-	 * @property passes
-	 * @type {Array}
+	 * @method swapBuffers
 	 */
-	this.passes = [];
+	swapBuffers()
+	{
+		var temp = this.readBuffer;
+		this.readBuffer = this.writeBuffer;
+		this.writeBuffer = temp;
+	}
 
 	/**
-	 * Input buffer passed to the render pass.
+	 * Add new pass to the composer.
 	 *
-	 * @property writeBuffer
-	 * @type {WebGLRenderTarget}
+	 * @method addPass
+	 * @param {Pass} pass Rendering pass to be added.
 	 */
-	this.writeBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
+	addPass(pass)
+	{
+		this.passes.push(pass);
+	}
 
 	/**
-	 * Input buffer passed to the render pass.
+	 * Move pass back in the list of render passes.
 	 *
-	 * @property readBuffer
-	 * @type {WebGLRenderTarget}
+	 * Moving back means that the pass is rendered earlier in the pipeline.
+	 *
+	 * @method moveBack
+	 * @param {Pass} pass Pass to be moved.
+	 * @return {boolean} Returns true on success, false otherwise.
 	 */
-	this.readBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
+	moveBack(pass)
+	{
+		var index = this.passes.indexOf(pass);
+
+		if (index > 0)
+		{
+			for (var k = index; k !== index - 1 ; k -= 1)
+			{
+				this.passes[k] = this.passes[k - 1];
+			}
+			this.passes[index - 1] = pass;
+
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
-	 * Copy shader used to copy data between the read and write buffer or to copy the writeBuffer to screen when necessary.
+	 * Move pass forward in the list of render passes.
 	 *
-	 * @property copyPass
-	 * @type {ShaderPass}
+	 * Moving forward in the list means being renderer later down the pipeline.
+	 *
+	 * @method moveForward
+	 * @param {Pass} pass Pass to be moved.
+	 * @return {boolean} Returns true on success, false otherwise.
 	 */
-	this.copyPass = new ShaderPass(CopyShader);
+	moveForward(pass)
+	{
+		var index = this.passes.indexOf(pass);
+
+		if (index !== -1 && index < this.passes.length - 1)
+		{
+			for (var k = index; k !== index + 1 ; k += 1)
+			{
+				this.passes[k] = this.passes[k + 1];
+			}
+			this.passes[index + 1] = pass;
+
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
-	 * Renderer state configuration, stored the clear configuration of the renderer.
+	 * Remove pass from this composer, if pass is not found nothing happens.
 	 *
-	 * Used to store and restore states.
-	 *
-	 * @property rendererState
-	 * @type {RendererState}
+	 * @method removePass
+	 * @param {Pass} pass Pass to be removed from the composer.
 	 */
-	this.rendererState = new RendererState();
+	removePass(pass)
+	{
+		var index = this.passes.indexOf(pass);
+		if (index !== -1)
+		{
+			this.passes.splice(index, 1);
+		}
+	}
+
+	/**
+	 * Insert new pass into the composer in a specific position.
+	 *
+	 * @method insertPass
+	 * @param {Pass} pass Rendering pass to be added.
+	 * @param {number} index Index to be inserted on.
+	 */
+	insertPass(pass, index)
+	{
+		this.passes.splice(index, 0, pass);
+	}
+
+	/**
+	 * Render a scene using this effect composer and a renderer.
+	 *
+	 * @method render
+	 * @param {WebGLRenderer} renderer Render to be used to render the scene.
+	 * @param {Scene} scene Scene to render.
+	 * @param {number} delta Delta time.
+	 */
+	render(renderer, scene, camera, delta)
+	{
+		var maskActive = false;
+
+		this.rendererState.backup(renderer);
+
+		for (var i = 0; i < this.passes.length; i++)
+		{
+			var pass = this.passes[i];
+
+			// Render pass if its enabled
+			if (pass.enabled)
+			{
+				pass.render(renderer, this.writeBuffer, this.readBuffer, delta, maskActive, scene, camera);
+
+				// If rendered to screen stop here
+				if (pass.renderToScreen)
+				{
+					// Copy writeBuffer to screen
+					if (pass.copyToScreen)
+					{
+						this.copyPass.renderToScreen = true;
+						this.copyPass.render(renderer, this.readBuffer, this.writeBuffer, delta);
+					}
+
+					break;
+				}
+
+				// Swap read and write buffers
+				if (pass.needsSwap)
+				{
+					if (maskActive)
+					{
+						renderer.context.stencilFunc(renderer.context.NOTEQUAL, 1, 0xFFFFFFff);
+						this.copyPass.renderToScreen = false;
+						this.copyPass.render(renderer, this.writeBuffer, this.readBuffer, delta);
+						renderer.context.stencilFunc(renderer.context.EQUAL, 1, 0xFFFFFFff);
+					}
+
+					this.swapBuffers();
+				}
+
+				// Check mask passes
+				if (MaskPass !== undefined)
+				{
+					if (pass instanceof MaskPass)
+					{
+						maskActive = true;
+					}
+					else if (pass instanceof ClearMaskPass)
+					{
+						maskActive = false;
+					}
+				}
+			}
+		}
+
+		this.rendererState.restore(renderer);
+	}
+
+	/**
+	 * Set rendering size for the composer.
+	 *
+	 * Also updates the size for all passes attached to the composer.
+	 *
+	 * @method setSize
+	 * @param {number} width Width.
+	 * @param {number} height Height.
+	 */
+	setSize(width, height)
+	{
+		width = Math.floor(width);
+		height = Math.floor(height);
+
+		this.width = width;
+		this.height = height;
+
+		this.writeBuffer.setSize(width, height);
+		this.readBuffer.setSize(width, height);
+
+		for (var i = 0; i < this.passes.length; i++)
+		{
+			this.passes[i].setSize(width, height);
+		}
+	}
+
+	/**
+	 * Reset this effect composer.
+	 *
+	 * @method reset
+	 */
+	reset()
+	{
+		this.dispose();
+
+		this.writeBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
+
+		this.readBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
+	}
+
+	/**
+	 * Dispose this effect composer.
+	 *
+	 * @method dispose
+	 */
+	dispose()
+	{
+		this.writeBuffer.dispose();
+		this.readBuffer.dispose();
+
+		this.writeBuffer = null;
+		this.readBuffer = null;
+	}
+
+	/**
+	 * Serialize this effect composer to JSON.
+	 *
+	 * @method toJSON
+	 */
+	toJSON()
+	{
+		var data = {};
+
+		data.uuid = this.uuid;
+		data.passes = [];
+
+		for (var i = 0; i < this.passes.length; i++)
+		{
+			data.passes.push(this.passes[i].toJSON());
+		}
+
+		return data;
+	}
 }
 
 EffectComposer.bufferParameters =
@@ -87,254 +338,6 @@ EffectComposer.bufferParameters =
 	magFilter: LinearFilter,
 	format: RGBAFormat,
 	stencilBuffer: false
-};
-
-/**
- * Swap rendering buffers.
- *
- * Used to make the output buffer of a render pass the input of the next one.
- *
- * @method swapBuffers
- */
-EffectComposer.prototype.swapBuffers = function()
-{
-	var temp = this.readBuffer;
-	this.readBuffer = this.writeBuffer;
-	this.writeBuffer = temp;
-};
-
-/**
- * Add new pass to the composer.
- *
- * @method addPass
- * @param {Pass} pass Rendering pass to be added.
- */
-EffectComposer.prototype.addPass = function(pass)
-{
-	this.passes.push(pass);
-};
-
-/**
- * Move pass back in the list of render passes.
- *
- * Moving back means that the pass is rendered earlier in the pipeline.
- *
- * @method moveBack
- * @param {Pass} pass Pass to be moved.
- * @return {boolean} Returns true on success, false otherwise.
- */
-EffectComposer.prototype.moveBack = function(pass)
-{
-	var index = this.passes.indexOf(pass);
-
-	if (index > 0)
-	{
-		for (var k = index; k !== index - 1 ; k -= 1)
-		{
-			this.passes[k] = this.passes[k - 1];
-		}
-		this.passes[index - 1] = pass;
-
-		return true;
-	}
-
-	return false;
-};
-
-/**
- * Move pass forward in the list of render passes.
- *
- * Moving forward in the list means being renderer later down the pipeline.
- *
- * @method moveForward
- * @param {Pass} pass Pass to be moved.
- * @return {boolean} Returns true on success, false otherwise.
- */
-EffectComposer.prototype.moveForward = function(pass)
-{
-	var index = this.passes.indexOf(pass);
-
-	if (index !== -1 && index < this.passes.length - 1)
-	{
-		for (var k = index; k !== index + 1 ; k += 1)
-		{
-			this.passes[k] = this.passes[k + 1];
-		}
-		this.passes[index + 1] = pass;
-
-		return true;
-	}
-
-	return false;
-};
-
-/**
- * Remove pass from this composer, if pass is not found nothing happens.
- *
- * @method removePass
- * @param {Pass} pass Pass to be removed from the composer.
- */
-EffectComposer.prototype.removePass = function(pass)
-{
-	var index = this.passes.indexOf(pass);
-	if (index !== -1)
-	{
-		this.passes.splice(index, 1);
-	}
-};
-
-/**
- * Insert new pass into the composer in a specific position.
- *
- * @method insertPass
- * @param {Pass} pass Rendering pass to be added.
- * @param {number} index Index to be inserted on.
- */
-EffectComposer.prototype.insertPass = function(pass, index)
-{
-	this.passes.splice(index, 0, pass);
-};
-
-/**
- * Render a scene using this effect composer and a renderer.
- *
- * @method render
- * @param {WebGLRenderer} renderer Render to be used to render the scene.
- * @param {Scene} scene Scene to render.
- * @param {number} delta Delta time.
- */
-EffectComposer.prototype.render = function(renderer, scene, camera, delta)
-{
-	var maskActive = false;
-
-	this.rendererState.backup(renderer);
-
-	for (var i = 0; i < this.passes.length; i++)
-	{
-		var pass = this.passes[i];
-
-		// Render pass if its enabled
-		if (pass.enabled)
-		{
-			pass.render(renderer, this.writeBuffer, this.readBuffer, delta, maskActive, scene, camera);
-
-			// If rendered to screen stop here
-			if (pass.renderToScreen)
-			{
-				// Copy writeBuffer to screen
-				if (pass.copyToScreen)
-				{
-					this.copyPass.renderToScreen = true;
-					this.copyPass.render(renderer, this.readBuffer, this.writeBuffer, delta);
-				}
-
-				break;
-			}
-
-			// Swap read and write buffers
-			if (pass.needsSwap)
-			{
-				if (maskActive)
-				{
-					renderer.context.stencilFunc(renderer.context.NOTEQUAL, 1, 0xFFFFFFff);
-					this.copyPass.renderToScreen = false;
-					this.copyPass.render(renderer, this.writeBuffer, this.readBuffer, delta);
-					renderer.context.stencilFunc(renderer.context.EQUAL, 1, 0xFFFFFFff);
-				}
-
-				this.swapBuffers();
-			}
-
-			// Check mask passes
-			if (MaskPass !== undefined)
-			{
-				if (pass instanceof MaskPass)
-				{
-					maskActive = true;
-				}
-				else if (pass instanceof ClearMaskPass)
-				{
-					maskActive = false;
-				}
-			}
-		}
-	}
-
-	this.rendererState.restore(renderer);
-};
-
-/**
- * Set rendering size for the composer.
- *
- * Also updates the size for all passes attached to the composer.
- *
- * @method setSize
- * @param {number} width Width.
- * @param {number} height Height.
- */
-EffectComposer.prototype.setSize = function(width, height)
-{
-	width = Math.floor(width);
-	height = Math.floor(height);
-
-	this.width = width;
-	this.height = height;
-
-	this.writeBuffer.setSize(width, height);
-	this.readBuffer.setSize(width, height);
-
-	for (var i = 0; i < this.passes.length; i++)
-	{
-		this.passes[i].setSize(width, height);
-	}
-};
-
-/**
- * Reset this effect composer.
- *
- * @method reset
- */
-EffectComposer.prototype.reset = function()
-{
-	this.dispose();
-
-	this.writeBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
-
-	this.readBuffer = new WebGLRenderTarget(this.width, this.height, EffectComposer.bufferParameters);
-};
-
-/**
- * Dispose this effect composer.
- *
- * @method dispose
- */
-EffectComposer.prototype.dispose = function()
-{
-	this.writeBuffer.dispose();
-	this.readBuffer.dispose();
-
-	this.writeBuffer = null;
-	this.readBuffer = null;
-};
-
-/**
- * Serialize this effect composer to JSON.
- *
- * @method toJSON
- */
-EffectComposer.prototype.toJSON = function()
-{
-	var data = {};
-
-	data.uuid = this.uuid;
-	data.passes = [];
-
-	for (var i = 0; i < this.passes.length; i++)
-	{
-		data.passes.push(this.passes[i].toJSON());
-	}
-
-	return data;
 };
 
 /**

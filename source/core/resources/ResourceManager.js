@@ -23,7 +23,8 @@ class ResourceManager extends Object3D
 	constructor()
 	{
 		super();
-		ResourceContainer.call(this);
+		// Initialize the resource libraries, ResourceContainer methods are mixed into the prototype below
+		Object.assign(this, new ResourceContainer());
 	}
 
 	/**

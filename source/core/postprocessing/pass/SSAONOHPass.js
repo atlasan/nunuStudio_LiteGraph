@@ -185,191 +185,191 @@ class SSAONOHPass extends Pass
 	this.minDistance = 0.1;
 	this.maxDistance = 1000;
 	}
+
+	/** 
+	 * Generate a sample kernel based on the kernelSize value.
+	 * 
+	 * @method generateSampleKernel
+	 */
+	generateSampleKernel()
+	{
+		for (var i = 0; i < this._kernelSize; i++)
+		{
+			var sample = new Vector3();
+			sample.x = Math.random() * 2 - 1;
+			sample.y = Math.random() * 2 - 1;
+			sample.z = Math.random();
+			sample.normalize();
+
+			var scale = i / this._kernelSize;
+			scale = TMath.lerp(0.1, 1, scale * scale);
+			sample.multiplyScalar(scale);
+			this.kernel.push(sample);
+		}
+	}
+
+	/**
+	 * Use noise to generate multiple pseudo random kernel rotations.
+	 *
+	 * @method generateRandomKernelRotations
+	 */
+	generateRandomKernelRotations()
+	{
+		var width = 4, height = 4;
+		var simplex = new SimplexNoise();
+		var size = width * height;
+		var data = new Float32Array(size);
+
+		for (var i = 0; i < size; i++)
+		{
+			var x = Math.random() * 2 - 1;
+			var y = Math.random() * 2 - 1;
+			var z = 0;
+			data[i] = simplex.noise3d(x, y, z);
+		}
+
+		this.noiseTexture = new DataTexture(data, width, height, LuminanceFormat, FloatType);
+		this.noiseTexture.wrapS = RepeatWrapping;
+		this.noiseTexture.wrapT = RepeatWrapping;
+		this.noiseTexture.needsUpdate = true;
+	}
+
+	/**
+	 * Render using this pass.
+	 * 
+	 * @method render
+	 * @param {WebGLRenderer} renderer
+	 * @param {WebGLRenderTarget} writeBuffer Buffer to write output.
+	 * @param {WebGLRenderTarget} readBuffer Input buffer.
+	 * @param {number} delta Delta time in milliseconds.
+	 * @param {boolean} maskActive Not used in this pass.
+	 */
+	render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
+	{
+		// Render configuration
+		renderer.autoClear = false;
+		renderer.setClearColor(0x7777ff);
+		renderer.setClearAlpha(1.0);
+
+		// Render normals
+		scene.overrideMaterial = this.normalMaterial;
+		renderer.setRenderTarget(this.normalRenderTarget);
+		renderer.clear(true, true, true);
+		renderer.render(scene, camera);
+
+		scene.overrideMaterial = null;
+
+		// Render SSAO
+		this.ssaoMaterial.uniforms["tDepth"].value = this.depthTexture;
+		this.ssaoMaterial.uniforms["tDiffuse"].value = readBuffer.texture;
+		this.ssaoMaterial.uniforms["cameraNear"].value = camera.near;
+		this.ssaoMaterial.uniforms["cameraFar"].value = camera.far;
+		this.ssaoMaterial.uniforms["cameraProjectionMatrix"].value.copy(camera.projectionMatrix);
+		this.ssaoMaterial.uniforms["cameraInverseProjectionMatrix"].value.copy(camera.projectionMatrix).invert(); 
+		this.renderPass(renderer, this.ssaoMaterial, this.ssaoRenderTarget);
+
+		// Render blur
+		this.renderPass(renderer, this.blurMaterial, this.blurRenderTarget);
+
+		// Output to screen
+		if (this.renderToScreen)
+		{
+			// Copy SSAO result
+			this.copyMaterial.uniforms["tDiffuse"].value = readBuffer.texture;
+			this.copyMaterial.blending = NoBlending;
+			this.renderPass(renderer, this.copyMaterial, null, this.clear);
+
+			// Copy blur and blend it to output
+			this.copyMaterial.uniforms["tDiffuse"].value = this.blurRenderTarget.texture;
+			this.copyMaterial.blending = CustomBlending;
+			this.renderPass(renderer, this.copyMaterial, null, false);
+		}
+		// Output to writeBuffer
+		else
+		{
+			// Copy SSAO result
+			this.copyMaterial.uniforms["tDiffuse"].value = readBuffer.texture;
+			this.copyMaterial.blending = NoBlending;
+			this.renderPass(renderer, this.copyMaterial, writeBuffer, this.clear);
+
+			// Copy blur and blend it to output
+			this.copyMaterial.uniforms["tDiffuse"].value = this.blurRenderTarget.texture;
+			this.copyMaterial.blending = CustomBlending;
+			this.renderPass(renderer, this.copyMaterial, writeBuffer, false);
+		}	
+	}
+
+	/**
+	 * Render a quad scene using a pass material.
+	 *
+	 * @method renderPass
+	 */
+	renderPass(renderer, passMaterial, renderTarget, clear)
+	{
+		this.quad.material = passMaterial;
+
+		renderer.autoClear = false;
+		renderer.setRenderTarget(renderTarget);
+
+		if (clear)
+		{
+			renderer.clear(true, true, true);
+		}
+
+		renderer.render(this.scene, this.camera);
+	}
+
+	dispose()
+	{
+		// Render targets
+		this.normalRenderTarget.dispose();
+		this.ssaoRenderTarget.dispose();
+		this.blurRenderTarget.dispose();
+
+		// Geometry
+		this.quad.geometry.dispose();
+
+		// Materials
+		this.normalMaterial.dispose();
+		this.blurMaterial.dispose();
+		this.copyMaterial.dispose();
+	}
+
+	/**
+	 * Set resolution of this render pass.
+	 * 
+	 * @method setSize
+	 * @param {number} width
+	 * @param {number} height
+	 */
+	setSize(width, height)
+	{
+		this.ssaoMaterial.uniforms["resolution"].value.set(width, height);
+		this.blurMaterial.uniforms["resolution"].value.set(width, height);
+
+		this.normalRenderTarget.setSize(width, height);
+		this.ssaoRenderTarget.setSize(width, height);
+		this.blurRenderTarget.setSize(width, height);
+	}
+
+	/**
+	 * Serialize pass to json.
+	 *
+	 * @method toJSON
+	 * @param {Object} meta Metadata object.
+	 */
+	toJSON(meta)
+	{
+		var data = Pass.prototype.toJSON.call(this, meta);
+	
+		data.kernelSize = this.kernelSize;
+		data.kernelRadius = this.kernelRadius;
+		data.minDistance = this.minDistance;
+		data.maxDistance = this.maxDistance;
+
+		return data;
+	}
 }
 
-
-/** 
- * Generate a sample kernel based on the kernelSize value.
- * 
- * @method generateSampleKernel
- */
-SSAONOHPass.prototype.generateSampleKernel = function()
-{
-	for (var i = 0; i < this._kernelSize; i++)
-	{
-		var sample = new Vector3();
-		sample.x = Math.random() * 2 - 1;
-		sample.y = Math.random() * 2 - 1;
-		sample.z = Math.random();
-		sample.normalize();
-
-		var scale = i / this._kernelSize;
-		scale = TMath.lerp(0.1, 1, scale * scale);
-		sample.multiplyScalar(scale);
-		this.kernel.push(sample);
-	}
-};
-
-/**
- * Use noise to generate multiple pseudo random kernel rotations.
- *
- * @method generateRandomKernelRotations
- */
-SSAONOHPass.prototype.generateRandomKernelRotations = function()
-{
-	var width = 4, height = 4;
-	var simplex = new SimplexNoise();
-	var size = width * height;
-	var data = new Float32Array(size);
-
-	for (var i = 0; i < size; i++)
-	{
-		var x = Math.random() * 2 - 1;
-		var y = Math.random() * 2 - 1;
-		var z = 0;
-		data[i] = simplex.noise3d(x, y, z);
-	}
-
-	this.noiseTexture = new DataTexture(data, width, height, LuminanceFormat, FloatType);
-	this.noiseTexture.wrapS = RepeatWrapping;
-	this.noiseTexture.wrapT = RepeatWrapping;
-	this.noiseTexture.needsUpdate = true;
-};
-
-/**
- * Render using this pass.
- * 
- * @method render
- * @param {WebGLRenderer} renderer
- * @param {WebGLRenderTarget} writeBuffer Buffer to write output.
- * @param {WebGLRenderTarget} readBuffer Input buffer.
- * @param {number} delta Delta time in milliseconds.
- * @param {boolean} maskActive Not used in this pass.
- */
-SSAONOHPass.prototype.render = function(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
-{
-	// Render configuration
-	renderer.autoClear = false;
-	renderer.setClearColor(0x7777ff);
-	renderer.setClearAlpha(1.0);
-
-	// Render normals
-	scene.overrideMaterial = this.normalMaterial;
-	renderer.setRenderTarget(this.normalRenderTarget);
-	renderer.clear(true, true, true);
-	renderer.render(scene, camera);
-
-	scene.overrideMaterial = null;
-
-	// Render SSAO
-	this.ssaoMaterial.uniforms["tDepth"].value = this.depthTexture;
-	this.ssaoMaterial.uniforms["tDiffuse"].value = readBuffer.texture;
-	this.ssaoMaterial.uniforms["cameraNear"].value = camera.near;
-	this.ssaoMaterial.uniforms["cameraFar"].value = camera.far;
-	this.ssaoMaterial.uniforms["cameraProjectionMatrix"].value.copy(camera.projectionMatrix);
-	this.ssaoMaterial.uniforms["cameraInverseProjectionMatrix"].value.copy(camera.projectionMatrix).invert(); 
-	this.renderPass(renderer, this.ssaoMaterial, this.ssaoRenderTarget);
-
-	// Render blur
-	this.renderPass(renderer, this.blurMaterial, this.blurRenderTarget);
-
-	// Output to screen
-	if (this.renderToScreen)
-	{
-		// Copy SSAO result
-		this.copyMaterial.uniforms["tDiffuse"].value = readBuffer.texture;
-		this.copyMaterial.blending = NoBlending;
-		this.renderPass(renderer, this.copyMaterial, null, this.clear);
-
-		// Copy blur and blend it to output
-		this.copyMaterial.uniforms["tDiffuse"].value = this.blurRenderTarget.texture;
-		this.copyMaterial.blending = CustomBlending;
-		this.renderPass(renderer, this.copyMaterial, null, false);
-	}
-	// Output to writeBuffer
-	else
-	{
-		// Copy SSAO result
-		this.copyMaterial.uniforms["tDiffuse"].value = readBuffer.texture;
-		this.copyMaterial.blending = NoBlending;
-		this.renderPass(renderer, this.copyMaterial, writeBuffer, this.clear);
-
-		// Copy blur and blend it to output
-		this.copyMaterial.uniforms["tDiffuse"].value = this.blurRenderTarget.texture;
-		this.copyMaterial.blending = CustomBlending;
-		this.renderPass(renderer, this.copyMaterial, writeBuffer, false);
-	}	
-};
-
-/**
- * Render a quad scene using a pass material.
- *
- * @method renderPass
- */
-SSAONOHPass.prototype.renderPass = function(renderer, passMaterial, renderTarget, clear)
-{
-	this.quad.material = passMaterial;
-
-	renderer.autoClear = false;
-	renderer.setRenderTarget(renderTarget);
-
-	if (clear)
-	{
-		renderer.clear(true, true, true);
-	}
-
-	renderer.render(this.scene, this.camera);
-};
-
-SSAONOHPass.prototype.dispose = function()
-{
-	// Render targets
-	this.normalRenderTarget.dispose();
-	this.ssaoRenderTarget.dispose();
-	this.blurRenderTarget.dispose();
-
-	// Geometry
-	this.quad.geometry.dispose();
-
-	// Materials
-	this.normalMaterial.dispose();
-	this.blurMaterial.dispose();
-	this.copyMaterial.dispose();
-};
-
-/**
- * Set resolution of this render pass.
- * 
- * @method setSize
- * @param {number} width
- * @param {number} height
- */
-SSAONOHPass.prototype.setSize = function(width, height)
-{
-	this.ssaoMaterial.uniforms["resolution"].value.set(width, height);
-	this.blurMaterial.uniforms["resolution"].value.set(width, height);
-
-	this.normalRenderTarget.setSize(width, height);
-	this.ssaoRenderTarget.setSize(width, height);
-	this.blurRenderTarget.setSize(width, height);
-};
-
-/**
- * Serialize pass to json.
- *
- * @method toJSON
- * @param {Object} meta Metadata object.
- */
-SSAONOHPass.prototype.toJSON = function(meta)
-{
-	var data = Pass.prototype.toJSON.call(this, meta);
-	
-	data.kernelSize = this.kernelSize;
-	data.kernelRadius = this.kernelRadius;
-	data.minDistance = this.minDistance;
-	data.maxDistance = this.maxDistance;
-
-	return data;
-};
 
 export {SSAONOHPass};

@@ -176,134 +176,134 @@ class UnrealBloomPass extends Pass
 		}
 		});
 	}
+
+	dispose()
+	{
+		for (var i = 0; i < this.renderTargetsHorizontal.length; i++)
+		{
+			this.renderTargetsHorizontal[i].dispose();
+		}
+		for (var i = 0; i < this.renderTargetsVertical.length; i++)
+		{
+			this.renderTargetsVertical[i].dispose();
+		}
+		this.renderTargetBright.dispose();
+	}
+
+	setSize(width, height)
+	{
+		var resx = Math.round(width / 2);
+		var resy = Math.round(height / 2);
+
+		this.renderTargetBright.setSize(resx, resy);
+
+		for (var i = 0; i < this.nMips; i++)
+		{
+			this.renderTargetsHorizontal[i].setSize(resx, resy);
+			this.renderTargetsVertical[i].setSize(resx, resy);
+			this.separableBlurMaterials[i].uniforms["texSize"].value.set(resx, resy);
+
+			resx = Math.round(resx / 2);
+			resy = Math.round(resy / 2);
+		}
+	}
+
+	render(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
+	{
+		renderer.autoClear = false;
+		renderer.setClearColor(new Color(0, 0, 0), 0);
+
+		if (maskActive)
+		{
+			renderer.context.disable(renderer.context.STENCIL_TEST);
+		}
+
+		// Clear screen
+		if (this.renderToScreen)
+		{
+			this.quad.material = this.basic;
+			this.basic.map = readBuffer.texture;
+
+			renderer.setRenderTarget(null);
+			renderer.clear();
+			renderer.render(this.scene, this.camera);
+		}
+
+		// Extract Bright Areas
+		this.highPassUniforms["tDiffuse"].value = readBuffer.texture;
+		this.quad.material = this.materialHighPassFilter;
+		renderer.setRenderTarget(this.renderTargetBright);
+		renderer.clear();
+		renderer.render(this.scene, this.camera);
+
+		// Blur All the mips progressively
+		var inputRenderTarget = this.renderTargetBright;
+		for (var i = 0; i < this.nMips; i++)
+		{
+			this.quad.material = this.separableBlurMaterials[i];
+
+			this.separableBlurMaterials[i].uniforms["colorTexture"].value = inputRenderTarget.texture;
+			this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionX;
+
+			renderer.setRenderTarget(this.renderTargetsHorizontal[i]);
+			renderer.clear();
+			renderer.render(this.scene, this.camera);
+
+			this.separableBlurMaterials[i].uniforms["colorTexture"].value = this.renderTargetsHorizontal[i].texture;
+			this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionY;
+
+			renderer.setRenderTarget(this.renderTargetsVertical[i]);
+			renderer.clear();
+			renderer.render(this.scene, this.camera);
+
+			inputRenderTarget = this.renderTargetsVertical[i];
+		}
+
+		// Composite All the mips
+		this.quad.material = this.compositeMaterial;
+		renderer.setRenderTarget(this.renderTargetsHorizontal[0]);
+		renderer.render(this.scene, this.camera);
+
+		// Blend it additively over the input texture
+		this.quad.material = this.materialCopy;
+		this.copyUniforms["tDiffuse"].value = this.renderTargetsHorizontal[0].texture;
+
+		if (maskActive)
+		{
+			renderer.context.enable(renderer.context.STENCIL_TEST);
+		}
+
+		renderer.setRenderTarget(this.renderToScreen ? null : readBuffer);
+		renderer.render(this.scene, this.camera);
+	}
+
+	/**
+	 * Serialize this effect composer to JSON.
+	 *
+	 * @method toJSON
+	 */
+	toJSON(meta)
+	{
+		var data = Pass.prototype.toJSON.call(this, meta);
+
+		data.strength = this.strength;
+		data.radius = this.radius;
+		data.threshold = this.threshold;
+		data.bloomFactors = this.bloomFactors;
+
+		data.bloomTintColors = [];
+		for (var i = 0; i < this.bloomTintColors.length; i++)
+		{
+			data.bloomTintColors.push(this.bloomTintColors[i].toArray());
+		}
+
+		return data;
+	}
 }
 
 
 UnrealBloomPass.BlurDirectionX = new Vector2(1.0, 0.0);
 UnrealBloomPass.BlurDirectionY = new Vector2(0.0, 1.0);
-
-UnrealBloomPass.prototype.dispose = function()
-{
-	for (var i = 0; i < this.renderTargetsHorizontal.length; i++)
-	{
-		this.renderTargetsHorizontal[i].dispose();
-	}
-	for (var i = 0; i < this.renderTargetsVertical.length; i++)
-	{
-		this.renderTargetsVertical[i].dispose();
-	}
-	this.renderTargetBright.dispose();
-};
-
-UnrealBloomPass.prototype.setSize = function(width, height)
-{
-	var resx = Math.round(width / 2);
-	var resy = Math.round(height / 2);
-
-	this.renderTargetBright.setSize(resx, resy);
-
-	for (var i = 0; i < this.nMips; i++)
-	{
-		this.renderTargetsHorizontal[i].setSize(resx, resy);
-		this.renderTargetsVertical[i].setSize(resx, resy);
-		this.separableBlurMaterials[i].uniforms["texSize"].value.set(resx, resy);
-
-		resx = Math.round(resx / 2);
-		resy = Math.round(resy / 2);
-	}
-};
-
-UnrealBloomPass.prototype.render = function(renderer, writeBuffer, readBuffer, delta, maskActive, scene, camera)
-{
-	renderer.autoClear = false;
-	renderer.setClearColor(new Color(0, 0, 0), 0);
-
-	if (maskActive)
-	{
-		renderer.context.disable(renderer.context.STENCIL_TEST);
-	}
-
-	// Clear screen
-	if (this.renderToScreen)
-	{
-		this.quad.material = this.basic;
-		this.basic.map = readBuffer.texture;
-
-		renderer.setRenderTarget(null);
-		renderer.clear();
-		renderer.render(this.scene, this.camera);
-	}
-
-	// Extract Bright Areas
-	this.highPassUniforms["tDiffuse"].value = readBuffer.texture;
-	this.quad.material = this.materialHighPassFilter;
-	renderer.setRenderTarget(this.renderTargetBright);
-	renderer.clear();
-	renderer.render(this.scene, this.camera);
-
-	// Blur All the mips progressively
-	var inputRenderTarget = this.renderTargetBright;
-	for (var i = 0; i < this.nMips; i++)
-	{
-		this.quad.material = this.separableBlurMaterials[i];
-
-		this.separableBlurMaterials[i].uniforms["colorTexture"].value = inputRenderTarget.texture;
-		this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionX;
-
-		renderer.setRenderTarget(this.renderTargetsHorizontal[i]);
-		renderer.clear();
-		renderer.render(this.scene, this.camera);
-
-		this.separableBlurMaterials[i].uniforms["colorTexture"].value = this.renderTargetsHorizontal[i].texture;
-		this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionY;
-
-		renderer.setRenderTarget(this.renderTargetsVertical[i]);
-		renderer.clear();
-		renderer.render(this.scene, this.camera);
-
-		inputRenderTarget = this.renderTargetsVertical[i];
-	}
-
-	// Composite All the mips
-	this.quad.material = this.compositeMaterial;
-	renderer.setRenderTarget(this.renderTargetsHorizontal[0]);
-	renderer.render(this.scene, this.camera);
-
-	// Blend it additively over the input texture
-	this.quad.material = this.materialCopy;
-	this.copyUniforms["tDiffuse"].value = this.renderTargetsHorizontal[0].texture;
-
-	if (maskActive)
-	{
-		renderer.context.enable(renderer.context.STENCIL_TEST);
-	}
-
-	renderer.setRenderTarget(this.renderToScreen ? null : readBuffer);
-	renderer.render(this.scene, this.camera);
-};
-
-/**
- * Serialize this effect composer to JSON.
- *
- * @method toJSON
- */
-UnrealBloomPass.prototype.toJSON = function(meta)
-{
-	var data = Pass.prototype.toJSON.call(this, meta);
-
-	data.strength = this.strength;
-	data.radius = this.radius;
-	data.threshold = this.threshold;
-	data.bloomFactors = this.bloomFactors;
-
-	data.bloomTintColors = [];
-	for (var i = 0; i < this.bloomTintColors.length; i++)
-	{
-		data.bloomTintColors.push(this.bloomTintColors[i].toArray());
-	}
-
-	return data;
-};
 
 UnrealBloomPass.getSeperableBlurMaterial = function(kernelRadius)
 {

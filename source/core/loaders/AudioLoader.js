@@ -9,60 +9,64 @@ import {Audio} from "../resources/Audio.js";
  * @module Loaders
  * @param {Object} manager
  */
-function AudioLoader(manager)
+class AudioLoader
 {
-	this.manager = manager !== undefined ? manager : DefaultLoadingManager;
+	constructor(manager)
+	{
+		this.manager = manager !== undefined ? manager : DefaultLoadingManager;
+	}
+
+	/**
+	 * Load audio file from URL.
+	 *
+	 * @method load
+	 * @param {string} url
+	 * @param {Function} onLoad
+	 * @param {Function} onProgress
+	 * @param {Function} onError
+	 */
+	load(url, onLoad, onProgress, onError)
+	{
+		var loader = new FileLoader(this.manager);
+		loader.load(url, function(text)
+		{
+			onLoad(self.parse(JSON.parse(text)));
+		}, onProgress, onError);
+	}
+
+	/**
+	 * Parse audio json and return resource.
+	 *
+	 * @method parse
+	 * @param {Object} json
+	 * @return {Audio} Audio resource
+	 */
+	parse(json)
+	{
+		var audio = new Audio();
+
+		audio.name = json.name;
+		audio.uuid = json.uuid;
+		audio.encoding = json.encoding;
+
+		if (json.format === "base64")
+		{
+			audio.format = "arraybuffer";
+			audio.data = ArraybufferUtils.fromBase64(json.data);
+		}
+		else if (json.format === "arraybuffer")
+		{
+			audio.format = json.format;
+			audio.data = json.data.toArrayBuffer !== undefined ? json.data.toArrayBuffer() : json.data;
+		}
+		else
+		{
+			audio.format = json.format;
+			audio.data = json.data;
+		}
+
+		return audio;
+	}
 }
 
-/**
- * Load audio file from URL.
- *
- * @method load
- * @param {string} url
- * @param {Function} onLoad
- * @param {Function} onProgress
- * @param {Function} onError
- */
-AudioLoader.prototype.load = function(url, onLoad, onProgress, onError)
-{
-	var loader = new FileLoader(this.manager);
-	loader.load(url, function(text)
-	{
-		onLoad(self.parse(JSON.parse(text)));
-	}, onProgress, onError);
-};
-
-/**
- * Parse audio json and return resource.
- *
- * @method parse
- * @param {Object} json
- * @return {Audio} Audio resource
- */
-AudioLoader.prototype.parse = function(json)
-{
-	var audio = new Audio();
-
-	audio.name = json.name;
-	audio.uuid = json.uuid;
-	audio.encoding = json.encoding;
-
-	if (json.format === "base64")
-	{
-		audio.format = "arraybuffer";
-		audio.data = ArraybufferUtils.fromBase64(json.data);
-	}
-	else if (json.format === "arraybuffer")
-	{
-		audio.format = json.format;
-		audio.data = json.data.toArrayBuffer !== undefined ? json.data.toArrayBuffer() : json.data;
-	}
-	else
-	{
-		audio.format = json.format;
-		audio.data = json.data;
-	}
-
-	return audio;
-};
 export {AudioLoader};

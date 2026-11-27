@@ -8,80 +8,83 @@
  * @param {Function} callback Callback task method called at the rate of the time.
  * @param {number} Time in ms to run the timer task.
  */
-function Timer(callback, time)
+class Timer
 {
-	/**
-	 * Task of the timer, executed at the timer defined rate.
-	 * 
-	 * @attribute callback
-	 * @type {Function}
-	 */
-	this.callback = callback;
-
-	/**
-	 * Period of the timer in milliseconds.
-	 * 
-	 * @attribute time
-	 * @type {number}
-	 */
-	this.time = time;
-
-	/**
-	 * Indicates if the timer is currently running, it is set to true on start and reset to false on stop.
-	 * 
-	 * @attribute running
-	 * @type {boolean}
-	 */
-	this.running = false;
-
-	/**
-	 * ID of the currently waiting timeout clock. Used to cancel the already request execution of the next clock tick.
-	 * 
-	 * @attribute running
-	 * @type {number}
-	 */
-	this.id = -1;
-}
-
-/**
- * Start timer, is the timer is already running dosen't do anything.
- *
- * The callback is called right after starting the timer.
- * 
- * @method start
- */
-Timer.prototype.start = function()
-{
-	if (this.running)
+	constructor(callback, time)
 	{
-		return;
+		/**
+		 * Task of the timer, executed at the timer defined rate.
+		 * 
+		 * @attribute callback
+		 * @type {Function}
+		 */
+		this.callback = callback;
+
+		/**
+		 * Period of the timer in milliseconds.
+		 * 
+		 * @attribute time
+		 * @type {number}
+		 */
+		this.time = time;
+
+		/**
+		 * Indicates if the timer is currently running, it is set to true on start and reset to false on stop.
+		 * 
+		 * @attribute running
+		 * @type {boolean}
+		 */
+		this.running = false;
+
+		/**
+		 * ID of the currently waiting timeout clock. Used to cancel the already request execution of the next clock tick.
+		 * 
+		 * @attribute running
+		 * @type {number}
+		 */
+		this.id = -1;
 	}
 
-	this.running = true;
-
-	var self = this;
-	function loop()
+	/**
+	 * Start timer, is the timer is already running dosen't do anything.
+	 *
+	 * The callback is called right after starting the timer.
+	 * 
+	 * @method start
+	 */
+	start()
 	{
-		self.callback();
-
-		if (self.running)
+		if (this.running)
 		{
-			self.id = setTimeout(loop, self.time);
+			return;
 		}
+
+		this.running = true;
+
+		var self = this;
+		function loop()
+		{
+			self.callback();
+
+			if (self.running)
+			{
+				self.id = setTimeout(loop, self.time);
+			}
+		}
+
+		loop();
 	}
 
-	loop();
-};
-
-/**
- * Stop timer.
- * 
- * @method stop
- */
-Timer.prototype.stop = function()
-{
-	this.running = false;
-	clearTimeout(self.id);
-};
+	/**
+	 * Stop timer.
+	 * 
+	 * @method stop
+	 */
+	stop()
+	{
+		this.running = false;
+		clearTimeout(self.id);
+	}
+}
 
 export {Timer};

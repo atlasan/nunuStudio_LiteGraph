@@ -12,165 +12,165 @@ import {Key} from "./Key.js";
  * @module Input
  * @param {boolean} dontInitialize If true the mouse events are not created.
  */
-function Keyboard(dontInitialize)
+class Keyboard
 {
-	/**
-	 * Array with keyboard keys status.
-	 *
-	 * @property keys
-	 * @type {Array}
-	 */
-	this.keys = [];
+	constructor(dontInitialize)
+	{
+		/**
+		 * Array with keyboard keys status.
+		 *
+		 * @property keys
+		 * @type {Array}
+		 */
+		this.keys = [];
+
+		/**
+		 * The actions array serves as a buffer for the key input actions.
+		 *
+		 * Until the update method is called it stores all the key stroke actions.
+		 *
+		 * On update the key strokes are updated and the keys array stores the correct values.
+		 *
+		 * @property actions
+		 * @type {Array}
+		 */
+		this.actions = [];
+
+		var self = this;
+		var actions = this.actions;
+
+		/**
+		 * Event manager used to handle the keyup, keydown and focus events.
+		 *
+		 * On each event actions are added to the actions array.
+		 *
+		 * @property events
+		 * @type {EventManager}
+		 */
+		this.events = new EventManager();
+		this.events.add(window, "keydown", function(event)
+		{
+			actions.push(event.keyCode);
+			actions.push(Key.DOWN);
+		});
+		this.events.add(window, "keyup", function(event)
+		{
+			actions.push(event.keyCode);
+			actions.push(Key.UP);
+		});
+		this.events.add(window, "focus", function(event)
+		{
+			self.reset();
+		});
+
+		if (dontInitialize !== true)
+		{
+			this.create();
+		}
+	}
 
 	/**
-	 * The actions array serves as a buffer for the key input actions.
-	 *
-	 * Until the update method is called it stores all the key stroke actions.
-	 *
-	 * On update the key strokes are updated and the keys array stores the correct values.
-	 *
-	 * @property actions
-	 * @type {Array}
+	 * Update key flags synchronously.
+	 * 
+	 * @method update
 	 */
-	this.actions = [];
+	update()
+	{
+		var end = 0;
 
-	var self = this;
-	var actions = this.actions;
+		while (this.actions.length > end)
+		{
+			var key = this.actions.shift();
+			var action = this.actions.shift();
+
+			if (this.keys[key] === undefined)
+			{
+				this.keys[key] = new Key();
+			}
+
+			this.keys[key].update(action);
+
+			if (this.keys[key].justReleased || this.keys[key].justPressed)
+			{
+				this.actions.push(key);
+				this.actions.push(Key.RESET);
+				end += 2;
+			}
+		}
+	}
 
 	/**
-	 * Event manager used to handle the keyup, keydown and focus events.
+	 * Reset keyboard status to default.
 	 *
-	 * On each event actions are added to the actions array.
-	 *
-	 * @property events
-	 * @type {EventManager}
+	 * Does not clean the action list.
+	 * 
+	 * @method reset
 	 */
-	this.events = new EventManager();
-	this.events.add(window, "keydown", function(event)
+	reset()
 	{
-		actions.push(event.keyCode);
-		actions.push(Key.DOWN);
-	});
-	this.events.add(window, "keyup", function(event)
-	{
-		actions.push(event.keyCode);
-		actions.push(Key.UP);
-	});
-	this.events.add(window, "focus", function(event)
-	{
-		self.reset();
-	});
+		// Reset all keys
+		for (var i = 0; i < this.keys.length; i++)
+		{
+			if (this.keys[i] !== undefined)
+			{
+				this.keys[i].reset();
+			}
+		}
+	}
 
-	if (dontInitialize !== true)
+	/**
+	 * Check if a key is pressed.
+	 * 
+	 * @method keyPressed
+	 * @return {boolean} True is the key is currently pressed
+	 */
+	keyPressed(key)
 	{
-		this.create();
+		return this.keys[key] !== undefined && this.keys[key].pressed;
+	}
+
+	/**
+	 * Check is a key as just pressed.
+	 * 
+	 * @method keyJustPressed
+	 * @return {boolean} True is the key was just pressed
+	 */
+	keyJustPressed(key)
+	{
+		return this.keys[key] !== undefined && this.keys[key].justPressed;
+	}
+
+	/**
+	 * Check if a key was just released.
+	 * 
+	 * @method keyJustReleased
+	 * @return {boolean} True is the key was just pressed
+	 */
+	keyJustReleased(key)
+	{
+		return this.keys[key] !== undefined && this.keys[key].justReleased;
+	}
+
+	/**
+	 * Create keyboard events.
+	 * 
+	 * @method dispose
+	 */
+	create()
+	{
+		this.events.create();
+	}
+
+	/**
+	 * Dispose keyboard events.
+	 * 
+	 * @method dispose
+	 */
+	dispose()
+	{
+		this.events.destroy();
 	}
 }
-
-Keyboard.prototype = Keyboard;
-Keyboard.prototype.constructor = Keyboard;
-
-/**
- * Update key flags synchronously.
- * 
- * @method update
- */
-Keyboard.update = function()
-{
-	var end = 0;
-
-	while (this.actions.length > end)
-	{
-		var key = this.actions.shift();
-		var action = this.actions.shift();
-
-		if (this.keys[key] === undefined)
-		{
-			this.keys[key] = new Key();
-		}
-
-		this.keys[key].update(action);
-
-		if (this.keys[key].justReleased || this.keys[key].justPressed)
-		{
-			this.actions.push(key);
-			this.actions.push(Key.RESET);
-			end += 2;
-		}
-	}
-};
-
-/**
- * Reset keyboard status to default.
- *
- * Does not clean the action list.
- * 
- * @method reset
- */
-Keyboard.reset = function()
-{
-	// Reset all keys
-	for (var i = 0; i < this.keys.length; i++)
-	{
-		if (this.keys[i] !== undefined)
-		{
-			this.keys[i].reset();
-		}
-	}
-};
-
-/**
- * Check if a key is pressed.
- * 
- * @method keyPressed
- * @return {boolean} True is the key is currently pressed
- */
-Keyboard.keyPressed = function(key)
-{
-	return this.keys[key] !== undefined && this.keys[key].pressed;
-};
-
-/**
- * Check is a key as just pressed.
- * 
- * @method keyJustPressed
- * @return {boolean} True is the key was just pressed
- */
-Keyboard.keyJustPressed = function(key)
-{
-	return this.keys[key] !== undefined && this.keys[key].justPressed;
-};
-
-/**
- * Check if a key was just released.
- * 
- * @method keyJustReleased
- * @return {boolean} True is the key was just pressed
- */
-Keyboard.keyJustReleased = function(key)
-{
-	return this.keys[key] !== undefined && this.keys[key].justReleased;
-};
-
-/**
- * Create keyboard events.
- * 
- * @method dispose
- */
-Keyboard.create = function()
-{
-	this.events.create();
-};
-
-/**
- * Dispose keyboard events.
- * 
- * @method dispose
- */
-Keyboard.dispose = function()
-{
-	this.events.destroy();
-};
 
 /**
  * TAB key
@@ -699,5 +699,14 @@ Keyboard.F11 = 122;
  * @type {number}
  */
 Keyboard.F12 = 123;
+
+// Values set on Keyboard are also read from instances (e.g. Keyboard.A in scripts)
+for (var key of Object.keys(Keyboard))
+{
+	if (!(key in Keyboard.prototype))
+	{
+		Keyboard.prototype[key] = Keyboard[key];
+	}
+}
 
 export {Keyboard};

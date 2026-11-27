@@ -28,29 +28,29 @@ class ParametricBufferGeometry extends ParametricGeometry
 			stacks: stacks
 		};
 	}
+
+	/**
+	 * Compile the generator code and generate a function to be passed to the geometry generator.
+	 *
+	 * @method compile
+	 * @return {Function} Compiled function to calculate the position of the vertex from (U, V) coordinates.
+	 */
+	compile(code)
+	{
+		try
+		{
+			return new Function("u, v, target", "target = target || new Vector3();\n" + code);
+		}
+		catch (e)
+		{
+			console.error("nunuStudio: Error occured while compiling ParametricBufferGeometry code.", e);
+		}
+
+		return function(u, v, target)
+		{
+			return target || new Vector3();
+		};
+	}
 }
-
-/**
- * Compile the generator code and generate a function to be passed to the geometry generator.
- *
- * @method compile
- * @return {Function} Compiled function to calculate the position of the vertex from (U, V) coordinates.
- */
-ParametricBufferGeometry.prototype.compile = function(code)
-{
-	try
-	{
-		return new Function("u, v, target", "target = target || new Vector3();\n" + code);
-	}
-	catch (e)
-	{
-		console.error("nunuStudio: Error occured while compiling ParametricBufferGeometry code.", e);
-	}
-
-	return function(u, v, target)
-	{
-		return target || new Vector3();
-	};
-};
 
 export {ParametricBufferGeometry};
