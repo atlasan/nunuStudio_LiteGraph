@@ -19,7 +19,7 @@ import {MaterialEditor} from "./MaterialEditor.js";
 
 class ShaderMaterialEditor extends MaterialEditor {
 	constructor(parent, closeable, container, index) {
-	// Built without calling super(), keeping the original ES5 semantics
+	// static-check: allow-no-super (built without calling super(), keeping the original ES5 semantics)
 	var self = Reflect.construct(TabComponent, [parent, closeable, container, index, Locale.material, Global.FILE_PATH + "icons/misc/material.png"], new.target);
 
 

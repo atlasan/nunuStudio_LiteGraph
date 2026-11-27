@@ -13,3 +13,9 @@ document.body.onload = Editor.initialize;
 document.body.onresize = Editor.resize;
 
 window.Buffer = window.ArrayBuffer;
+
+// Development builds expose the editor for debugging and browser tests
+if (DEVELOPMENT)
+{
+	window.Editor = Editor;
+}

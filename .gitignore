@@ -21,3 +21,10 @@ temp/
 .idea/
 
 dist/
+
+# Test outputs
+test/.cache/
+test/.results/
+test/.report/
+# Reference screenshots, rendered locally with npm run test:baseline
+test/e2e/screenshots/

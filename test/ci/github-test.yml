@@ -1,0 +1,41 @@
+# Disabled GitHub Actions workflow, kept here so it does not run on GitHub.
+# To enable it, copy it to .github/workflows/test.yml.
+
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # master is needed to render the visual baselines with the published runtime
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Static checks
+        run: npm run test:static
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm run test:e2e
+
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            test/.report
+            test/.results
+          retention-days: 7

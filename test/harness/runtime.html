@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>nunuStudio runtime harness</title>
+	<style>html, body {margin: 0; background: #000;} canvas {display: block;}</style>
+</head>
+<body>
+	<!-- Usage: runtime.html?project=/examples/name.nsp[&runtime=/cache/master/nunu.min.js] -->
+	<canvas id="canvas" width="480" height="270"></canvas>
+	<script>
+		var params = new URLSearchParams(location.search);
+		var script = document.createElement("script");
+		script.src = params.get("runtime") || "/nunu.min.js";
+		script.onload = function()
+		{
+			var canvas = document.getElementById("canvas");
+			canvas.addEventListener("webglcontextlost", function()
+			{
+				console.error("WebGL context lost");
+			});
+
+			var app = new Nunu.App(canvas);
+			app.loadProgramAsync(params.get("project"), function()
+			{
+				// Scripts capture Math.random when they start, give them their own seeded stream so they get
+				// the same numbers no matter how many the engine draws (e.g. for UUIDs), which differs between versions
+				var engineRandom = Math.random;
+				if (window.seededRandom !== undefined)
+				{
+					Math.random = window.seededRandom(2);
+				}
+				app.run();
+				Math.random = engineRandom;
+				window.app = app;
+				window.loaded = true;
+			}, function() {});
+		};
+		document.body.appendChild(script);
+	</script>
+</body>
+</html>

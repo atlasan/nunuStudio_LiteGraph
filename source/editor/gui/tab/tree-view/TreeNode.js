@@ -46,7 +46,7 @@ import {NodeEditor} from "../node-editor/NodeEditor.js";
  */
 class TreeNode extends Component {
 	constructor(container) {
-	// Built without calling super(), keeping the original ES5 semantics
+	// static-check: allow-no-super (built without calling super(), keeping the original ES5 semantics)
 	var self = Object.create(new.target.prototype);
 
 	// Container

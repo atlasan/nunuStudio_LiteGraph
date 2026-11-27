@@ -1,0 +1,21 @@
+[
+	"source/core/bsp/BSPNode.js: BACK",
+	"source/core/loaders/MaterialLoader.js: FileLoader",
+	"source/core/loaders/ObjectLoader.js: NodeScript",
+	"source/core/loaders/ObjectLoader.js: Object2D",
+	"source/core/loaders/ObjectLoader.js: Shape",
+	"source/core/objects/lights/LightProbe.js: TCubeCamera",
+	"source/core/objects/script/Script.js: url",
+	"source/core/renderer/css/CSS3DRenderer.js: matrix",
+	"source/core/resources/ResourceManager.js: material",
+	"source/core/texture/CanvasTexture.js: height",
+	"source/core/texture/CanvasTexture.js: width",
+	"source/core/texture/DataTexture.js: NearestFilter",
+	"source/core/utils/PhysicsGenerator.js: Box3",
+	"source/core/xr/VRHandler.js: displays",
+	"source/editor/Loaders.js: JSONLoader",
+	"source/editor/gui/tab/about/AboutTab.js: process",
+	"source/editor/gui/tab/animation/AnimationTrackButton.js: time",
+	"source/editor/history/ResourceCrawler.js: i",
+	"source/editor/utils/DOMUtils.js: value"
+]

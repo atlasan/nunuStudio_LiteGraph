@@ -27,6 +27,8 @@ const config = {
 		})
 	],
 	module: {
+		// Importing a name a module does not export (e.g. removed three.js APIs) is a build error
+		parser: {javascript: {exportsPresence: "error"}},
 		rules: [
 			{
 				test: /\.glsl$/i,
