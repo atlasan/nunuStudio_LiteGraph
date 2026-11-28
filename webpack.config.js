@@ -1,5 +1,7 @@
+const Fs = require("fs");
 const Path = require("path");
 const Webpack = require("webpack");
+const liteGraph = require("./webpack.litegraph.js");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MergeIntoSingleFilePlugin = require("webpack-merge-and-include-globally");
 const CopyPlugin = require("copy-webpack-plugin");
@@ -8,7 +10,19 @@ const runtime = require("./webpack.runtime.js");
 
 const source = Path.resolve(__dirname, "source");
 const output = Path.resolve(__dirname, "docs/editor");
+const websiteExamples = Path.resolve(__dirname, "docs/examples");
+const editorExamples = Path.join(source, "files/examples");
 
+function listProjects(directory)
+{
+	return Fs.existsSync(directory) ? Fs.readdirSync(directory, {withFileTypes: true})
+		.filter((entry) => entry.isFile() && /\.(isp|nsp)$/i.test(entry.name))
+		.map((entry) => entry.name) : [];
+}
+
+const localProjects = new Set(listProjects(editorExamples));
+const websiteProjects = listProjects(websiteExamples).filter((name) => !localProjects.has(name));
+const bundledProjects = [...localProjects, ...websiteProjects].sort();
 
 module.exports = [
 	{
@@ -27,6 +41,8 @@ module.exports = [
 			// Importing a name a module does not export (e.g. removed three.js APIs) is a build error
 			parser: {javascript: {exportsPresence: "error"}},
 			rules: [
+				liteGraph,
+				{test: /litegraph\.css$/, use: ["style-loader", "css-loader"]},
 				{
 					test: /\.glsl$/i,
 					use: "raw-loader"
@@ -62,11 +78,16 @@ module.exports = [
 						from: source + "/files",
 						to: output + "/files",
 						force: true
-					}
+					},
+					...websiteProjects.map((name) => ({
+						from: Path.join(websiteExamples, name),
+						to: Path.join(output, "files/examples", name)
+					}))
 				],
 				options: {concurrency: 100}
 			}),
-			new HtmlWebpackPlugin({template: source + "/editor/index.html", filename: "index.html"}),
+			new Webpack.DefinePlugin({BUNDLED_PROJECTS: JSON.stringify(bundledProjects)}),
+			new HtmlWebpackPlugin({template: source + "/editor/index.html", filename: "index.html", hash: true}),
 			new Webpack.ProgressPlugin(),
 			new Webpack.ProvidePlugin({
 				THREE: "three",

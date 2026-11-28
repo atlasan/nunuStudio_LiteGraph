@@ -1,6 +1,35 @@
 import {EventManager} from "../utils/EventManager.js";
 import {Key} from "./Key.js";
 
+const keyCodes = new Map(Object.entries({
+	Backspace: 8, Tab: 9, Enter: 13, Shift: 16, Control: 17, Alt: 18,
+	Pause: 19, CapsLock: 20, Escape: 27, " ": 32, Space: 32, PageUp: 33,
+	PageDown: 34, End: 35, Home: 36, ArrowLeft: 37, ArrowUp: 38, ArrowRight: 39,
+	ArrowDown: 40, Insert: 45, Delete: 46
+}));
+
+function getKeyCode(event)
+{
+	if (event.keyCode)
+	{
+		return event.keyCode;
+	}
+
+	const key = event.key;
+	const code = event.code;
+	if (/^[a-z0-9]$/i.test(key))
+	{
+		return key.toUpperCase().charCodeAt(0);
+	}
+	if (/^Key[A-Z]$/.test(code) || /^Digit[0-9]$/.test(code))
+	{
+		return code.charCodeAt(code.length - 1);
+	}
+
+	const name = key && key !== "Unidentified" ? key : code;
+	return /^F([1-9]|1[0-2])$/.test(name) ? 111 + Number(name.slice(1)) : keyCodes.get(name);
+}
+
 /**
  * Keyboard instance for input in sync with the running application, internally stores the key transitions provided by the browser.
  * 
@@ -23,6 +52,7 @@ class Keyboard
 		 * @type {Array}
 		 */
 		this.keys = [];
+		this.inputTarget = null;
 
 		/**
 		 * The actions array serves as a buffer for the key input actions.
@@ -36,9 +66,6 @@ class Keyboard
 		 */
 		this.actions = [];
 
-		var self = this;
-		var actions = this.actions;
-
 		/**
 		 * Event manager used to handle the keyup, keydown and focus events.
 		 *
@@ -48,20 +75,21 @@ class Keyboard
 		 * @type {EventManager}
 		 */
 		this.events = new EventManager();
-		this.events.add(window, "keydown", function(event)
+		const queue = (event, action) =>
 		{
-			actions.push(event.keyCode);
-			actions.push(Key.DOWN);
-		});
-		this.events.add(window, "keyup", function(event)
-		{
-			actions.push(event.keyCode);
-			actions.push(Key.UP);
-		});
-		this.events.add(window, "focus", function(event)
-		{
-			self.reset();
-		});
+			if (this.inputTarget !== null && event.target !== this.inputTarget)
+			{
+				return;
+			}
+			const key = getKeyCode(event);
+			if (key !== undefined)
+			{
+				this.actions.push(key, action);
+			}
+		};
+		this.events.add(window, "keydown", (event) => queue(event, Key.DOWN));
+		this.events.add(window, "keyup", (event) => queue(event, Key.UP));
+		this.events.add(window, "blur", () => this.reset());
 
 		if (dontInitialize !== true)
 		{
@@ -76,39 +104,28 @@ class Keyboard
 	 */
 	update()
 	{
-		var end = 0;
+		this.keys.forEach((key) => key.update(Key.RESET));
 
-		while (this.actions.length > end)
+		for (let i = 0; i < this.actions.length; i += 2)
 		{
-			var key = this.actions.shift();
-			var action = this.actions.shift();
-
-			if (this.keys[key] === undefined)
-			{
-				this.keys[key] = new Key();
-			}
-
-			this.keys[key].update(action);
-
-			if (this.keys[key].justReleased || this.keys[key].justPressed)
-			{
-				this.actions.push(key);
-				this.actions.push(Key.RESET);
-				end += 2;
-			}
+			const code = this.actions[i];
+			const down = this.actions[i + 1] === Key.DOWN;
+			const key = this.keys[code] ?? (this.keys[code] = new Key());
+			// A quick tap can produce both edges before the next frame.
+			key.set(key.justPressed || (down && !key.pressed), down,
+				key.justReleased || (!down && key.pressed));
 		}
+		this.actions.length = 0;
 	}
 
 	/**
 	 * Reset keyboard status to default.
 	 *
-	 * Does not clean the action list.
-	 * 
 	 * @method reset
 	 */
 	reset()
 	{
-		// Reset all keys
+		this.actions.length = 0;
 		for (var i = 0; i < this.keys.length; i++)
 		{
 			if (this.keys[i] !== undefined)
@@ -169,6 +186,7 @@ class Keyboard
 	dispose()
 	{
 		this.events.destroy();
+		this.reset();
 	}
 }
 

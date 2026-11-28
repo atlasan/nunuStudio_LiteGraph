@@ -12,6 +12,8 @@ import {InspectorContainer} from "./tab/inspector/InspectorContainer.js";
 import {ConsoleTab} from "./tab/console/ConsoleTab.js";
 import {AssetExplorer} from "./tab/asset/AssetExplorer.js";
 import {AnimationTab} from "./tab/animation/AnimationTab.js";
+import {LiveGraphTab} from "./tab/litegraph/LiveGraphTab.js";
+import {RunProject} from "./tab/run/RunProject.js";
 import {MainMenu} from "./MainMenu.js";
 
 /**
@@ -63,6 +65,14 @@ class Interface
 		this.menuBar = new MainMenu(DocumentBody);
 	}
 
+	showLiveGraph()
+	{
+		const tab = this.tab.getTab(LiveGraphTab) || this.console.container.addTab(LiveGraphTab, true);
+		tab.select();
+		const run = this.tab.getTab(RunProject, Editor.program);
+		if (run) {run.focusPreview();}
+	}
+
 	/**
 	 * Save program into file.
 	 *
@@ -103,7 +113,7 @@ class Interface
 			{
 				if (files.length > 0)
 				{
-					Editor.loadProgram(files[0], files[0].name.endsWith(".nsp"));
+					Editor.loadProgram(files[0], FileSystem.getFileExtension(files[0]) === "nsp");
 				}
 			}, ".isp, .nsp");
 		}

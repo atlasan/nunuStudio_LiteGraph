@@ -23,6 +23,7 @@ import {BSP} from "../../core/bsp/BSP.js";
 import {Exporters} from "../Exporters.js";
 import {AboutTab} from "./tab/about/AboutTab.js";
 import {SettingsTab} from "./tab/settings/SettingsTab.js";
+import starterCatalog from "../../files/examples/visual-script-examples.json";
 
 /**
  * Main menu of the application is displayed on top of the window, contains all global operations that can be applied to the project.
@@ -121,6 +122,36 @@ class MainMenu extends Component
 		{
 			Editor.gui.loadProgram();
 		}, Global.FILE_PATH + "icons/misc/load.png").setAltText("CTRL+L");
+
+		if (Global.EXAMPLE_PROJECTS.length > 0)
+		{
+			const examples = fileMenu.addMenu(Locale.examples, Global.FILE_PATH + "icons/misc/folder.png");
+			const addExample = (menu, label, name) => menu.addOption(label, () =>
+			{
+				if (Editor.confirm(Locale.changesWillBeLost + " " + Locale.loadProject))
+				{
+					Editor.loadExample(name);
+				}
+			});
+			const starterFiles = new Set(starterCatalog.examples.flatMap(({binary, json}) => [binary, json]));
+			const availableStarters = starterCatalog.examples.filter(({binary, json}) =>
+				Global.EXAMPLE_PROJECTS.includes(binary) || Global.EXAMPLE_PROJECTS.includes(json));
+			if (availableStarters.length > 0)
+			{
+				const starters = examples.addMenu(Locale.liteGraphStarters);
+				for (const {title, binary, json} of availableStarters)
+				{
+					addExample(starters, title, Global.EXAMPLE_PROJECTS.includes(binary) ? binary : json);
+				}
+			}
+			for (const name of Global.EXAMPLE_PROJECTS)
+			{
+				if (!starterFiles.has(name))
+				{
+					addExample(examples, name, name);
+				}
+			}
+		}
 
 		// Settings
 		fileMenu.addOption(Locale.settings, function()
@@ -744,6 +775,13 @@ class MainMenu extends Component
 		{
 			Editor.runProject();
 		});
+
+		const liveGraph = new ButtonText(this);
+		liveGraph.setText(Locale.openLiveGraph);
+		liveGraph.size.set(100, this.size.y);
+		liveGraph.position.set(520, 0);
+		liveGraph.updateInterface();
+		liveGraph.setOnClick(() => Editor.gui.showLiveGraph());
 	}
 
 	updateInterface() 

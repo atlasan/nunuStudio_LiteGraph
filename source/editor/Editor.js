@@ -194,14 +194,17 @@ Editor.initialize = function()
 	// Check is some project file passed as argument
 	for (var i = 0; i < Editor.args.length; i++)
 	{
-		if (Editor.args[i].endsWith(".isp"))
+		const file = Editor.args[i];
+		const example = !Nunu.runningOnDesktop() && file.match(/^(?:(?:\.{1,2})?\/)*(?:files\/)?examples\/([^/]+)$/);
+		if (example && Global.EXAMPLE_PROJECTS.includes(example[1]))
 		{
-			Editor.loadProgram(Editor.args[i], false);
+			Editor.loadExample(example[1]);
 			break;
 		}
-		else if (Editor.args[i].endsWith(".nsp"))
+		const extension = FileSystem.getFileExtension(file);
+		if (extension === "isp" || extension === "nsp")
 		{
-			Editor.loadProgram(Editor.args[i], true);
+			Editor.loadProgram(file, extension === "nsp");
 			break;
 		}
 	}
@@ -216,6 +219,12 @@ Editor.initialize = function()
 	Editor.manager = new EventManager();
 	Editor.manager.add(document.body, "keydown", function(event)
 	{
+		const run = Editor.gui.tab.getTab(RunProject, Editor.program);
+		if (run && event.target === run.canvas.canvas ||
+			event.target instanceof Element && event.target.closest(".live-graph"))
+		{
+			return;
+		}
 		var key = event.keyCode;
 
 		if (event.ctrlKey)
@@ -1128,51 +1137,45 @@ Editor.setProgram = function(program)
  *
  * @static
  * @method loadProgram
- * @param {File} file
+ * @param {File|string} file Project file or path.
  * @param {boolean} binary Indicates if the file is binary.
+ * @param {Object} options Set asCopy to save a bundled project under a new path.
  */
-Editor.loadProgram = function(file, binary)
+Editor.loadProgram = function(file, binary, {asCopy = false} = {})
 {
 	var modal = new LoadingModal(DocumentBody);
 	modal.show();
 
-	function onload()
+	function onerror(error)
+	{
+		modal.destroy();
+		Editor.alert(Locale.errorLoadingFile + "\n(" + error + ")");
+		console.error("nunuStudio: Error loading file", error);
+	}
+
+	function onload(data)
 	{
 		try
 		{
-			var loader = new ObjectLoader();
-
-			var program;
-
-			if (binary === true)
-			{
-				var pson = new StaticPair();
-				var data = pson.decode(reader.result);
-				program = loader.parse(data);
-			}
-			else
-			{
-				program = loader.parse(JSON.parse(reader.result));
-			}
-
-			Editor.setOpenFile(file);
-			Editor.setProgram(program);
-
-			Editor.alert(Locale.projectLoaded);
+			const projectData = binary ? new StaticPair().decode(data) : JSON.parse(data);
+			Editor.setProgram(new ObjectLoader().parse(projectData));
+			Editor.setOpenFile(asCopy ? null : file);
 		}
-		catch (e)
+		catch (error)
 		{
-			Editor.alert(Locale.errorLoadingFile + "\n(" + e + ")");
-			console.error("nunuStudio: Error loading file", e);
+			onerror(error);
+			return;
 		}
 
 		modal.destroy();
+		Editor.alert(Locale.projectLoaded);
 	};
 
 	if (file instanceof File)
 	{
-		var reader = new FileReader();
-		reader.onload = onload;
+		const reader = new FileReader();
+		reader.onload = () => onload(reader.result);
+		reader.onerror = () => onerror(reader.error);
 		if (binary === true)
 		{
 			reader.readAsArrayBuffer(file);
@@ -1184,17 +1187,38 @@ Editor.loadProgram = function(file, binary)
 	}
 	else if (typeof file === "string")
 	{
-		var reader = {};
-		if (binary === true)
+		if (asCopy && !FileSystem.fs)
 		{
-			reader.result = FileSystem.readFileArrayBuffer(file);
+			const url = new URL(file, document.baseURI);
+			url.searchParams.set("v", TIMESTAMP);
+			return fetch(url).then((response) =>
+			{
+				if (!response.ok)
+				{
+					throw new Error("Could not open " + file + " (HTTP " + response.status + ")");
+				}
+				return binary ? response.arrayBuffer() : response.text();
+			}).then(onload, onerror);
 		}
-		else
+
+		let data;
+		try
 		{
-			reader.result = FileSystem.readFile(file);
+			data = binary ? FileSystem.readFileArrayBuffer(file) : FileSystem.readFile(file);
 		}
-		onload();
+		catch (error)
+		{
+			onerror(error);
+			return;
+		}
+		onload(data);
 	}
+};
+
+Editor.loadExample = function(name)
+{
+	const path = Global.FILE_PATH + "examples/" + (FileSystem.fs ? name : encodeURIComponent(name));
+	Editor.loadProgram(path, FileSystem.getFileExtension(name) === "nsp", {asCopy: true});
 };
 
 /**

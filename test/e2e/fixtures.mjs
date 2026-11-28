@@ -10,7 +10,7 @@ const ignored = [/favicon\.ico/, /GPU stall due to ReadPixels/, /user gesture is
  */
 export const test = base.extend({
 	// Runtime script used by the harness, set per project in playwright.config.mjs
-	runtime: ["/nunu.min.js", {option: true}],
+	runtime: ["/files/runtime/nunu.min.js", {option: true}],
 	// Fail tests on page problems, when false they are only reported as annotations
 	strict: [true, {option: true}],
 

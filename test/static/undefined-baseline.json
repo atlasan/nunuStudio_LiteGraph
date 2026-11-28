@@ -1,8 +1,6 @@
 [
 	"source/core/bsp/BSPNode.js: BACK",
 	"source/core/loaders/MaterialLoader.js: FileLoader",
-	"source/core/loaders/ObjectLoader.js: NodeScript",
-	"source/core/loaders/ObjectLoader.js: Object2D",
 	"source/core/loaders/ObjectLoader.js: Shape",
 	"source/core/objects/lights/LightProbe.js: TCubeCamera",
 	"source/core/objects/script/Script.js: url",

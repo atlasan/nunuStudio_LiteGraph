@@ -26,6 +26,7 @@ class Mouse
 		this._wheel = 0;
 		this._wheelUpdated = false;
 		this._doubleClicked = new Array(5);
+		this.inputTarget = null;
 
 		/**
 		 * Array with mouse buttons status.
@@ -107,33 +108,16 @@ class Mouse
 		// Self pointer
 		var self = this;
 
-		// Scroll wheel
-		if (window.onmousewheel !== undefined)
+		const accepts = (event) => this.inputTarget === null || event.target === this.inputTarget;
+		this.events.add(this.domElement, "wheel", (event) =>
 		{
-			// Chrome, edge
-			this.events.add(this.domElement, "mousewheel", function(event)
+			if (accepts(event))
 			{
-				self._wheel = event.deltaY;
-				self._wheelUpdated = true;
-			});
-		}
-		else if (window.addEventListener !== undefined)
-		{
-			// Firefox
-			this.events.add(this.domElement, "DOMMouseScroll", function(event)
-			{
-				self._wheel = event.detail * 30;
-				self._wheelUpdated = true;
-			});
-		}
-		else
-		{
-			this.events.add(this.domElement, "wheel", function(event)
-			{
-				self._wheel = event.deltaY;
-				self._wheelUpdated = true;
-			});
-		}
+				this._wheel += event.deltaY;
+				this._wheelUpdated = true;
+			}
+		});
+		this.events.add(window, "blur", () => this.reset());
 
 		// Touchscreen input events
 		if ('ontouchstart' in window || navigator.msMaxTouchPoints > 0)
@@ -178,31 +162,45 @@ class Mouse
 		{
 			// console.log("nunuStudio: Mouse move event", event.offsetX, event.offsetY);
 
-			self.updatePosition(event.clientX, event.clientY, event.movementX, event.movementY);
+			if (accepts(event))
+			{
+				self.updatePosition(event.clientX, event.clientY, event.movementX, event.movementY);
+			}
 		});
 
 		// Button pressed
 		this.events.add(this.domElement, "mousedown", function(event)
 		{
-			self.updateKey(event.which - 1, Key.DOWN);
+			if (accepts(event))
+			{
+				self.updatePosition(event.clientX, event.clientY, 0, 0);
+				self.updateKey(event.button, Key.DOWN);
+			}
 		});
 
 		// Button released
 		this.events.add(this.domElement, "mouseup", function(event)
 		{
-			self.updateKey(event.which - 1, Key.UP);
+			if (accepts(event))
+			{
+				self.updatePosition(event.clientX, event.clientY, 0, 0);
+			}
+			self.updateKey(event.button, Key.UP);
 		});
 
 		// Drag start
 		this.events.add(this.domElement, "dragstart", function(event)
 		{
-			self.updateKey(event.which - 1, Key.UP);
+			self.updateKey(event.button, Key.UP);
 		});
 
 		// Mouse double click
 		this.events.add(this.domElement, "dblclick", function(event)
 		{	
-			self._doubleClicked[event.which - 1] = true;
+			if (accepts(event) && event.button >= 0 && event.button < self.keys.length)
+			{
+				self._doubleClicked[event.button] = true;
+			}
 		});
 
 		if (dontInitialize !== true)
@@ -219,20 +217,32 @@ class Mouse
 	 */
 	setCanvas(canvas)
 	{
+		if (canvas === this.canvas)
+		{
+			return;
+		}
+		if (this.canvas !== null)
+		{
+			this.canvas.removeEventListener("mouseenter", Mouse.enterCanvas);
+			this.canvas.removeEventListener("mouseleave", Mouse.leaveCanvas);
+		}
 		this.canvas = canvas;
-
-		canvas.pointerInside = false;
-
-		canvas.addEventListener("mouseenter", function()
+		if (canvas !== null)
 		{
-			this.pointerInside = true;
-		});
-
-		canvas.addEventListener("mouseleave", function()
-		{
-			this.pointerInside = false;
-		});
+			this.watchCanvas();
+		}
 	}
+
+	watchCanvas()
+	{
+		const canvas = this.canvas;
+		canvas.pointerInside = canvas.matches(":hover");
+		canvas.addEventListener("mouseenter", Mouse.enterCanvas);
+		canvas.addEventListener("mouseleave", Mouse.leaveCanvas);
+	}
+
+	static enterCanvas() {this.pointerInside = true;}
+	static leaveCanvas() {this.pointerInside = false;}
 
 	/**
 	 * Check if mouse is inside attached canvas (updated async).
@@ -362,9 +372,12 @@ class Mouse
 	 */
 	updateKey(button, action)
 	{
-		if (button > -1)
+		const key = this._keys[button];
+		if (key)
 		{
-			this._keys[button].update(action);
+			const down = action === Key.DOWN;
+			key.set(key.justPressed || (down && !key.pressed), down,
+				key.justReleased || (!down && key.pressed));
 		}
 	}
 
@@ -378,16 +391,9 @@ class Mouse
 		// Update mouse keys state
 		for (var i = 0; i < 5; i++)
 		{
-			if (this._keys[i].justPressed && this.keys[i].justPressed)
-			{
-				this._keys[i].justPressed = false;
-			}
-			if (this._keys[i].justReleased && this.keys[i].justReleased)
-			{
-				this._keys[i].justReleased = false;
-			}
-
-			this.keys[i].set(this._keys[i].justPressed, this._keys[i].pressed, this._keys[i].justReleased);
+			const key = this._keys[i];
+			this.keys[i].set(key.justPressed, key.pressed, key.justReleased);
+			key.update(Key.RESET);
 
 			// Update mouse double click
 			if (this._doubleClicked[i] === true)
@@ -405,6 +411,7 @@ class Mouse
 		if (this._wheelUpdated)
 		{
 			this.wheel = this._wheel;
+			this._wheel = 0;
 			this._wheelUpdated = false;
 		}
 		else
@@ -436,6 +443,19 @@ class Mouse
 	create()
 	{
 		this.events.create();
+		if (this.canvas) {this.watchCanvas();}
+	}
+
+	reset()
+	{
+		this.keys.forEach((key) => key.reset());
+		this._keys.forEach((key) => key.reset());
+		this.doubleClicked.fill(false);
+		this._doubleClicked.fill(false);
+		this.wheel = this._wheel = 0;
+		this._wheelUpdated = this._positionUpdated = false;
+		this.delta.set(0, 0);
+		this._delta.set(0, 0);
 	}
 
 	/**
@@ -446,6 +466,12 @@ class Mouse
 	dispose()
 	{
 		this.events.destroy();
+		if (this.canvas)
+		{
+			this.canvas.removeEventListener("mouseenter", Mouse.enterCanvas);
+			this.canvas.removeEventListener("mouseleave", Mouse.leaveCanvas);
+		}
+		this.reset();
 	}
 }
 

@@ -45,6 +45,16 @@
 - [NW.js](https://nwjs.io/) and [Cordova](https://cordova.apache.org/) exports for desktop and mobile deployment
 - Compatible with [WebXR](https://www.w3.org/TR/webxr/) for Virtual Reality and Augmented Reality
 
+## LiteGraph visual scripting
+
+Add a **LiteGraph Script** from the scene editor’s script drawer and open it from Project Explorer. The same graph runs in the editor preview and the standalone runtime.
+
+Open **File → Examples → LiteGraph Starters** to try the bundled projects. Tap or hold **W/S** to drive Rover and press **R** to reset. The Input monitor shows how two scripts receive keyboard and mouse input from the same preview.
+
+Open **Graph Debug** during Run to inspect a live graph and see its connections light up. Use **Focus preview** after using the graph picker to send keys back to the scene.
+
+See the [LiteGraph integration guide](source/lib/litegraph/README.md) for project compatibility, input behavior, and verification commands.
+
 ## Build
 The project uses [Webpack](https://webpack.js.org/) to build and bundle its code base.
   - The building system generates minified builds for the runtime and for the editor

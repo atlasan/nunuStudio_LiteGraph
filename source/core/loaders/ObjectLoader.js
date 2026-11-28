@@ -1,4 +1,5 @@
 import {AnimationClip, Bone, BufferAttribute, Color, DefaultLoadingManager, FileLoader, Fog, FogExp2, LOD, Line, LineLoop, LineSegments, Points, Skeleton} from "three";
+import {Object2D} from "escher.js/build/escher.module.js";
 import {AmbientLight} from "../objects/lights/AmbientLight.js";
 import {AudioEmitter} from "../objects/audio/AudioEmitter.js";
 import {CubeCamera} from "../objects/cameras/CubeCamera.js";
@@ -26,6 +27,8 @@ import {RectAreaLight} from "../objects/lights/RectAreaLight.js";
 import {ResourceContainer} from "../resources/ResourceContainer.js";
 import {Scene} from "../objects/Scene.js";
 import {Script} from "../objects/script/Script.js";
+import {LiteGraphScript} from "../objects/script/LiteGraphScript.js";
+import {NodeScript} from "../objects/script/NodeScript.js";
 import {SkinnedMesh} from "../objects/mesh/SkinnedMesh.js";
 import {Sky} from "../objects/misc/Sky.js";
 import {SpineAnimation} from "../objects/spine/SpineAnimation.js";
@@ -805,6 +808,10 @@ class ObjectLoader extends ResourceContainer
 				object.graph = Object2D.parse(data.graph);
 				break;
 
+			case "LiteGraphScript":
+				object = new LiteGraphScript(data.graph, data.graphVersion);
+				break;
+
 			case "RectAreaLight":
 				object = new RectAreaLight(data.color, data.intensity, data.width, data.height);
 				break;
@@ -915,6 +922,11 @@ class ObjectLoader extends ResourceContainer
 		}
 		catch (e)
 		{
+			if (data.type === "LiteGraphScript")
+			{
+				// Replacing a rejected graph with a group would discard the saved script.
+				throw e;
+			}
 			console.error("nunuStudio: Error parsing and creating object " + data.uuid + ", object skiped.", e, data);
 			object = new Group();
 		}

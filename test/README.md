@@ -31,6 +31,8 @@ Webpack is also set to fail the build when a module imports a name that is not e
 Run in Chromium with software WebGL against a dev server (`webpack.test.js`) that builds in memory, `docs/editor` is never written.
 Every test fails on page errors, `console.error` or alert dialogs (`fixtures.mjs`).
 
+- `litegraph.spec.mjs`: opens a legacy-format project, edits its scene binding, checks Play and Stop and tests the published web ZIP. It also checks the standalone runtime and the existing Escher `NodeScript` format. See [the host integration](../source/lib/litegraph/README.md).
+- `litegraph-starters.spec.mjs`: opens each bundled starter through the editor menu, checks that its graph has no missing nodes, runs its interaction, and checks Stop. The binary and JSON copies are checked for equality.
 - `editor.spec.mjs`: the editor as a list of steps (`[name, async (page) => {...}]`), errors are checked after each step. Add a row to cover a feature.
 - `examples.spec.mjs`: every project in `docs/examples` is found automatically, loaded with the runtime (`harness/runtime.html`), run for two seconds of frames with a frozen clock and seeded `Math.random`, round-tripped through `toJSON`/`ObjectLoader`, and its frame compared with `e2e/screenshots/<name>.png` (local, not in git).
 

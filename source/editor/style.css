@@ -67,3 +67,44 @@ input[type=number]::-webkit-outer-spin-button
 	-webkit-appearance: none;
 	margin: 0;
 }
+
+.live-graph-controls,
+.live-graph-values {
+	position: absolute;
+	left: 0;
+	right: 0;
+	box-sizing: border-box;
+	padding: 5px 8px;
+	color: var(--font-main-color);
+	background: var(--panel-color);
+	font: 12px system-ui, sans-serif;
+	white-space: nowrap;
+}
+
+.live-graph-controls {
+	top: 0;
+	height: 34px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.live-graph-controls select,
+.live-graph-controls button {
+	max-width: 55%;
+	color: var(--font-main-color);
+	background: var(--panel-color);
+	border: 1px solid var(--bar-color);
+	padding: 3px 5px;
+}
+
+.live-graph-controls span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.live-graph-values {
+	bottom: 0;
+	height: 26px;
+	overflow-x: auto;
+}

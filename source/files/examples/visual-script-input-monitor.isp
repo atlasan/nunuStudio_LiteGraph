@@ -1,0 +1,2580 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "Object3D.toJSON"
+  },
+  "geometries": [
+    {
+      "uuid": "896b7496-110b-45a7-8e7e-6216e5aed5c3",
+      "type": "BoxGeometry",
+      "name": "",
+      "width": 9.6,
+      "height": 4.9,
+      "depth": 0.13,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    },
+    {
+      "uuid": "fc336ba1-71b2-4a2d-bdb8-0293a9f23deb",
+      "type": "BoxGeometry",
+      "name": "",
+      "width": 8.4,
+      "height": 0.022,
+      "depth": 0.035,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    },
+    {
+      "uuid": "7e89fdf1-c103-4675-a518-e4d713cd6a2b",
+      "type": "BoxGeometry",
+      "name": "",
+      "width": 8.4,
+      "height": 0.022,
+      "depth": 0.035,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    },
+    {
+      "uuid": "a265b08b-e7a0-473a-9b12-50bf6afd6530",
+      "type": "BoxGeometry",
+      "name": "",
+      "width": 0.045,
+      "height": 1.46,
+      "depth": 0.05,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    },
+    {
+      "uuid": "d01cceaa-3bc6-47f8-b14e-b42a5b53237c",
+      "type": "BoxGeometry",
+      "name": "",
+      "width": 0.045,
+      "height": 0.67,
+      "depth": 0.05,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "cd9aefb2-d83a-411d-8931-644b2e549741",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 2109252,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    },
+    {
+      "uuid": "dffce917-aa64-45a9-a97f-470a2c517f35",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 5797009,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    },
+    {
+      "uuid": "391b9561-76b4-4171-9376-9b5965d71c9b",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 5797009,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    },
+    {
+      "uuid": "45f6ff68-9b85-4e99-bbe1-402cd2e49fdc",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 6873532,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    },
+    {
+      "uuid": "44ad4ff4-3322-4a91-9790-f7494a8ee9fd",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 16762509,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    }
+  ],
+  "object": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "type": "Program",
+    "name": "Input monitor",
+    "layers": 1,
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "children": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000002",
+        "type": "Scene",
+        "name": "Input monitor",
+        "layers": 1,
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          {
+            "uuid": "ae67fb96-5730-4f98-a56b-1cfd6eb8d152",
+            "type": "LiteGraphScript",
+            "name": "Listener A",
+            "visible": true,
+            "graphVersion": 1,
+            "graph": {
+              "id": "47a772bf-df02-4c8d-95c5-6aaf1f6fe262",
+              "revision": 25,
+              "last_node_id": 13,
+              "last_link_id": 12,
+              "nodes": [
+                {
+                  "id": 1,
+                  "type": "nunu/input/monitor",
+                  "pos": [
+                    20,
+                    70
+                  ],
+                  "size": [
+                    238,
+                    215
+                  ],
+                  "flags": {},
+                  "order": 0,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "keyboard status",
+                      "type": "string",
+                      "links": [
+                        2
+                      ]
+                    },
+                    {
+                      "name": "buttons status",
+                      "type": "string",
+                      "links": [
+                        4
+                      ]
+                    },
+                    {
+                      "name": "pointer status",
+                      "type": "string",
+                      "links": [
+                        6
+                      ]
+                    },
+                    {
+                      "name": "key pressed",
+                      "type": -1,
+                      "links": [
+                        7
+                      ]
+                    },
+                    {
+                      "name": "key released",
+                      "type": -1,
+                      "links": [
+                        8
+                      ]
+                    },
+                    {
+                      "name": "button pressed",
+                      "type": -1,
+                      "links": [
+                        9
+                      ]
+                    },
+                    {
+                      "name": "button released",
+                      "type": -1,
+                      "links": [
+                        10
+                      ]
+                    },
+                    {
+                      "name": "pointer moved",
+                      "type": -1,
+                      "links": [
+                        11
+                      ]
+                    },
+                    {
+                      "name": "scrolled",
+                      "type": -1,
+                      "links": [
+                        12
+                      ]
+                    }
+                  ],
+                  "title": "Read keyboard and mouse",
+                  "properties": {}
+                },
+                {
+                  "id": 2,
+                  "type": "nunu/object",
+                  "pos": [
+                    310,
+                    80
+                  ],
+                  "size": [
+                    128.8300018310547,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 1,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        1
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "title": "Keyboard status",
+                  "properties": {
+                    "nunu_uuid": "ea240af7-bfa1-4c38-ac54-bcf98ed89b86"
+                  }
+                },
+                {
+                  "id": 3,
+                  "type": "nunu/text/display",
+                  "pos": [
+                    540,
+                    80
+                  ],
+                  "size": [
+                    158.44000244140625,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 10,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "text object",
+                      "type": "nunu_object,object",
+                      "link": 1
+                    },
+                    {
+                      "name": "text",
+                      "type": "string",
+                      "link": 2
+                    }
+                  ],
+                  "outputs": [],
+                  "title": "Show keyboard status",
+                  "properties": {}
+                },
+                {
+                  "id": 4,
+                  "type": "nunu/object",
+                  "pos": [
+                    310,
+                    200
+                  ],
+                  "size": [
+                    122.90799713134766,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 2,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        3
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "title": "Buttons status",
+                  "properties": {
+                    "nunu_uuid": "1827c5f3-14f9-41ff-9509-5387b7d02523"
+                  }
+                },
+                {
+                  "id": 5,
+                  "type": "nunu/text/display",
+                  "pos": [
+                    540,
+                    200
+                  ],
+                  "size": [
+                    152.51800537109375,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 11,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "text object",
+                      "type": "nunu_object,object",
+                      "link": 3
+                    },
+                    {
+                      "name": "text",
+                      "type": "string",
+                      "link": 4
+                    }
+                  ],
+                  "outputs": [],
+                  "title": "Show buttons status",
+                  "properties": {}
+                },
+                {
+                  "id": 6,
+                  "type": "nunu/object",
+                  "pos": [
+                    310,
+                    330
+                  ],
+                  "size": [
+                    122.90799713134766,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 3,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        5
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "title": "Pointer status",
+                  "properties": {
+                    "nunu_uuid": "ebd810d2-2dd9-4a67-88ff-0a514d835290"
+                  }
+                },
+                {
+                  "id": 7,
+                  "type": "nunu/text/display",
+                  "pos": [
+                    540,
+                    330
+                  ],
+                  "size": [
+                    152.51800537109375,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 12,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "text object",
+                      "type": "nunu_object,object",
+                      "link": 5
+                    },
+                    {
+                      "name": "text",
+                      "type": "string",
+                      "link": 6
+                    }
+                  ],
+                  "outputs": [],
+                  "title": "Show pointer status",
+                  "properties": {}
+                },
+                {
+                  "id": 8,
+                  "type": "events/counter",
+                  "pos": [
+                    80,
+                    520
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 4,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 7
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Key down",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 9,
+                  "type": "events/counter",
+                  "pos": [
+                    320,
+                    520
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 5,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 8
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Key up",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 10,
+                  "type": "events/counter",
+                  "pos": [
+                    570,
+                    520
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 6,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 9
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Button down",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 11,
+                  "type": "events/counter",
+                  "pos": [
+                    80,
+                    670
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 7,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 10
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Button up",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 12,
+                  "type": "events/counter",
+                  "pos": [
+                    320,
+                    670
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 8,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 11
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Pointer moves",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 13,
+                  "type": "events/counter",
+                  "pos": [
+                    570,
+                    670
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 9,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 12
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Scrolls",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                }
+              ],
+              "links": [
+                [
+                  1,
+                  2,
+                  0,
+                  3,
+                  0,
+                  "nunu_object,object"
+                ],
+                [
+                  2,
+                  1,
+                  0,
+                  3,
+                  1,
+                  "string"
+                ],
+                [
+                  3,
+                  4,
+                  0,
+                  5,
+                  0,
+                  "nunu_object,object"
+                ],
+                [
+                  4,
+                  1,
+                  1,
+                  5,
+                  1,
+                  "string"
+                ],
+                [
+                  5,
+                  6,
+                  0,
+                  7,
+                  0,
+                  "nunu_object,object"
+                ],
+                [
+                  6,
+                  1,
+                  2,
+                  7,
+                  1,
+                  "string"
+                ],
+                [
+                  7,
+                  1,
+                  3,
+                  8,
+                  0,
+                  -1
+                ],
+                [
+                  8,
+                  1,
+                  4,
+                  9,
+                  0,
+                  -1
+                ],
+                [
+                  9,
+                  1,
+                  5,
+                  10,
+                  0,
+                  -1
+                ],
+                [
+                  10,
+                  1,
+                  6,
+                  11,
+                  0,
+                  -1
+                ],
+                [
+                  11,
+                  1,
+                  7,
+                  12,
+                  0,
+                  -1
+                ],
+                [
+                  12,
+                  1,
+                  8,
+                  13,
+                  0,
+                  -1
+                ]
+              ],
+              "groups": [],
+              "config": {
+                "align_to_grid": true,
+                "links_ontop": false,
+                "execution": "ancestors"
+              },
+              "extra": {},
+              "version": 0.4,
+              "litegraph_version": "0.18.0-dev.2",
+              "litegraph_modes": 2,
+              "state": {
+                "lastNodeId": 13,
+                "lastLinkId": 12,
+                "lastGroupId": 0,
+                "lastRerouteId": 0
+              }
+            }
+          },
+          {
+            "uuid": "e4395b6c-7685-4dd5-b728-7085f86adf2c",
+            "type": "LiteGraphScript",
+            "name": "Listener B",
+            "visible": true,
+            "graphVersion": 1,
+            "graph": {
+              "id": "45d44e3c-fff1-422c-827e-7098e59d1e41",
+              "revision": 18,
+              "last_node_id": 10,
+              "last_link_id": 8,
+              "nodes": [
+                {
+                  "id": 1,
+                  "type": "nunu/input/monitor",
+                  "pos": [
+                    20,
+                    70
+                  ],
+                  "size": [
+                    238,
+                    215
+                  ],
+                  "flags": {},
+                  "order": 0,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "keyboard status",
+                      "type": "string",
+                      "links": [
+                        2
+                      ]
+                    },
+                    {
+                      "name": "buttons status",
+                      "type": "string",
+                      "links": [
+                        4
+                      ]
+                    },
+                    {
+                      "name": "pointer status",
+                      "type": "string",
+                      "links": null
+                    },
+                    {
+                      "name": "key pressed",
+                      "type": -1,
+                      "links": [
+                        5
+                      ]
+                    },
+                    {
+                      "name": "key released",
+                      "type": -1,
+                      "links": [
+                        6
+                      ]
+                    },
+                    {
+                      "name": "button pressed",
+                      "type": -1,
+                      "links": [
+                        7
+                      ]
+                    },
+                    {
+                      "name": "button released",
+                      "type": -1,
+                      "links": [
+                        8
+                      ]
+                    },
+                    {
+                      "name": "pointer moved",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "scrolled",
+                      "type": -1,
+                      "links": null
+                    }
+                  ],
+                  "title": "Read keyboard and mouse",
+                  "properties": {}
+                },
+                {
+                  "id": 2,
+                  "type": "nunu/object",
+                  "pos": [
+                    310,
+                    80
+                  ],
+                  "size": [
+                    128.8300018310547,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 1,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        1
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "title": "Mirror keyboard",
+                  "properties": {
+                    "nunu_uuid": "89fe447a-c34f-4189-a61b-9d0041a3d329"
+                  }
+                },
+                {
+                  "id": 3,
+                  "type": "nunu/text/display",
+                  "pos": [
+                    540,
+                    80
+                  ],
+                  "size": [
+                    158.44000244140625,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 8,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "text object",
+                      "type": "nunu_object,object",
+                      "link": 1
+                    },
+                    {
+                      "name": "text",
+                      "type": "string",
+                      "link": 2
+                    }
+                  ],
+                  "outputs": [],
+                  "title": "Show mirror keyboard",
+                  "properties": {}
+                },
+                {
+                  "id": 4,
+                  "type": "nunu/object",
+                  "pos": [
+                    310,
+                    200
+                  ],
+                  "size": [
+                    122.90799713134766,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 2,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        3
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "title": "Mirror buttons",
+                  "properties": {
+                    "nunu_uuid": "67fa911a-24fa-4d21-90e9-3a93bf4df36d"
+                  }
+                },
+                {
+                  "id": 5,
+                  "type": "nunu/text/display",
+                  "pos": [
+                    540,
+                    200
+                  ],
+                  "size": [
+                    152.51800537109375,
+                    50
+                  ],
+                  "flags": {},
+                  "order": 9,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "text object",
+                      "type": "nunu_object,object",
+                      "link": 3
+                    },
+                    {
+                      "name": "text",
+                      "type": "string",
+                      "link": 4
+                    }
+                  ],
+                  "outputs": [],
+                  "title": "Show mirror buttons",
+                  "properties": {}
+                },
+                {
+                  "id": 6,
+                  "type": "events/counter",
+                  "pos": [
+                    80,
+                    520
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 4,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 5
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Key down",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 7,
+                  "type": "events/counter",
+                  "pos": [
+                    320,
+                    520
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 5,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 6
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Key up",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 8,
+                  "type": "events/counter",
+                  "pos": [
+                    570,
+                    520
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 6,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 7
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Button down",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 9,
+                  "type": "events/counter",
+                  "pos": [
+                    80,
+                    670
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 7,
+                  "mode": 0,
+                  "inputs": [
+                    {
+                      "name": "inc",
+                      "type": -1,
+                      "link": 8
+                    },
+                    {
+                      "name": "dec",
+                      "type": -1,
+                      "link": null
+                    },
+                    {
+                      "name": "reset",
+                      "type": -1,
+                      "link": null
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "change",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "num",
+                      "type": "number",
+                      "links": null
+                    }
+                  ],
+                  "title": "Button up",
+                  "properties": {
+                    "doCountExecution": false
+                  }
+                },
+                {
+                  "id": 10,
+                  "type": "91608458-0973-4a18-9b84-801b2a8b456f",
+                  "pos": [
+                    550,
+                    520
+                  ],
+                  "size": [
+                    200,
+                    100
+                  ],
+                  "flags": {},
+                  "order": 3,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [],
+                  "title": "Nested listener",
+                  "properties": {
+                    "enabled": true,
+                    "subgraph_id": "91608458-0973-4a18-9b84-801b2a8b456f"
+                  }
+                }
+              ],
+              "links": [
+                [
+                  1,
+                  2,
+                  0,
+                  3,
+                  0,
+                  "nunu_object,object"
+                ],
+                [
+                  2,
+                  1,
+                  0,
+                  3,
+                  1,
+                  "string"
+                ],
+                [
+                  3,
+                  4,
+                  0,
+                  5,
+                  0,
+                  "nunu_object,object"
+                ],
+                [
+                  4,
+                  1,
+                  1,
+                  5,
+                  1,
+                  "string"
+                ],
+                [
+                  5,
+                  1,
+                  3,
+                  6,
+                  0,
+                  -1
+                ],
+                [
+                  6,
+                  1,
+                  4,
+                  7,
+                  0,
+                  -1
+                ],
+                [
+                  7,
+                  1,
+                  5,
+                  8,
+                  0,
+                  -1
+                ],
+                [
+                  8,
+                  1,
+                  6,
+                  9,
+                  0,
+                  -1
+                ]
+              ],
+              "groups": [],
+              "config": {
+                "align_to_grid": true,
+                "links_ontop": false,
+                "execution": "ancestors"
+              },
+              "extra": {},
+              "version": 0.4,
+              "litegraph_version": "0.18.0-dev.2",
+              "litegraph_modes": 2,
+              "state": {
+                "lastNodeId": 10,
+                "lastLinkId": 8,
+                "lastGroupId": 0,
+                "lastRerouteId": 0
+              },
+              "definitions": {
+                "subgraphs": [
+                  {
+                    "id": "91608458-0973-4a18-9b84-801b2a8b456f",
+                    "revision": 9,
+                    "groups": [],
+                    "config": {
+                      "align_to_grid": true,
+                      "links_ontop": false
+                    },
+                    "extra": {},
+                    "version": 1,
+                    "litegraph_modes": 2,
+                    "state": {
+                      "lastNodeId": 5,
+                      "lastLinkId": 4,
+                      "lastGroupId": 0,
+                      "lastRerouteId": 0
+                    },
+                    "name": "Nested listener",
+                    "inputNode": {
+                      "id": -10,
+                      "bounding": [
+                        -200,
+                        0,
+                        120,
+                        60
+                      ]
+                    },
+                    "outputNode": {
+                      "id": -20,
+                      "bounding": [
+                        600,
+                        0,
+                        120,
+                        60
+                      ]
+                    },
+                    "inputs": [],
+                    "outputs": [],
+                    "widgets": [],
+                    "nodes": [
+                      {
+                        "id": 1,
+                        "type": "nunu/input/monitor",
+                        "pos": [
+                          40,
+                          70
+                        ],
+                        "size": [
+                          193.9720001220703,
+                          190
+                        ],
+                        "flags": {},
+                        "order": 0,
+                        "mode": 0,
+                        "inputs": [],
+                        "outputs": [
+                          {
+                            "name": "keyboard status",
+                            "type": "string",
+                            "links": null
+                          },
+                          {
+                            "name": "buttons status",
+                            "type": "string",
+                            "links": null
+                          },
+                          {
+                            "name": "pointer status",
+                            "type": "string",
+                            "links": null
+                          },
+                          {
+                            "name": "key pressed",
+                            "type": -1,
+                            "links": [
+                              1
+                            ]
+                          },
+                          {
+                            "name": "key released",
+                            "type": -1,
+                            "links": [
+                              2
+                            ]
+                          },
+                          {
+                            "name": "button pressed",
+                            "type": -1,
+                            "links": [
+                              3
+                            ]
+                          },
+                          {
+                            "name": "button released",
+                            "type": -1,
+                            "links": [
+                              4
+                            ]
+                          },
+                          {
+                            "name": "pointer moved",
+                            "type": -1,
+                            "links": null
+                          },
+                          {
+                            "name": "scrolled",
+                            "type": -1,
+                            "links": null
+                          }
+                        ],
+                        "title": "Listen inside subgraph",
+                        "properties": {}
+                      },
+                      {
+                        "id": 2,
+                        "type": "events/counter",
+                        "pos": [
+                          370,
+                          50
+                        ],
+                        "size": [
+                          140,
+                          102
+                        ],
+                        "flags": {},
+                        "order": 1,
+                        "mode": 0,
+                        "inputs": [
+                          {
+                            "name": "inc",
+                            "type": -1,
+                            "link": 1
+                          },
+                          {
+                            "name": "dec",
+                            "type": -1,
+                            "link": null
+                          },
+                          {
+                            "name": "reset",
+                            "type": -1,
+                            "link": null
+                          }
+                        ],
+                        "outputs": [
+                          {
+                            "name": "change",
+                            "type": -1,
+                            "links": null
+                          },
+                          {
+                            "name": "num",
+                            "type": "number",
+                            "links": null
+                          }
+                        ],
+                        "title": "Key down",
+                        "properties": {
+                          "doCountExecution": false
+                        }
+                      },
+                      {
+                        "id": 3,
+                        "type": "events/counter",
+                        "pos": [
+                          370,
+                          180
+                        ],
+                        "size": [
+                          140,
+                          102
+                        ],
+                        "flags": {},
+                        "order": 2,
+                        "mode": 0,
+                        "inputs": [
+                          {
+                            "name": "inc",
+                            "type": -1,
+                            "link": 2
+                          },
+                          {
+                            "name": "dec",
+                            "type": -1,
+                            "link": null
+                          },
+                          {
+                            "name": "reset",
+                            "type": -1,
+                            "link": null
+                          }
+                        ],
+                        "outputs": [
+                          {
+                            "name": "change",
+                            "type": -1,
+                            "links": null
+                          },
+                          {
+                            "name": "num",
+                            "type": "number",
+                            "links": null
+                          }
+                        ],
+                        "title": "Key up",
+                        "properties": {
+                          "doCountExecution": false
+                        }
+                      },
+                      {
+                        "id": 4,
+                        "type": "events/counter",
+                        "pos": [
+                          370,
+                          310
+                        ],
+                        "size": [
+                          140,
+                          102
+                        ],
+                        "flags": {},
+                        "order": 3,
+                        "mode": 0,
+                        "inputs": [
+                          {
+                            "name": "inc",
+                            "type": -1,
+                            "link": 3
+                          },
+                          {
+                            "name": "dec",
+                            "type": -1,
+                            "link": null
+                          },
+                          {
+                            "name": "reset",
+                            "type": -1,
+                            "link": null
+                          }
+                        ],
+                        "outputs": [
+                          {
+                            "name": "change",
+                            "type": -1,
+                            "links": null
+                          },
+                          {
+                            "name": "num",
+                            "type": "number",
+                            "links": null
+                          }
+                        ],
+                        "title": "Button down",
+                        "properties": {
+                          "doCountExecution": false
+                        }
+                      },
+                      {
+                        "id": 5,
+                        "type": "events/counter",
+                        "pos": [
+                          370,
+                          440
+                        ],
+                        "size": [
+                          140,
+                          102
+                        ],
+                        "flags": {},
+                        "order": 4,
+                        "mode": 0,
+                        "inputs": [
+                          {
+                            "name": "inc",
+                            "type": -1,
+                            "link": 4
+                          },
+                          {
+                            "name": "dec",
+                            "type": -1,
+                            "link": null
+                          },
+                          {
+                            "name": "reset",
+                            "type": -1,
+                            "link": null
+                          }
+                        ],
+                        "outputs": [
+                          {
+                            "name": "change",
+                            "type": -1,
+                            "links": null
+                          },
+                          {
+                            "name": "num",
+                            "type": "number",
+                            "links": null
+                          }
+                        ],
+                        "title": "Button up",
+                        "properties": {
+                          "doCountExecution": false
+                        }
+                      }
+                    ],
+                    "links": [
+                      {
+                        "id": 1,
+                        "origin_id": 1,
+                        "origin_slot": 3,
+                        "target_id": 2,
+                        "target_slot": 0,
+                        "type": -1
+                      },
+                      {
+                        "id": 2,
+                        "origin_id": 1,
+                        "origin_slot": 4,
+                        "target_id": 3,
+                        "target_slot": 0,
+                        "type": -1
+                      },
+                      {
+                        "id": 3,
+                        "origin_id": 1,
+                        "origin_slot": 5,
+                        "target_id": 4,
+                        "target_slot": 0,
+                        "type": -1
+                      },
+                      {
+                        "id": 4,
+                        "origin_id": 1,
+                        "origin_slot": 6,
+                        "target_id": 5,
+                        "target_slot": 0,
+                        "type": -1
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000003",
+            "type": "PerspectiveCamera",
+            "name": "Camera",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0.9996556467004938,
+              -0.026240960725887965,
+              0,
+              0,
+              0.026240960725887965,
+              0.9996556467004938,
+              0,
+              0,
+              0.85,
+              8,
+              1
+            ],
+            "fov": 50,
+            "zoom": 1,
+            "near": 0.1,
+            "far": 100,
+            "focus": 10,
+            "aspect": 1.5,
+            "filmGauge": 35,
+            "filmOffset": 0,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000004",
+            "type": "DirectionalLight",
+            "name": "Key light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              3,
+              5,
+              2,
+              1
+            ],
+            "color": 16777215,
+            "intensity": 1.7,
+            "shadow": {
+              "camera": {
+                "uuid": "00000000-0000-4000-8000-000000000006",
+                "type": "OrthographicCamera",
+                "layers": 1,
+                "zoom": 1,
+                "left": -5,
+                "right": 5,
+                "top": 5,
+                "bottom": -5,
+                "near": 0.5,
+                "far": 500
+              }
+            },
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000005",
+            "type": "AmbientLight",
+            "name": "Ambient light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "color": 11785215,
+            "intensity": 0.9,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "c0e47d0d-7e0a-4589-9d1a-4febb38d33b8",
+            "type": "Group",
+            "name": "Monitor station",
+            "castShadow": false,
+            "receiveShadow": false,
+            "visible": true,
+            "frustumCulled": true,
+            "renderOrder": 0,
+            "static": false,
+            "matrixAutoUpdate": true,
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "children": [
+              {
+                "uuid": "f19be2f3-3afc-43af-ae99-d1ebe0d5d4b4",
+                "type": "Mesh",
+                "name": "Display backing",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0.66,
+                  -0.22,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "896b7496-110b-45a7-8e7e-6216e5aed5c3",
+                "material": "cd9aefb2-d83a-411d-8931-644b2e549741"
+              },
+              {
+                "uuid": "e60da5cc-8923-403d-b4c1-e72be654a865",
+                "type": "Mesh",
+                "name": "Keyboard and mouse divider",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0.04,
+                  -0.1,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "fc336ba1-71b2-4a2d-bdb8-0293a9f23deb",
+                "material": "dffce917-aa64-45a9-a97f-470a2c517f35"
+              },
+              {
+                "uuid": "1f6ed4d2-edda-433e-a662-d49fc7ea17c5",
+                "type": "Mesh",
+                "name": "Status footer",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  -0.94,
+                  -0.1,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "7e89fdf1-c103-4675-a518-e4d713cd6a2b",
+                "material": "391b9561-76b4-4171-9376-9b5965d71c9b"
+              },
+              {
+                "uuid": "5afd505d-f082-4bf9-9468-f68e77dc424c",
+                "type": "Mesh",
+                "name": "Keyboard marker",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  -4.2,
+                  1.02,
+                  -0.1,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "a265b08b-e7a0-473a-9b12-50bf6afd6530",
+                "material": "45f6ff68-9b85-4e99-bbe1-402cd2e49fdc"
+              },
+              {
+                "uuid": "ca00dcd1-d527-48c7-a4c6-b24441c6afa2",
+                "type": "Mesh",
+                "name": "Mouse marker",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  -4.2,
+                  -0.44,
+                  -0.1,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "d01cceaa-3bc6-47f8-b14e-b42a5b53237c",
+                "material": "44ad4ff4-3322-4a91-9790-f7494a8ee9fd"
+              }
+            ]
+          },
+          {
+            "uuid": "2b37c773-7aed-4f6c-99ad-05f2d78e98f2",
+            "type": "TextSprite",
+            "name": "Title",
+            "visible": true,
+            "text": "Input monitor",
+            "color": "#ecf6ff",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              2.58,
+              0.05
+            ],
+            "scale": [
+              2.6910000000000003,
+              0.46,
+              1
+            ]
+          },
+          {
+            "uuid": "bb5789de-b286-4e75-8257-502acfa149b7",
+            "type": "TextSprite",
+            "name": "Controls",
+            "visible": true,
+            "text": "Press any key, click, move the pointer, or scroll",
+            "color": "#b1c8db",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              2.05,
+              0.05
+            ],
+            "scale": [
+              6.174,
+              0.28,
+              1
+            ]
+          },
+          {
+            "uuid": "fb9c53e3-95d9-459e-9f0d-739238409510",
+            "type": "TextSprite",
+            "name": "First listener label",
+            "visible": true,
+            "text": "LISTENER A",
+            "color": "#7cebc5",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              1.51,
+              0.05
+            ],
+            "scale": [
+              0.9900000000000001,
+              0.22,
+              1
+            ]
+          },
+          {
+            "uuid": "ea240af7-bfa1-4c38-ac54-bcf98ed89b86",
+            "type": "TextSprite",
+            "name": "Keyboard status",
+            "visible": true,
+            "text": "Keys held: none  ·  no key events",
+            "color": "#e6faff",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              1.16,
+              0.05
+            ],
+            "scale": [
+              4.0095,
+              0.27,
+              1
+            ]
+          },
+          {
+            "uuid": "1827c5f3-14f9-41ff-9509-5387b7d02523",
+            "type": "TextSprite",
+            "name": "Buttons status",
+            "visible": true,
+            "text": "Buttons held: none  ·  no button events",
+            "color": "#ffe7c5",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              0.77,
+              0.05
+            ],
+            "scale": [
+              4.3875,
+              0.25,
+              1
+            ]
+          },
+          {
+            "uuid": "ebd810d2-2dd9-4a67-88ff-0a514d835290",
+            "type": "TextSprite",
+            "name": "Pointer status",
+            "visible": true,
+            "text": "Pointer: 0, 0  ·  Move: 0, 0  ·  Last scroll: 0",
+            "color": "#d2eaee",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              0.39,
+              0.05
+            ],
+            "scale": [
+              5.076,
+              0.24,
+              1
+            ]
+          },
+          {
+            "uuid": "6315e270-f1c9-4719-8cf8-4f2f4e28f411",
+            "type": "TextSprite",
+            "name": "Second listener label",
+            "visible": true,
+            "text": "LISTENER B",
+            "color": "#ffcc8a",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              -0.25,
+              0.05
+            ],
+            "scale": [
+              0.9900000000000001,
+              0.22,
+              1
+            ]
+          },
+          {
+            "uuid": "89fe447a-c34f-4189-a61b-9d0041a3d329",
+            "type": "TextSprite",
+            "name": "Mirror keyboard",
+            "visible": true,
+            "text": "Keys held: none  ·  no key events",
+            "color": "#e6faff",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              -0.59,
+              0.05
+            ],
+            "scale": [
+              3.7125,
+              0.25,
+              1
+            ]
+          },
+          {
+            "uuid": "67fa911a-24fa-4d21-90e9-3a93bf4df36d",
+            "type": "TextSprite",
+            "name": "Mirror buttons",
+            "visible": true,
+            "text": "Buttons held: none  ·  no button events",
+            "color": "#ffe7c5",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              -0.8,
+              0.05
+            ],
+            "scale": [
+              3.5100000000000002,
+              0.2,
+              1
+            ]
+          },
+          {
+            "uuid": "52e5bc57-95a7-49f1-b6af-e61dd82d9f00",
+            "type": "TextSprite",
+            "name": "Debugger hint",
+            "visible": true,
+            "text": "Graph Debug shows the connections that carried input",
+            "color": "#b1c8db",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#202f44",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              -1.26,
+              0.05
+            ],
+            "scale": [
+              5.6160000000000005,
+              0.24,
+              1
+            ]
+          }
+        ],
+        "background": 1252395,
+        "visible": true,
+        "matrixAutoUpdate": true,
+        "usePhysics": false,
+        "cameras": [
+          "00000000-0000-4000-8000-000000000003"
+        ]
+      }
+    ],
+    "visible": true,
+    "matrixAutoUpdate": true,
+    "author": "nunuStudio LiteGraph integration",
+    "description": "Press Space to hide/show the selected object.",
+    "version": "1.0.0",
+    "ar": false,
+    "vr": false,
+    "vrScale": 1,
+    "rendererConfig": {
+      "backgroundColor": null,
+      "backend": 2,
+      "autoClear": false,
+      "autoClearColor": false,
+      "autoClearDepth": false,
+      "autoClearStencil": false,
+      "antialiasing": true,
+      "shadows": true,
+      "stencil": true,
+      "shadowsType": 2,
+      "shadowsAutoUpdate": true,
+      "toneMapping": 0,
+      "toneMappingExposure": 1,
+      "sortObjects": true,
+      "checkShaderErrors": true,
+      "gammaFactor": 2,
+      "precision": "highp",
+      "alpha": true,
+      "premultipliedAlpha": true,
+      "preserveDrawingBuffer": false,
+      "powerPreference": "high-performance",
+      "logarithmicDepthBuffer": false,
+      "physicallyCorrectLights": false,
+      "maxMorphTargets": 8,
+      "maxMorphNormals": 4
+    }
+  }
+}

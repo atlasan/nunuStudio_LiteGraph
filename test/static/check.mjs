@@ -163,7 +163,7 @@ const eslint = new ESLint({
 	overrideConfig: {
 		parserOptions: {ecmaVersion: 2020, sourceType: "module"},
 		env: {browser: true, es2020: true},
-		globals: Object.fromEntries(["THREE", "VERSION", "TIMESTAMP", "DEVELOPMENT", "REPOSITORY_BRANCH", "REPOSITORY_COMMIT", "CodeMirror", "Buffer", "tern"].map((g) => [g, "readonly"])),
+		globals: Object.fromEntries(["THREE", "VERSION", "TIMESTAMP", "DEVELOPMENT", "REPOSITORY_BRANCH", "REPOSITORY_COMMIT", "BUNDLED_PROJECTS", "CodeMirror", "Buffer", "tern"].map((g) => [g, "readonly"])),
 		rules: {"no-undef": "error"}
 	}
 });

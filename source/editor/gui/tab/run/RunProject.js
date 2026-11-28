@@ -32,6 +32,23 @@ class RunProject extends TabComponent
 		 * @type {RendererCanvas}
 		 */
 		this.canvas = new RendererCanvas(this, Editor.program.rendererConfig);
+		this.canvas.onCanvasReset = (rendererCanvas) =>
+		{
+			const canvas = rendererCanvas.canvas;
+			canvas.tabIndex = 0;
+			canvas.setAttribute("aria-label", Locale.run);
+			canvas.addEventListener("blur", () => this.resetInput());
+			canvas.addEventListener("pointerdown", () => canvas.focus({preventScroll: true}));
+			canvas.addEventListener("keydown", (event) =>
+			{
+				if (event.code === "Space" || event.key === " ")
+				{
+					event.preventDefault();
+				}
+			});
+			this.attachInput();
+		};
+		this.canvas.onCanvasReset(this.canvas);
 		this.canvas.onResize = function(width, height)
 		{
 			if (self.program !== null)
@@ -128,11 +145,22 @@ class RunProject extends TabComponent
 		Editor.gui.menuBar.run.setText(Locale.stop);
 
 		super.activate();
+		queueMicrotask(() => this.focusPreview());
+	}
+
+	focusPreview()
+	{
+		if (this.active && this.program !== null)
+		{
+			this.canvas.canvas.focus({preventScroll: true});
+		}
 	}
 
 	deactivate() 
 	{
 		super.deactivate();
+		this.canvas.canvas.blur();
+		this.resetInput();
 
 		Editor.gui.menuBar.run.setText(Locale.run);
 	}
@@ -140,6 +168,26 @@ class RunProject extends TabComponent
 	isAttached(program) 
 	{
 		return program === Editor.program;
+	}
+
+	resetInput()
+	{
+		if (this.program && this.program.keyboard && this.program.mouse)
+		{
+			this.program.keyboard.reset();
+			this.program.mouse.reset();
+		}
+	}
+
+	attachInput()
+	{
+		if (this.program && this.program.keyboard && this.program.mouse)
+		{
+			const canvas = this.canvas.canvas;
+			this.program.keyboard.inputTarget = canvas;
+			this.program.mouse.inputTarget = canvas;
+			this.program.mouse.setCanvas(canvas);
+		}
 	}
 
 	destroy() 
@@ -185,6 +233,12 @@ class RunProject extends TabComponent
 
 		if (this.program !== null)
 		{
+			if (this.program.keyboard) {this.program.keyboard.inputTarget = null;}
+			if (this.program.mouse)
+			{
+				this.program.mouse.inputTarget = null;
+				this.program.mouse.setCanvas(null);
+			}
 			this.program.dispose();
 			this.program = null;
 		}
@@ -194,12 +248,8 @@ class RunProject extends TabComponent
 
 	resetCanvas() 
 	{
-		RendererCanvas.prototype.resetCanvas.call(this);
-
-		if (this.program !== null && this.program.mouse !== null)
-		{
-			this.program.mouse.setCanvas(this.canvas.canvas);
-		}
+		this.resetInput();
+		this.canvas.resetCanvas();
 	}
 
 	/**
@@ -239,6 +289,7 @@ class RunProject extends TabComponent
 			// Set runtime variables
 			this.program.setRenderer(this.canvas.renderer);
 			this.program.initialize();
+			this.attachInput();
 			this.program.resize(this.canvas.canvas.width, this.canvas.canvas.height);
 		}
 		catch (error)

@@ -32,5 +32,6 @@ module.exports = [
 			new Webpack.HotModuleReplacementPlugin()
 		]
 	}),
-	common[1]
+	// The editor reads this URL when it packages a web project.
+	merge(common[1], {output: {publicPath: "/files/runtime/"}})
 ];

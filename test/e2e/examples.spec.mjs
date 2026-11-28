@@ -25,7 +25,7 @@ const quirks = {
 	spine: {self: "the old runtime cannot load it (Spine 3.8 data with the 4.0 runtime, upgraded by SpineJson now)"}
 };
 
-const current = "/nunu.min.js";
+const current = "/files/runtime/nunu.min.js";
 const start = new Date("2024-01-01T00:00:00Z").getTime();
 
 for (const name of examples)

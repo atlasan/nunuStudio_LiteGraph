@@ -3,7 +3,7 @@
  *
  * Builds editor and runtime in memory (nothing is written to docs/editor) and serves:
  *  /              editor (in memory bundle, static files from docs/editor)
- *  /nunu.min.js   runtime (in memory, always fresh, unlike the committed docs/editor/files/runtime copy)
+ *  /files/runtime/nunu.min.js   runtime (in memory, always fresh, unlike the committed docs/editor/files/runtime copy)
  *  /examples/     example projects from docs/examples
  *  /harness/      test pages
  *  /cache/        files prepared by the test setup (e.g. the master runtime)

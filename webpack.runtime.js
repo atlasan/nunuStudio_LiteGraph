@@ -1,5 +1,6 @@
 const Path = require("path");
 const Webpack = require("webpack");
+const liteGraph = require("./webpack.litegraph.js");
 
 const source = Path.resolve(__dirname, "source");
 const output = Path.resolve(__dirname, "dist");
@@ -34,6 +35,7 @@ const config = {
 		// Importing a name a module does not export (e.g. removed three.js APIs) is a build error
 		parser: {javascript: {exportsPresence: "error"}},
 		rules: [
+			liteGraph,
 			{
 				test: /\.glsl$/i,
 				use: "raw-loader"

@@ -17,7 +17,10 @@ var parseBufferAttribute = function(json)
 	// Legacy format
 	if (json.array !== undefined)
 	{
-		var typedArray = new TYPED_ARRAYS[json.type](json.array);
+		// Some saved projects contain trailing values that do not make up a full vertex.
+		const length = json.array.length - (json.array.length % json.itemSize);
+		const values = length < json.array.length ? json.array.slice(0, length) : json.array;
+		var typedArray = new TYPED_ARRAYS[json.type](values);
 		var contructor = json.isInstancedBufferAttribute ? InstancedBufferAttribute : BufferAttribute;
 		var bufferAttribute = new contructor(typedArray, json.itemSize, json.normalized);
 

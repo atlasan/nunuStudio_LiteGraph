@@ -195,7 +195,9 @@ class Scene extends TScene
 	 */
 	update(delta)
 	{
-		this.mouse.set(this.program.mouse.position.x / this.canvas.width * 2 - 1, -2 * this.program.mouse.position.y / this.canvas.height + 1);
+		const width = this.canvas.clientWidth || this.canvas.width;
+		const height = this.canvas.clientHeight || this.canvas.height;
+		this.mouse.set(this.program.mouse.position.x / width * 2 - 1, -2 * this.program.mouse.position.y / height + 1);
 
 		if (this.cameras.length > 0)
 		{

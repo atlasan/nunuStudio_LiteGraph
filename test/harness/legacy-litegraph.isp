@@ -1,0 +1,51 @@
+{
+	"metadata": {"version": "0.98", "type": "Object3D"},
+	"object": {
+		"uuid": "37e53a93-d896-40a6-a90a-dca719380510",
+		"type": "Program",
+		"name": "Legacy LiteGraph project",
+		"visible": true,
+		"children": [{
+			"uuid": "d80751f0-de05-490c-bc8d-2172adce4744",
+			"type": "Scene",
+			"name": "Legacy Scene",
+			"visible": true,
+			"children": [{
+				"uuid": "d584fde7-7e35-46e4-98a0-1f8735716d6f",
+				"type": "LiteGraphScript",
+				"name": "Legacy Motion",
+				"visible": true,
+				"graph": {
+					"last_node_id": 3,
+					"last_link_id": 2,
+					"nodes": [{
+						"id": 1, "type": "nunu/object", "pos": [55, 65], "size": [140, 35], "flags": {}, "mode": 0,
+						"outputs": [{"name": "object", "type": 0, "links": [1]}],
+						"properties": {"nunu_uuid": "c4d311c3-0adf-489e-b1c4-6251560d626a"}
+					}, {
+						"id": 2, "type": "math3d/xyz-to-vec3", "pos": [55, 160], "size": [155, 75], "flags": {}, "mode": 0,
+						"inputs": [{"name": "x", "type": "number", "link": null}, {"name": "y", "type": "number", "link": null}, {"name": "z", "type": "number", "link": null}],
+						"outputs": [{"name": "vec3", "type": "vec3", "links": [2]}],
+						"properties": {"x": 3, "y": 2, "z": 1}
+					}, {
+						"id": 3, "type": "nunu/position_set", "pos": [300, 100], "size": [140, 55], "flags": {}, "mode": 0,
+						"inputs": [{"name": "object", "type": "nunu_object,object", "link": 1}, {"name": "vec3", "type": "vec3", "link": 2}],
+						"properties": {}
+					}],
+					"links": [[1, 1, 0, 3, 0, 0], [2, 2, 0, 3, 1, "vec3"]],
+					"groups": [], "config": {}, "extra": {}, "version": 0.4
+				}
+			}, {
+				"uuid": "c4d311c3-0adf-489e-b1c4-6251560d626a",
+				"type": "Group",
+				"name": "Legacy Target",
+				"visible": true
+			}, {
+				"uuid": "15411d35-f953-43ee-ae84-f9275114a233",
+				"type": "Group",
+				"name": "Replacement Target",
+				"visible": true
+			}]
+		}]
+	}
+}

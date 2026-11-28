@@ -11,7 +11,7 @@
 	<script>
 		var params = new URLSearchParams(location.search);
 		var script = document.createElement("script");
-		script.src = params.get("runtime") || "/nunu.min.js";
+		script.src = params.get("runtime") || "/files/runtime/nunu.min.js";
 		script.onload = function()
 		{
 			var canvas = document.getElementById("canvas");

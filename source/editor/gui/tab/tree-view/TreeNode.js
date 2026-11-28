@@ -35,6 +35,8 @@ import {DocumentBody} from "../../../components/DocumentBody.js";
 import {Component} from "../../../components/Component.js";
 import {NodeScript} from "../../../../core/Main.js";
 import {NodeEditor} from "../node-editor/NodeEditor.js";
+import {LiteGraphScript} from "../../../../core/objects/script/LiteGraphScript.js";
+import {LiteGraphEditor} from "../litegraph/LiteGraphEditor.js";
 
 /**
  * Represents a tree node element.
@@ -701,6 +703,10 @@ class TreeNode extends Component
 				else if (self.object instanceof Camera)
 				{
 					openTab(CameraEditor, self.object);
+				}
+				else if (self.object instanceof LiteGraphScript)
+				{
+					openTab(LiteGraphEditor, self.object);
 				}
 				else if (self.object instanceof NodeScript)
 				{

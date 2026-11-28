@@ -1,3 +1,4 @@
+import {readFile} from "node:fs/promises";
 import {test, expect, expectClean} from "./fixtures.mjs";
 
 /**
@@ -100,4 +101,46 @@ test("editor", async ({page}) =>
 			expectClean(page);
 		});
 	}
+});
+
+test("opens bundled examples and imports a local project from the examples folder", async ({page}) =>
+{
+	await page.addInitScript(() =>
+	{
+		window.confirm = () => true;
+		window.loadedProjects = [];
+		window.alert = (message) => window.loadedProjects.push(message);
+	});
+	await page.goto("/");
+	await page.waitForFunction(() => window.Editor?.program);
+
+	const response = page.waitForResponse((item) => new URL(item.url()).pathname === "/files/examples/pong.nsp");
+	await menu(page, "File", "Examples", "pong.nsp");
+	const example = await response;
+	expect(example.ok()).toBe(true);
+	expect(new URL(example.url()).searchParams.get("v")).toBeTruthy();
+	await expect.poll(() => editor(page, () => ({
+		name: window.Editor.program.name,
+		file: window.Editor.openFile,
+		positions: window.Editor.program.getGeometry("301E4FF8-B90B-4B75-B966-B83894F6270C")?.getAttribute("position").count
+	}))).toEqual({name: "pong", file: null, positions: 6});
+
+	const choosing = page.waitForEvent("filechooser");
+	await menu(page, "File", "Load");
+	await (await choosing).setFiles({
+		name: "flappy.NSP",
+		mimeType: "application/octet-stream",
+		buffer: await readFile("docs/examples/flappy.nsp")
+	});
+	await expect.poll(() => editor(page, () => window.Editor.program.getObjectByName("bird")?.name)).toBe("bird");
+	expect(await editor(page, () => window.Editor.openFile)).toBe("flappy.NSP");
+	expect(await editor(page, () => window.loadedProjects)).toEqual(["Project loaded", "Project loaded"]);
+});
+
+test("opens an examples-folder link at editor startup", async ({page}) =>
+{
+	await page.addInitScript(() => {window.alert = () => {};});
+	await page.goto("/?nsp=..//examples/pong.nsp");
+	await expect.poll(() => editor(page, () => window.Editor?.program?.name)).toBe("pong");
+	expect(await editor(page, () => window.Editor.openFile)).toBeNull();
 });

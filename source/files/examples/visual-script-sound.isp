@@ -1,0 +1,1575 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "Object3D.toJSON"
+  },
+  "geometries": [
+    {
+      "uuid": "11111111-1111-4111-8111-111111111111",
+      "type": "BoxBufferGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    },
+    {
+      "uuid": "e3ee0ff0-4cf0-40dc-a3ff-6abd7a1acc5c",
+      "type": "CylinderGeometry",
+      "name": "",
+      "radiusTop": 1,
+      "radiusBottom": 1,
+      "height": 1,
+      "radialSegments": 48,
+      "heightSegments": 1,
+      "openEnded": false,
+      "thetaStart": 0,
+      "thetaLength": 6.283185307179586
+    },
+    {
+      "uuid": "d1127596-d9a4-4def-bd2a-774784a072ea",
+      "type": "TorusGeometry",
+      "name": "",
+      "radius": 0.9116000000000001,
+      "tube": 0.022,
+      "radialSegments": 10,
+      "tubularSegments": 64,
+      "arc": 6.283185307179586,
+      "thetaStart": 0,
+      "thetaLength": 6.283185307179586
+    },
+    {
+      "uuid": "0e1f79e5-8a5b-426d-a2f6-e099a9df3720",
+      "type": "TorusGeometry",
+      "name": "",
+      "radius": 0.24,
+      "tube": 0.019,
+      "radialSegments": 10,
+      "tubularSegments": 64,
+      "arc": 6.283185307179586,
+      "thetaStart": 0,
+      "thetaLength": 6.283185307179586
+    },
+    {
+      "uuid": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+      "type": "BoxGeometry",
+      "name": "",
+      "width": 1,
+      "height": 1,
+      "depth": 1,
+      "widthSegments": 1,
+      "heightSegments": 1,
+      "depthSegments": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "22222222-2222-4222-8222-222222222222",
+      "type": "MeshStandardMaterial",
+      "color": 16552137,
+      "roughness": 0.6,
+      "metalness": 0.1,
+      "emissive": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "stencilWrite": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680
+    },
+    {
+      "uuid": "e54225f7-68ee-4b78-ba4e-0d9234d70f70",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": false,
+      "name": "",
+      "color": 16552137,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    },
+    {
+      "uuid": "915c14cc-1973-45f5-bc75-e5a797e16d99",
+      "type": "MeshStandardMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 1252136,
+      "roughness": 0.66,
+      "metalness": 0,
+      "emissive": 0,
+      "emissiveIntensity": 1,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "envMapIntensity": 1,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "flatShading": false,
+      "fog": true
+    },
+    {
+      "uuid": "9e7419c0-bc94-44bf-9e22-ec3075e200b4",
+      "type": "MeshStandardMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 3689829,
+      "roughness": 0.72,
+      "metalness": 0,
+      "emissive": 0,
+      "emissiveIntensity": 1,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "envMapIntensity": 1,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "flatShading": false,
+      "fog": true
+    },
+    {
+      "uuid": "545f84ca-c400-464d-a2c1-f556fc0ada65",
+      "type": "MeshBasicMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 5334912,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "fog": true
+    },
+    {
+      "uuid": "2a4d10ab-0a1e-4f37-855d-3b3f65d724bb",
+      "type": "MeshStandardMaterial",
+      "blending": 1,
+      "side": 0,
+      "shadowSide": null,
+      "vertexColors": false,
+      "opacity": 1,
+      "transparent": false,
+      "blendSrc": 204,
+      "blendDst": 205,
+      "blendEquation": 100,
+      "blendSrcAlpha": null,
+      "blendDstAlpha": null,
+      "blendEquationAlpha": null,
+      "blendColor": 0,
+      "blendAlpha": 0,
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": true,
+      "colorWrite": true,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "stencilWriteMask": 255,
+      "stencilFunc": 519,
+      "stencilRef": 0,
+      "stencilFuncMask": 255,
+      "stencilFail": 7680,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "stencilWrite": false,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "dithering": false,
+      "alphaTest": 0,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "premultipliedAlpha": false,
+      "forceSinglePass": false,
+      "allowOverride": true,
+      "visible": true,
+      "toneMapped": true,
+      "name": "",
+      "color": 10006473,
+      "roughness": 0.4,
+      "metalness": 0.25,
+      "emissive": 0,
+      "emissiveIntensity": 1,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "envMapIntensity": 1,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+      "wireframeLinecap": "round",
+      "wireframeLinejoin": "round",
+      "flatShading": false,
+      "fog": true
+    }
+  ],
+  "object": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "type": "Program",
+    "name": "Synth station",
+    "layers": 1,
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "children": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000002",
+        "type": "Scene",
+        "name": "Synth station",
+        "layers": 1,
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          {
+            "uuid": "33333333-3333-4333-8333-333333333333",
+            "type": "Mesh",
+            "name": "Synth",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "matrixAutoUpdate": true,
+            "geometry": "11111111-1111-4111-8111-111111111111",
+            "material": "22222222-2222-4222-8222-222222222222",
+            "visible": true,
+            "scale": [
+              1.06,
+              0.74,
+              0.82
+            ],
+            "children": [
+              {
+                "uuid": "103c763b-8cdb-4a98-a758-f6d79b70c402",
+                "type": "Group",
+                "name": "Details",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "children": [
+                  {
+                    "uuid": "eaee9239-19bd-45f3-a045-f41a7ea44bd6",
+                    "type": "Mesh",
+                    "name": "Synth panel",
+                    "castShadow": false,
+                    "receiveShadow": false,
+                    "visible": true,
+                    "frustumCulled": true,
+                    "renderOrder": 0,
+                    "static": false,
+                    "matrixAutoUpdate": true,
+                    "layers": 1,
+                    "matrix": [
+                      0.95,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.09,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.91,
+                      0,
+                      0,
+                      0.52,
+                      0,
+                      1
+                    ],
+                    "up": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "geometry": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+                    "material": "915c14cc-1973-45f5-bc75-e5a797e16d99"
+                  },
+                  {
+                    "uuid": "5e05d463-27ac-46a6-8069-3f653fc8a4dc",
+                    "type": "Mesh",
+                    "name": "Synth key",
+                    "castShadow": false,
+                    "receiveShadow": false,
+                    "visible": true,
+                    "frustumCulled": true,
+                    "renderOrder": 0,
+                    "static": false,
+                    "matrixAutoUpdate": true,
+                    "layers": 1,
+                    "matrix": [
+                      0.122,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.044,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.32,
+                      0,
+                      -0.29,
+                      0.596,
+                      0.24,
+                      1
+                    ],
+                    "up": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "geometry": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+                    "material": "2a4d10ab-0a1e-4f37-855d-3b3f65d724bb"
+                  },
+                  {
+                    "uuid": "a9cb946c-997d-4d7d-8e7f-2dd60d35e42d",
+                    "type": "Mesh",
+                    "name": "Synth key",
+                    "castShadow": false,
+                    "receiveShadow": false,
+                    "visible": true,
+                    "frustumCulled": true,
+                    "renderOrder": 0,
+                    "static": false,
+                    "matrixAutoUpdate": true,
+                    "layers": 1,
+                    "matrix": [
+                      0.122,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.044,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.32,
+                      0,
+                      -0.145,
+                      0.596,
+                      0.24,
+                      1
+                    ],
+                    "up": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "geometry": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+                    "material": "2a4d10ab-0a1e-4f37-855d-3b3f65d724bb"
+                  },
+                  {
+                    "uuid": "ce1534b1-5e9e-4138-9eed-5c267ce981a0",
+                    "type": "Mesh",
+                    "name": "Synth key",
+                    "castShadow": false,
+                    "receiveShadow": false,
+                    "visible": true,
+                    "frustumCulled": true,
+                    "renderOrder": 0,
+                    "static": false,
+                    "matrixAutoUpdate": true,
+                    "layers": 1,
+                    "matrix": [
+                      0.122,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.044,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.32,
+                      0,
+                      0,
+                      0.596,
+                      0.24,
+                      1
+                    ],
+                    "up": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "geometry": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+                    "material": "2a4d10ab-0a1e-4f37-855d-3b3f65d724bb"
+                  },
+                  {
+                    "uuid": "30d4579e-811e-467f-a68b-c95262a6ac1c",
+                    "type": "Mesh",
+                    "name": "Synth key",
+                    "castShadow": false,
+                    "receiveShadow": false,
+                    "visible": true,
+                    "frustumCulled": true,
+                    "renderOrder": 0,
+                    "static": false,
+                    "matrixAutoUpdate": true,
+                    "layers": 1,
+                    "matrix": [
+                      0.122,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.044,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.32,
+                      0,
+                      0.145,
+                      0.596,
+                      0.24,
+                      1
+                    ],
+                    "up": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "geometry": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+                    "material": "2a4d10ab-0a1e-4f37-855d-3b3f65d724bb"
+                  },
+                  {
+                    "uuid": "fc465830-b9ed-4ef1-9ce9-262f254dcd4d",
+                    "type": "Mesh",
+                    "name": "Synth key",
+                    "castShadow": false,
+                    "receiveShadow": false,
+                    "visible": true,
+                    "frustumCulled": true,
+                    "renderOrder": 0,
+                    "static": false,
+                    "matrixAutoUpdate": true,
+                    "layers": 1,
+                    "matrix": [
+                      0.122,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.044,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0.32,
+                      0,
+                      0.29,
+                      0.596,
+                      0.24,
+                      1
+                    ],
+                    "up": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "geometry": "ac31cc4e-910b-4531-af11-7c8866414c0a",
+                    "material": "2a4d10ab-0a1e-4f37-855d-3b3f65d724bb"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000003",
+            "type": "PerspectiveCamera",
+            "name": "Camera",
+            "layers": 1,
+            "matrix": [
+              0.8690647313803969,
+              4.163336342344337e-17,
+              -0.49469838555499523,
+              0,
+              -0.1551309319963171,
+              0.9495595071532967,
+              -0.27252731296650295,
+              0,
+              0.4697455551771329,
+              0.3135868976452751,
+              0.8252286780138819,
+              0,
+              3.7,
+              2.8,
+              6.5,
+              1
+            ],
+            "fov": 50,
+            "zoom": 1,
+            "near": 0.1,
+            "far": 100,
+            "focus": 10,
+            "aspect": 1.5,
+            "filmGauge": 35,
+            "filmOffset": 0,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000004",
+            "type": "DirectionalLight",
+            "name": "Key light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              3,
+              5,
+              2,
+              1
+            ],
+            "color": 16777215,
+            "intensity": 1.7,
+            "shadow": {
+              "camera": {
+                "uuid": "00000000-0000-4000-8000-000000000006",
+                "type": "OrthographicCamera",
+                "layers": 1,
+                "zoom": 1,
+                "left": -5,
+                "right": 5,
+                "top": 5,
+                "bottom": -5,
+                "near": 0.5,
+                "far": 500
+              }
+            },
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000005",
+            "type": "AmbientLight",
+            "name": "Ambient light",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "color": 11785215,
+            "intensity": 0.9,
+            "visible": true,
+            "matrixAutoUpdate": true
+          },
+          {
+            "uuid": "66666666-6666-4666-8666-000000000006",
+            "type": "Audio",
+            "name": "Beep",
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "visible": true,
+            "matrixAutoUpdate": true,
+            "audio": "66666666-6666-4666-8666-000000000007",
+            "volume": 1,
+            "autoplay": false,
+            "startTime": 0,
+            "playbackRate": 1,
+            "loop": false
+          },
+          {
+            "type": "LiteGraphScript",
+            "name": "Space plays a sound",
+            "uuid": "44444444-4444-4444-8444-444444444444",
+            "visible": true,
+            "graphVersion": 1,
+            "graph": {
+              "id": "55555555-5555-4555-8555-555555555555",
+              "revision": 1,
+              "last_node_id": 6,
+              "last_link_id": 5,
+              "nodes": [
+                {
+                  "id": 1,
+                  "type": "nunu/object",
+                  "pos": [
+                    40,
+                    60
+                  ],
+                  "size": [
+                    164.36199951171875,
+                    82
+                  ],
+                  "flags": {},
+                  "order": 0,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        1
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "nunu_uuid": "66666666-6666-4666-8666-000000000006"
+                  }
+                },
+                {
+                  "id": 2,
+                  "type": "nunu/keyboard",
+                  "pos": [
+                    40,
+                    440
+                  ],
+                  "size": [
+                    140,
+                    102
+                  ],
+                  "flags": {},
+                  "order": 1,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "down",
+                      "type": "boolean",
+                      "links": [
+                        5
+                      ]
+                    },
+                    {
+                      "name": "pressed",
+                      "type": -1,
+                      "links": [
+                        2
+                      ]
+                    },
+                    {
+                      "name": "released",
+                      "type": -1,
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "key": 32
+                  }
+                },
+                {
+                  "id": 3,
+                  "type": "nunu/audio/playback",
+                  "pos": [
+                    360,
+                    60
+                  ],
+                  "size": [
+                    260,
+                    150
+                  ],
+                  "flags": {},
+                  "order": 2,
+                  "mode": 1,
+                  "inputs": [
+                    {
+                      "name": "apply",
+                      "type": -1,
+                      "link": 2
+                    },
+                    {
+                      "name": "object",
+                      "type": "nunu_object,object",
+                      "link": 1
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "done",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "failed",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "success",
+                      "type": "boolean",
+                      "links": null
+                    },
+                    {
+                      "name": "message",
+                      "type": "string",
+                      "links": null
+                    },
+                    {
+                      "name": "playing",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "operation": "restart"
+                  }
+                },
+                {
+                  "id": 4,
+                  "type": "nunu/object",
+                  "title": "Activity light",
+                  "pos": [
+                    40,
+                    370
+                  ],
+                  "size": [
+                    164.36199951171875,
+                    82
+                  ],
+                  "flags": {},
+                  "order": 3,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "object",
+                      "type": "nunu_object",
+                      "links": [
+                        4
+                      ]
+                    },
+                    {
+                      "name": "found",
+                      "type": "boolean",
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "nunu_uuid": "9bcc369b-7a05-4424-a968-eaca8cf10528"
+                  }
+                },
+                {
+                  "id": 5,
+                  "type": "nunu/events",
+                  "title": "Scene Events",
+                  "pos": [
+                    40,
+                    550
+                  ],
+                  "size": [
+                    220,
+                    160
+                  ],
+                  "flags": {},
+                  "order": 4,
+                  "mode": 0,
+                  "inputs": [],
+                  "outputs": [
+                    {
+                      "name": "started",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "update",
+                      "type": -1,
+                      "links": [
+                        3
+                      ]
+                    },
+                    {
+                      "name": "stopped",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "resized",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "app data",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "delta",
+                      "type": "number",
+                      "links": null
+                    },
+                    {
+                      "name": "time",
+                      "type": "number",
+                      "links": null
+                    },
+                    {
+                      "name": "size",
+                      "type": "vec2",
+                      "links": null
+                    },
+                    {
+                      "name": "data",
+                      "type": 0,
+                      "links": null
+                    }
+                  ],
+                  "properties": {}
+                },
+                {
+                  "id": 6,
+                  "type": "nunu/objects/visibility",
+                  "title": "Light while Space is held",
+                  "pos": [
+                    670,
+                    370
+                  ],
+                  "size": [
+                    260,
+                    150
+                  ],
+                  "flags": {},
+                  "order": 5,
+                  "mode": 1,
+                  "inputs": [
+                    {
+                      "name": "apply",
+                      "type": -1,
+                      "link": 3
+                    },
+                    {
+                      "name": "object",
+                      "type": "nunu_object,object",
+                      "link": 4
+                    },
+                    {
+                      "name": "visible",
+                      "type": "boolean",
+                      "link": 5
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "done",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "failed",
+                      "type": -1,
+                      "links": null
+                    },
+                    {
+                      "name": "success",
+                      "type": "boolean",
+                      "links": null
+                    },
+                    {
+                      "name": "message",
+                      "type": "string",
+                      "links": null
+                    }
+                  ],
+                  "properties": {
+                    "operation": "set",
+                    "visible": false
+                  }
+                }
+              ],
+              "links": [
+                [
+                  1,
+                  1,
+                  0,
+                  3,
+                  1,
+                  "nunu_object,object"
+                ],
+                [
+                  2,
+                  2,
+                  1,
+                  3,
+                  0,
+                  -1
+                ],
+                [
+                  3,
+                  5,
+                  1,
+                  6,
+                  0,
+                  -1
+                ],
+                [
+                  4,
+                  4,
+                  0,
+                  6,
+                  1,
+                  "nunu_object,object"
+                ],
+                [
+                  5,
+                  2,
+                  0,
+                  6,
+                  2,
+                  "boolean"
+                ]
+              ],
+              "groups": [],
+              "config": {
+                "align_to_grid": true,
+                "links_ontop": false,
+                "execution": "ancestors"
+              },
+              "extra": {},
+              "version": 0.4,
+              "litegraph_version": "0.18.0-dev.2",
+              "litegraph_modes": 2,
+              "state": {
+                "lastNodeId": 3,
+                "lastLinkId": 2,
+                "lastGroupId": 0,
+                "lastRerouteId": 0
+              }
+            }
+          },
+          {
+            "uuid": "5cd0cb81-781d-4d34-b575-3b2f57a166b7",
+            "type": "Group",
+            "name": "Workshop",
+            "castShadow": false,
+            "receiveShadow": false,
+            "visible": true,
+            "frustumCulled": true,
+            "renderOrder": 0,
+            "static": false,
+            "matrixAutoUpdate": true,
+            "layers": 1,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "children": [
+              {
+                "uuid": "9bcc369b-7a05-4424-a968-eaca8cf10528",
+                "type": "Mesh",
+                "name": "Synth activity light",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": false,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  0.22,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.015,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.22,
+                  0,
+                  0,
+                  0.615,
+                  0,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "e3ee0ff0-4cf0-40dc-a3ff-6abd7a1acc5c",
+                "material": "e54225f7-68ee-4b78-ba4e-0d9234d70f70"
+              },
+              {
+                "uuid": "0ac54167-8022-4d0f-8dcc-c70e3ddf7f9f",
+                "type": "Mesh",
+                "name": "Pedestal",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1.06,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.36,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1.06,
+                  0,
+                  0,
+                  -0.73,
+                  0,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "e3ee0ff0-4cf0-40dc-a3ff-6abd7a1acc5c",
+                "material": "915c14cc-1973-45f5-bc75-e5a797e16d99"
+              },
+              {
+                "uuid": "f90ca1ec-29e9-45e6-8237-f7eb3370c214",
+                "type": "Mesh",
+                "name": "Pedestal top",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  0.9964,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.9964,
+                  0,
+                  0,
+                  -0.55,
+                  0,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "e3ee0ff0-4cf0-40dc-a3ff-6abd7a1acc5c",
+                "material": "9e7419c0-bc94-44bf-9e22-ec3075e200b4"
+              },
+              {
+                "uuid": "b2c2def4-de86-4e71-9d03-680b7aecdd47",
+                "type": "Mesh",
+                "name": "Edge light",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2.220446049250313e-16,
+                  1,
+                  0,
+                  0,
+                  -1,
+                  2.220446049250313e-16,
+                  0,
+                  0,
+                  -0.515,
+                  0,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "d1127596-d9a4-4def-bd2a-774784a072ea",
+                "material": "e54225f7-68ee-4b78-ba4e-0d9234d70f70"
+              },
+              {
+                "uuid": "016a31b9-2e82-4d8e-99cf-61ba6b2edb01",
+                "type": "Mesh",
+                "name": "Synth light rim",
+                "castShadow": false,
+                "receiveShadow": false,
+                "visible": true,
+                "frustumCulled": true,
+                "renderOrder": 0,
+                "static": false,
+                "matrixAutoUpdate": true,
+                "layers": 1,
+                "matrix": [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2.220446049250313e-16,
+                  1,
+                  0,
+                  0,
+                  -1,
+                  2.220446049250313e-16,
+                  0,
+                  0,
+                  0.6,
+                  0,
+                  1
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "geometry": "0e1f79e5-8a5b-426d-a2f6-e099a9df3720",
+                "material": "545f84ca-c400-464d-a2c1-f556fc0ada65"
+              }
+            ]
+          },
+          {
+            "uuid": "5df05af2-7598-45b1-9154-f80bdadc23d7",
+            "type": "TextSprite",
+            "name": "Title",
+            "visible": true,
+            "text": "Synth station",
+            "color": "#e6f1ff",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#111928",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              1.85,
+              0
+            ],
+            "scale": [
+              2.6666666666666665,
+              0.5,
+              1
+            ]
+          },
+          {
+            "uuid": "4189297c-2f93-483c-b952-c97d5480436b",
+            "type": "TextSprite",
+            "name": "Controls",
+            "visible": true,
+            "text": "Space   Trigger the synth",
+            "color": "#fc90c9",
+            "outline": false,
+            "outlineWidth": 1,
+            "outlineColor": "#111928",
+            "resolution": 96,
+            "align": "center",
+            "font": "system-ui",
+            "position": [
+              0,
+              1.3800000000000001,
+              0
+            ],
+            "scale": [
+              3.84,
+              0.36,
+              1
+            ]
+          }
+        ],
+        "background": 1120552,
+        "visible": true,
+        "matrixAutoUpdate": true,
+        "usePhysics": false,
+        "cameras": [
+          "00000000-0000-4000-8000-000000000003"
+        ]
+      }
+    ],
+    "visible": true,
+    "matrixAutoUpdate": true,
+    "author": "nunuStudio LiteGraph integration",
+    "description": "Press Space to play the audio emitter from the start.",
+    "version": "1.0.0",
+    "ar": false,
+    "vr": false,
+    "vrScale": 1,
+    "rendererConfig": {
+      "backgroundColor": null,
+      "backend": 2,
+      "autoClear": false,
+      "autoClearColor": false,
+      "autoClearDepth": false,
+      "autoClearStencil": false,
+      "antialiasing": true,
+      "shadows": true,
+      "stencil": true,
+      "shadowsType": 2,
+      "shadowsAutoUpdate": true,
+      "toneMapping": 0,
+      "toneMappingExposure": 1,
+      "sortObjects": true,
+      "checkShaderErrors": true,
+      "gammaFactor": 2,
+      "precision": "highp",
+      "alpha": true,
+      "premultipliedAlpha": true,
+      "preserveDrawingBuffer": false,
+      "powerPreference": "high-performance",
+      "logarithmicDepthBuffer": false,
+      "physicallyCorrectLights": false,
+      "maxMorphTargets": 8,
+      "maxMorphNormals": 4
+    }
+  },
+  "audio": [
+    {
+      "name": "beep.wav",
+      "uuid": "66666666-6666-4666-8666-000000000007",
+      "type": "Audio",
+      "encoding": "wav",
+      "format": "base64",
+      "data": "UklGRsEIAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YZ0IAACAgIGBgoKCgoB/fXx7ent8foGEhomJiYeEgHx4dXNzdXl+g4mNkJGPi4V+d3Fta21xd3+Ij5WYmJSNhXtxamVkZ253go2XnaCemI6CdmphXV1ibHmHlJ+mp6OajX5vYllVV19sfI2cqK6up5uLeGdZUE1SXm6BlaaxtrSqmoZxXk9HR09ecoiesLu+uKuXgGhURT5BTWB3kai6xMW8qpJ4Xkk7Nz1MY3+bs8XNyr2njG5TPjEwOk5piKa/z9XOvaODY0cyKCs5UXGSscrX2c65m3lZPiwmLT9ae5y5z9nXybCRcFA4KScxRmOFpcHT2tTDqIdmSDInKDZObY+ux9ba0LyffVxBLiYrPFd3mLbN2djLtJVzVDoqJi9DYIGivtLa1cWri2pLNCgoNEtpi6vF1drSvqKBYEMvJio6U3OVs8vY2c23mXdXPCsmLUBcfZ670NrXyK6PbU42KCcySGWHp8LU2tPBpoVkRjEnKTdQb5GwydfZz7qce1o/LSYsPll5m7jO2djKspNxUjgpJjBFYoOkwNPa1cSpiWdJMycoNU1rja3G1trRvaB/XkIuJis7VXWXtczY2My1lnVVOysmLkJef6C90drWxqyNa0w1KCczSmiJqcTV2tK/pINhRDAmKjlScZOyytjZzriaeVg9LCYtP1t7nbrP2dfIsJBvUDcpJzFHZIWmwdPa1MKnh2VHMicpNk9uj6/I19rQu559XEAtJis9V3iZt83Z2MuzlHNTOSomL0RggqK/0trVxaqKaUo0Jyg0S2qMq8XW2tG+oYBfQy8mKjpUdJW0y9jZzbaYdlY8KyYuQV1+n7zQ2tbHro5tTjYoJzJIZoiow9Ta08GlhGNGMScpOFFwkrHJ19nPuZx6Wj4sJiw+WXqbuc/Z18mxknBROCknMEVjhKXA09rUw6iIZ0kyJyg2TWyOrcfW2tC8n35dQS4mKzxWdpi2zdnYzLSWdFQ6KiYvQ1+Aob3R2tbGrIxqTDQoJzNKaIqqxNXa0r+jgmFEMCYqOVNylLPK2NnOt5l4WD0sJi1AW3ydu9DZ18ivkG5PNyknMUdlhqfC1NrUwqaGZEcxJyk3T26Qr8jX2c+6nXxbPy0mLD1YeJq4ztnYyrKTclI5KiYwRGGCo7/S2tXEqopoSjMnKDVMa4ysxtba0b2hgF9CLyYqO1V0lrXM2NnMtpd2VjsrJi5BXn6gvNHa1setjWxNNSgnM0lniKnD1drTwKSDYkUwJik4UXGSscrX2c65m3lZPiwmLT9ae5y5z9nXybCRcFA4KScxRmOFpcHT2tTDqIdmSDInKDZObY+ux9ba0LyffVxBLiYrPFd3mLbN2djLtJVzVDoqJi9DYIGivtLa1cWri2pLNCgoNEtpi6vF1drSvqKBYEMvJio6U3OVs8vY2c23mXdXPCsmLUBcfZ670NrXyK6PbU42KCcySGWHp8LU2tPBpoVkRjEnKTdQb5GwydfZz7qce1o/LSYsPll5m7jO2djKspNxUjgpJjBFYoOkwNPa1cSpiWdJMycoNU1rja3G1trRvaB/XkIuJis7VXWXtczY2My1lnVVOysmLkJef6C90drWxqyNa0w1KCczSmiJqcTV2tK/pINhRDAmKjlScZOyytjZzriaeVg9LCYtP1t7nbrP2dfIsJBvUDcpJzFHZIWmwdPa1MKnh2VHMicpNk9uj6/I19rQu559XEAtJis9V3iZt83Z2MuzlHNTOSomL0RggqK/0trVxaqKaUo0Jyg0S2qMq8XW2tG+oYBfQy8mKjpUdJW0y9jZzbaYdlY8KyYuQV1+n7zQ2tbHro5tTjYoJzJIZoiow9Ta08GlhGNGMScpOFFwkrHJ19nPuZx6Wj4sJiw+WXqbuc/Z18mxknBROCknMEVjhKXA09rUw6iIZ0kyJyg2TWyOrcfW2tC8n35dQS4mKzxWdpi2zdnYzLSWdFQ6KiYvQ1+Aob3R2tbGrIxqTDQoJzNKaIqqxNXa0r+jgmFEMCYqOVNylLPK2NnOt5l4WD0sJi1AW3ydu9DZ18ivkG5PNyknMUdlhqfC1NrUwqaGZEcxJyk3T26Qr8jX2c+6nXxbPy0mLD1YeJq4ztnYyrKTclI5KiYwRGGCo7/S2tXEqopoSjMnKDVMa4ysxtbZ0b2ggF9DMCgsPFZ1lbPJ1tbKtJZ2Vz4vKjJFX3+euczU0cKqjW1ROy8uOU1piKW+zdLLuqGDZUs4MDJAVnKQrMHNz8WymHpeRjcyN0dfe5ixxMzLvqmPclhDNzU9T2iEn7bFy8a3oYZrUkA3OURXcYylucXIwK+YfmROPzk9S2B5k6q8xcS6qJB2Xks/PENSaIGZrr3DwLOgiG9ZSD8/SVlviJ+yvcC7rJiBaVVHQURPYXeOpLS9vbWmkXpkUkdDSFVofpSntbu5r5+KdGBQR0ZOXG+Emaq1ubWpmINuXE9JSlNidoqdrLW2sKORfWpZT0tOWWl8j6GttLKqnYt3ZldPTlNfb4KUo66xrqWWhXNiVlBRWGV1h5ilra+qn5F/bmBWUlVdanuLm6asrKWai3trX1dVWWJwgI+dpqqooJWGdmheWFhdaHWEkp6lp6Scj4FzZ15aW2JteoiVn6SkoJeLfXBlXlxfZ3F+i5afoqGckoZ6bmVgX2NrdoKOl56gnpeOgndsZWJiZ296hZCYnJ2ak4p/dGxmZGZrc32IkZebmpaPhnxzbGdmaW93gIqRlpiXkouDenJsaWltc3qDi5GVlpSPiIB4cm1rbHB2fYWLkJOTkIuFfndyb25wc3mAhouPkZCNiIN8d3NxcXN3fIGHi46OjYqGgXx3dHNzdnl+goeKjIyKh4N/e3h2dXZ4fH+DhoiJiYeFgn58eXh4eXt9gIOFhoeGhYOBfnx7ent8fX+BgoSEhISDgYB/fn19fX5/gIGBgoKCgYGAgH9/f3+AgIA="
+    }
+  ]
+}

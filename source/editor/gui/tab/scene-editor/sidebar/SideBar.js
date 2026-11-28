@@ -8,6 +8,7 @@ import {TextBitmap} from "../../../../../core/objects/text/TextBitmap.js";
 import {Sprite} from "../../../../../core/objects/sprite/Sprite.js";
 import {Script} from "../../../../../core/objects/script/Script.js";
 import {NodeScript} from "../../../../../core/objects/script/NodeScript.js";
+import {LiteGraphScript} from "../../../../../core/objects/script/LiteGraphScript.js";
 import {PhysicsObject} from "../../../../../core/objects/physics/PhysicsObject.js";
 import {ParticleEmitter} from "../../../../../core/objects/particle/ParticleEmitter.js";
 import {Sky} from "../../../../../core/objects/misc/Sky.js";
@@ -512,6 +513,11 @@ return target.set(x, y, z);`;
 				Editor.addObject(new NodeScript(), self.editor.scene);
 			}, Locale.nodeGraph);
 		}
+
+		scripts.addOption(Global.FILE_PATH + "icons/script/workflow.png", function()
+		{
+			Editor.addObject(new LiteGraphScript(), self.editor.scene);
+		}, Locale.liteGraphScript);
 
 		scripts.updateOptions();
 

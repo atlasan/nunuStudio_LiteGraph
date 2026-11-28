@@ -23,14 +23,14 @@ export default defineConfig({
 	},
 	projects: [
 		// Code on this branch
-		{name: "current", use: {runtime: "/nunu.min.js", strict: true}},
+		{name: "current", use: {runtime: "/files/runtime/nunu.min.js", strict: true}},
 		// Runtime published on the reference branch, renders the example screenshots (npm run test:baseline)
 		// Errors of the old runtime are reported as annotations instead of failing
 		{name: "baseline", testMatch: /examples/, use: {runtime: "/cache/baseline/nunu.min.js", strict: false}}
 	],
 	webServer: {
 		command: "npx webpack serve --config test/webpack.test.js",
-		url: `http://localhost:${port}/nunu.min.js`,
+		url: `http://localhost:${port}/files/runtime/nunu.min.js`,
 		timeout: 180000,
 		reuseExistingServer: !process.env.CI,
 		stdout: "ignore"

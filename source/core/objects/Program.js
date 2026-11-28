@@ -11,6 +11,7 @@ import {ObjectLoader} from "../loaders/ObjectLoader.js";
 import {Mouse} from "../input/Mouse.js";
 import {Keyboard} from "../input/Keyboard.js";
 import {Script} from "./script/Script.js";
+import {LiteGraphScript} from "./script/LiteGraphScript.js";
 
 /**
  * Program class contains all the data of a app.
@@ -174,6 +175,7 @@ class Program extends ResourceManager
 		 * @type {Keyboard}
 		 */
 		this.keyboard = null;
+		this.inputFrame = 0;
 
 		/**
 		 * Mouse input object, runtime variable.
@@ -261,16 +263,16 @@ class Program extends ResourceManager
 	{
 		if (this.mouse === null)
 		{
-			this.mouse = new Mouse();
-			this.mouse.setCanvas(this.canvas);
-			this.mouse.create();
+			this.mouse = new Mouse(undefined, true);
 		}
 
 		if (this.keyboard === null)
 		{
-			this.keyboard = new Keyboard();
-			this.keyboard.create();
+			this.keyboard = new Keyboard(true);
 		}
+		this.mouse.setCanvas(this.canvas);
+		this.mouse.create();
+		this.keyboard.create();
 
 		// Create manager events
 		this.manager.create();
@@ -367,6 +369,7 @@ class Program extends ResourceManager
 
 		this.mouse.update();
 		this.keyboard.update();
+		this.inputFrame++;
 
 		this.scene.update(delta);
 	}
@@ -689,7 +692,7 @@ class Program extends ResourceManager
 		// Check if there is a script with onAppData method available
 		this.traverse(function(child)
 		{
-			if (child instanceof Script)
+			if (child instanceof Script || child instanceof LiteGraphScript)
 			{
 				child.appData(data);
 				found = true;
